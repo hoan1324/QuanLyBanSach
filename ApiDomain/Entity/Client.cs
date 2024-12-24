@@ -17,6 +17,8 @@ namespace ApiDomain.Entity
 		public string? Email {  get; set; }
 		public DateTime? DateOfBirth {  get; set; }
 		public DateTime? CreateDate { get; set; }
+		public Guid? UserID { get; set; }
+		public ICollection<Order>? Order { get; set; }
 
 	}
 }

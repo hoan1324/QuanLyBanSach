@@ -16,6 +16,8 @@ namespace ApiDomain.Entity
 		public required string PhoneNumber { get; set; }
 		public required string Email { get; set; }
 		public int Status {  get; set; }
+		public ICollection<Purchase>? Purchases { get; set; }
+		public ICollection<Book>? Books { get; set; }
 
 	}
 }

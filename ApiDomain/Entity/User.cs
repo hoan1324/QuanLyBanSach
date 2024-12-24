@@ -21,7 +21,10 @@ namespace ApiDomain.Entity
 		public string? Avatar {  get; set; }
 		public required string Gender {  get; set; }
 		public int Status {  get; set; }
-	   
+	    public Guid? StaffID { get; set; }
+		public Guid RoleID { get; set; }
+		public virtual Role? Role { get; set; }
+
 
 	}
 }

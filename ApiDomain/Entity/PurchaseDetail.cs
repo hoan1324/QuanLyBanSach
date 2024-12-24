@@ -7,10 +7,11 @@ using System.Threading.Tasks;
 
 namespace ApiDomain.Entity
 {
-	public class Permission : Entity<Guid>
+	public class PurchaseDetail
 	{
-		public required string Name { get; set; }
-		public required string Code { get; set; }
-		public int Status { get; set; }
+
+		public decimal UnitPrice {  get; set; }
+		public int Quantity {  get; set; }
+		public decimal NetPrice {  get; set; }
 	}
 }

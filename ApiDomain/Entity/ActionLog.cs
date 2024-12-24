@@ -7,10 +7,14 @@ using System.Threading.Tasks;
 
 namespace ApiDomain.Entity
 {
-	public class Permission : Entity<Guid>
+	public class ActionLog : Entity<Guid>
 	{
-		public required string Name { get; set; }
-		public required string Code { get; set; }
-		public int Status { get; set; }
+		public required string Title { get; set; }
+		public string? Description { get; set; }
+		public string? CreatedBy { get; set; }
+		public DateTime? CreatedDate { get; set; }
+
+
+
 	}
 }
