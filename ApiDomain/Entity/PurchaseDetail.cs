@@ -9,9 +9,12 @@ namespace ApiDomain.Entity
 {
 	public class PurchaseDetail
 	{
-
+		public Guid PurchaseID { get; set; }
+		public Guid BookID { get; set; }
 		public decimal UnitPrice {  get; set; }
 		public int Quantity {  get; set; }
 		public decimal NetPrice {  get; set; }
+		public virtual Book? Book { get; set; }
+
 	}
 }

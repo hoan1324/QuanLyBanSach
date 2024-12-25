@@ -11,5 +11,7 @@ namespace ApiDomain.Entity
 	{
 		public required string Name { get; set; }
 		public string? Description { get; set; }
+		public ICollection<User>? Users { get; set; }
+		public ICollection<PermissionRole>? Permissions { get; set; }
 	}
 }

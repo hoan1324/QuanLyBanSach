@@ -14,6 +14,8 @@ namespace ApiDomain.Entity
 		public Guid BookID { get; set; }
 		public string? Code {  get; set; }
 		public int Status {  get; set; }
+		public User? User { get; set; }
+		public Book? Book { get; set; }
 		
 	}
 }

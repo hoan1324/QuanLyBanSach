@@ -8,8 +8,10 @@ namespace ApiDomain.Entity
 {
 	public class Shipping
 	{
+		public Guid OrderID { get; set; }
 		public decimal ShoppingCost {  get; set; }
 		public int Status {  get; set; }
 		public string? Carrier {  get; set; }
+		public virtual Order? Order { get; set; }
 	}
 }

@@ -9,7 +9,9 @@ namespace ApiDomain.Entity
 {
 	public class Purchase:Entity<Guid>
 	{
-
+		public Guid IssuingUnitID { get; set; }
 		public decimal TotalAmount {  get; set; }
+		public virtual IssuingUnit? IssuingUnit { get; set; }
+		public ICollection<PurchaseDetail>? PurchaseDetails { get; set; }
 	}
 }

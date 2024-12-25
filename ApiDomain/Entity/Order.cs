@@ -13,5 +13,6 @@ namespace ApiDomain.Entity
 		public decimal TotalAmount {  get; set; }
 		public virtual Client? Client { get; set; }
 		public ICollection<OrderDetail>? Details { get; set; }
+		public ICollection<Shipping>? Shippings { get; set; }
 	}
 }

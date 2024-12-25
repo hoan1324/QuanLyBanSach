@@ -22,7 +22,7 @@ namespace ApiDomain.Entity
 		public required string Gender {  get; set; }
 		public int Status {  get; set; }
 	    public  Guid JobID { get; set; }
-		public virtual Job Job { get; set; }
+		public virtual Job? Job { get; set; }
 
 	}
 }
