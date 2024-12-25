@@ -10,6 +10,6 @@ namespace ApiDomain.Entity
 	{
 		public Guid BookID { get; set; }
 		public int InventoryQuantity {  get; set; }
-		public virtual Book? Book { get; set; }
+		public  Book? Book { get; set; }
 	}
 }

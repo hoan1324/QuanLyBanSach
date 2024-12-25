@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace ApiDomain.Entity
 {
-	public class BookType : Entity<Guid>
+	public class Genres : Entity<Guid>
 	{
 		public required string Name { get; set; }
 		public string? Description { get; set; }
-		public ICollection<Book>? Books { get; set; }
+		public ICollection<BookGenres>? BookGenres { get; set; }
 		
 	}
 }

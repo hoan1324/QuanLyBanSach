@@ -11,6 +11,6 @@ namespace ApiDomain.Entity
 		public Guid BookID { get; set; }
 		public Guid ComboID {  get; set; }
 		public Combo? Combo {  get; set; }
-		public virtual Book? Book { get; set; }
+		public Book? Book { get; set; }
 	}
 }

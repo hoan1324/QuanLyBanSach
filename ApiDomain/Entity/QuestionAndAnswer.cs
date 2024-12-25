@@ -15,7 +15,7 @@ namespace ApiDomain.Entity
 		public DateTime? CreateDate { get; set; }
 		public string? ModifiedBy { get; set; }
 		public DateTime? ModifiedDate { get; set; }
-		public int Status { get; set; }
+		public int Status { get; set; }//0:đang phê duyệt//đã phê duyệt
 
 	}
 }

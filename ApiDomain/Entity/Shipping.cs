@@ -12,6 +12,6 @@ namespace ApiDomain.Entity
 		public decimal ShoppingCost {  get; set; }
 		public int Status {  get; set; }
 		public string? Carrier {  get; set; }
-		public virtual Order? Order { get; set; }
+		public  Order? Order { get; set; }
 	}
 }

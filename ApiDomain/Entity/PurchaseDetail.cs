@@ -15,6 +15,7 @@ namespace ApiDomain.Entity
 		public int Quantity {  get; set; }
 		public decimal NetPrice {  get; set; }
 		public virtual Book? Book { get; set; }
+		public  Purchase? Purchase { get; set; }
 
 	}
 }

@@ -9,8 +9,11 @@ namespace ApiDomain.Entity
 {
 	public class Role : Entity<Guid>
 	{
-		public required string Name { get; set; }
+		public  string Name { get; set; }
+		public string Code {  get; set; }
 		public string? Description { get; set; }
+		public DateTime? CreateDate { get; set; }
+		public bool IsAdmin {  get; set; }
 		public ICollection<User>? Users { get; set; }
 		public ICollection<PermissionRole>? Permissions { get; set; }
 	}

@@ -21,7 +21,7 @@ namespace ApiDomain.Entity
 		public required string Media {  get; set; }
 		public DateTime AnnouncementTime {  get; set; }//Thoi gian cong bo
 		public int Group {  get; set; }//banner o trang chu,trang con
-		public int Status {  get; set; } //trann thais banner hoatj dong,khong hoat dong,da xoa
+		public int Status {  get; set; } //trann thais banner dang cho,hoat dong,da xoa
 		
 
 

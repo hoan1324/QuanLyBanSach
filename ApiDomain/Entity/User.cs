@@ -20,14 +20,13 @@ namespace ApiDomain.Entity
 		public  string Email { get; set; }
 		public string? Avatar {  get; set; }
 		public  string Gender {  get; set; }
-		public int Status {  get; set; }
-	    public Guid? StaffID { get; set; }
+		public int Status {  get; set; } //0:hoatj dong,//1:bij ban
 		public Guid RoleID { get; set; }
 		public virtual Role? Role { get; set; }
 		public ICollection<UserPermission>? UserPermissions { get; set; }
-		public ICollection<Client>? Clients { get; set; }
 		public ICollection<BookRating>? BookRatings { get; set; }
 		public ICollection<ShoppingCart>? ShoppingCarts { get;set; }
+		public ICollection<Comment>? Comments { get; set; }
 
 
 	}

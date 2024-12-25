@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ApiInfrastructure.Context
 {
-	public class ApplicationDBContext: DbContext
+	public class ApplicationDBContext : DbContext
 	{
 		public ApplicationDBContext(DbContextOptions<ApplicationDBContext> options) : base(options)
 		{
@@ -25,7 +25,8 @@ namespace ApiInfrastructure.Context
 		public DbSet<BookImage> BookImages { get; set; }
 		public DbSet<BookRating> BookRatings { get; set; }
 		public DbSet<BookReview> BookReviews { get; set; }
-		public DbSet<BookType> BookTypes { get; set; }
+		public DbSet<BookGenres> BookGenres { get; set; }
+		public DbSet<Genres> Genres { get; set; }
 		public DbSet<Category> Categories { get; set; }
 		public DbSet<Client> Clients { get; set; }
 		public DbSet<Combo> Combos { get; set; }
@@ -47,12 +48,243 @@ namespace ApiInfrastructure.Context
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			var user = modelBuilder.Entity<User>();
-			user.ToTable("User");
-			user.Property(n=>n.UserName).IsRequired().HasMaxLength(200).HasColumnType("nvarchar(200) COLLATE Latin1_General_CI_AI");
+			user.ToTable("Users");
+			user.Property(n => n.UserName).IsRequired().HasColumnType("nvarchar(200) COLLATE Latin1_General_CI_AI");
 			user.Property(n => n.Password).IsRequired().HasMaxLength(200).IsUnicode(true);
 			user.Property(n => n.PhoneNumber).IsRequired().HasMaxLength(15).IsUnicode(false);
 			user.Property(n => n.Email).IsRequired().HasMaxLength(200).IsUnicode(false);
+			user.Property(n => n.Gender).IsRequired().HasMaxLength(30).IsUnicode(false);
+			user.Property(n => n.Status).HasDefaultValue(0);
+			user.Property(n => n.CreateDate).HasDefaultValue(DateTime.Now);
+			user.HasOne(n => n.Role).WithMany(n => n.Users).HasForeignKey(n => n.RoleID);
+			user.HasMany(n => n.UserPermissions).WithOne(n => n.User);
+			user.HasMany(n => n.BookRatings).WithOne(n => n.User);
+			user.HasMany(n => n.ShoppingCarts).WithOne(n => n.User);
+			user.HasMany(n => n.Comments).WithOne(n => n.User);
 
+
+			var role = modelBuilder.Entity<Role>();
+			role.ToTable("Roles");
+			role.Property(n => n.Name).IsRequired().HasColumnType("nvarchar(200) COLLATE Latin1_General_CI_AI");
+			role.Property(n => n.Code).IsRequired().HasMaxLength(100).IsUnicode(false);
+			role.Property(n => n.Description).HasColumnType("nvarchar(500)");
+			role.Property(n => n.CreateDate).HasDefaultValue(DateTime.Now);
+			role.Property(n => n.IsAdmin).HasDefaultValue(false);
+			role.HasMany(n => n.Users).WithOne(n => n.Role);
+			role.HasMany(n => n.Permissions).WithOne(n => n.Role);
+
+			var permission = modelBuilder.Entity<Permission>();
+			permission.ToTable("Permission");
+			permission.Property(n => n.Name).IsRequired().HasColumnType("nvarchar(200) COLLATE Latin1_General_CI_AI");
+			permission.Property(n => n.Code).IsRequired().HasMaxLength(100).IsUnicode(false);
+			permission.Property(n => n.Status).HasDefaultValue(0);
+			permission.HasMany(n => n.UserPermissions).WithOne(n => n.Permission);
+			permission.HasMany(n => n.PermissionRoles).WithOne(n => n.Permission);
+
+			var userPermission = modelBuilder.Entity<UserPermission>();
+			userPermission.ToTable("UserPermission");
+			userPermission.HasKey(n => new { n.UserID, n.PermissionID });
+			userPermission.HasOne(n => n.Permission).WithMany(n => n.UserPermissions).HasForeignKey(n => n.PermissionID);
+			userPermission.HasOne(n => n.User).WithMany(n => n.UserPermissions).HasForeignKey(n => n.UserID);
+
+			var permissionRole = modelBuilder.Entity<PermissionRole>();
+			permissionRole.ToTable("PermissionRole");
+			permissionRole.HasKey(n => new { n.RoleID, n.PermissionID });
+			permissionRole.HasOne(n => n.Permission).WithMany(n => n.PermissionRoles).HasForeignKey(n => n.PermissionID);
+			permissionRole.HasOne(n => n.Role).WithMany(n => n.Permissions).HasForeignKey(n => n.RoleID);
+
+			var actionLog = modelBuilder.Entity<ActionLog>();
+			actionLog.ToTable("ActionLogs");
+			actionLog.Property(n => n.Title).IsRequired().HasColumnType("nvarchar(200) COLLATE Latin1_General_CI_AI");
+			actionLog.Property(n => n.Description).HasColumnType("nvarchar(500) ");
+			actionLog.Property(n => n.CreatedDate).HasDefaultValue(DateTime.Now);
+
+			var banner = modelBuilder.Entity<Banner>();
+			banner.ToTable("Banners");
+			banner.Property(n => n.CreateDate).HasDefaultValue(DateTime.Now);
+			banner.Property(n => n.Name).HasMaxLength(300).IsUnicode(true).HasColumnType("nvarchar(300) COLLATE Latin1_General_CI_AI");
+			banner.Property(n => n.Title).HasMaxLength(300).IsUnicode(true).HasColumnType("nvarchar(300) COLLATE Latin1_General_CI_AI");
+			banner.Property(n => n.Media).HasMaxLength(500).IsUnicode(true);
+			banner.Property(n => n.Summary).HasMaxLength(500).IsUnicode(true);
+			banner.Property(n => n.Description).HasMaxLength(2000).IsUnicode(true);
+			banner.Property(n => n.Status).HasDefaultValue(0);
+
+			var book = modelBuilder.Entity<Book>();
+			book.ToTable("Books");
+			book.Property(n => n.BookName).HasColumnType("nvarchar(300) COLLATE Latin1_General_CI_AI");
+			book.Property(n => n.Description).HasColumnType("nvarchar(max)");
+			book.Property(n => n.Title).HasColumnType("nvarchar(200) COLLATE Latin1_General_CI_AI");
+			book.Property(n => n.Author).HasColumnType("nvarchar(200) COLLATE Latin1_General_CI_AI");
+			book.Property(n => n.Language).HasColumnType("nvarchar(100) COLLATE Latin1_General_CI_AI");
+			book.Property(n => n.CoverType).HasColumnType("nvarchar(50) COLLATE Latin1_General_CI_AI");
+			book.Property(n => n.ISBN).HasMaxLength(50);
+			book.Property(n => n.Translator).HasColumnType("nvarchar(200) COLLATE Latin1_General_CI_AI");
+			book.Property(n => n.Url).HasMaxLength(200).IsUnicode(false);
+			book.Property(n => n.PublishingHouse).HasColumnType("nvarchar(200) COLLATE Latin1_General_CI_AI");
+			book.HasOne(n => n.IssuingUnit).WithMany(n => n.Books).HasForeignKey(n => n.IssuingUnitID);
+			book.HasOne(n => n.Menu).WithMany(n => n.Books).HasForeignKey(n => n.MenuID);
+			book.HasMany(n => n.BookGenres).WithOne(n => n.Book);
+			book.HasMany(n => n.BookImages).WithOne(n => n.Book);
+			book.HasMany(n => n.PurchaseDetails).WithOne(n => n.Book);
+			book.HasMany(n => n.OrderDetails).WithOne(n => n.Book);
+			book.HasMany(n => n.Warehouses).WithOne(n => n.Book);
+			book.HasMany(n => n.ComboBooks).WithOne(n => n.Book);
+			book.HasMany(n => n.BookRatings).WithOne(n => n.Book);
+			book.HasMany(n => n.ShoppingCarts).WithOne(n => n.Book);
+			book.HasMany(n => n.BookReviews).WithOne(n => n.Book);
+			book.HasMany(n => n.Comments).WithOne(n => n.Book);
+
+
+			var bookImage = modelBuilder.Entity<BookImage>();
+			bookImage.ToTable("BookImages");
+			bookImage.Property(n => n.IsDefault).HasDefaultValue(false);
+			bookImage.Property(n => n.Image).HasMaxLength(200).IsUnicode(false);
+			bookImage.HasOne(n => n.Book).WithMany(n => n.BookImages).HasForeignKey(n => n.BookID);
+
+			var bookRating = modelBuilder.Entity<BookRating>();
+			bookRating.ToTable("BookRatings");
+			bookRating.HasKey(n => new { n.UserID, n.BookID });
+			bookRating.Property(n => n.CreateDate).HasDefaultValue(DateTime.Now);
+			bookRating.HasOne(n => n.Book).WithMany(n => n.BookRatings).HasForeignKey(n => n.BookID);
+			bookRating.HasOne(n => n.User).WithMany(n => n.BookRatings).HasForeignKey(n => n.UserID);
+
+			var bookReview = modelBuilder.Entity<BookReview>();
+			bookReview.ToTable("BookReviews");
+			bookReview.HasKey(n => n.BookID);
+			bookReview.Property(n => n.CreateDate).HasDefaultValue(DateTime.Now);
+			bookReview.HasOne(n => n.Book).WithMany(n => n.BookReviews).HasForeignKey(n => n.BookID);
+
+			var bookGenres = modelBuilder.Entity<BookGenres>();
+			bookGenres.ToTable("BookGenres");
+			bookGenres.HasKey(n => new { n.BookID, n.GenresID });
+			bookGenres.HasOne(n => n.Book).WithMany(n => n.BookGenres).HasForeignKey(n => n.BookID);
+			bookGenres.HasOne(n => n.Genres).WithMany(n => n.BookGenres).HasForeignKey(n => n.GenresID);
+
+			var genres = modelBuilder.Entity<Genres>();
+			genres.Property(n => n.Name).HasColumnType("nvarchar(200) COLLATE Latin1_General_CI_AI");
+			genres.Property(n => n.Description).HasColumnType("nvarchar(200)");
+			genres.HasMany(n => n.BookGenres).WithOne(n => n.Genres);
+
+			var category = modelBuilder.Entity<Category>();
+			category.ToTable("Categories");
+			category.Property(n => n.CategoryName).HasColumnType("nvarchar(200) COLLATE Latin1_General_CI_AI");
+			category.Property(n => n.Description).HasColumnType("nvarchar(500)");
+
+			var client = modelBuilder.Entity<Client>();
+			client.ToTable("Clients");
+			client.Property(n => n.Name).HasColumnType("nvarchar(200) COLLATE Latin1_General_CI_AI");
+			client.Property(n => n.Description).HasColumnType("nvarchar(500)");
+			client.Property(n => n.Address).HasColumnType("nvarchar(100) COLLATE Latin1_General_CI_AI");
+			client.Property(n => n.PhoneNumber).HasMaxLength(30).IsUnicode(false);
+			client.Property(n => n.Gender).HasColumnType("nvarchar(30)");
+			client.Property(n => n.Email).HasMaxLength(100).IsUnicode(false);
+			client.Property(n => n.CreateDate).HasDefaultValue(DateTime.Now);
+			client.HasMany(n => n.Order).WithOne(n => n.Client);
+
+			var combo = modelBuilder.Entity<Combo>();
+			combo.ToTable("Combos");
+			combo.Property(n => n.Name).IsRequired().HasColumnType("nvarchar(200) COLLATE Latin1_General_CI_AI");
+			combo.Property(n => n.Description).HasColumnType("nvarchar(max)");
+			combo.Property(n => n.CreateDate).HasDefaultValue(DateTime.Now);
+			combo.Property(n => n.IsActive).HasDefaultValue(false);
+			combo.Property(n => n.Image).HasMaxLength(200).IsUnicode(false);
+			combo.HasMany(n => n.Books).WithOne(n => n.Combo);
+
+			var comboBook = modelBuilder.Entity<ComboBook>();
+			comboBook.ToTable("ComboBooks");
+			comboBook.HasOne(n => n.Book).WithMany(n => n.ComboBooks).HasForeignKey(n => n.BookID);
+			comboBook.HasOne(n => n.Combo).WithMany(n => n.Books).HasForeignKey(n => n.ComboID);
+
+			var comment = modelBuilder.Entity<Comment>();
+			comment.ToTable("Comments");
+			comment.Property(n => n.CreateDate).HasDefaultValue(DateTime.Now);
+			comment.Property(n => n.Detail).HasColumnType("nvarchar(1000)");
+			comment.HasOne(n => n.Book).WithMany(n => n.Comments).HasForeignKey(n => n.BookID);
+			comment.HasOne(n => n.User).WithMany(n => n.Comments).HasForeignKey(n => n.UserID);
+
+			var issuingUnit = modelBuilder.Entity<IssuingUnit>();
+			issuingUnit.ToTable("IssuingUnits");
+			issuingUnit.Property(n => n.Name).HasColumnType("nvarchar(200) COLLATE Latin1_General_CI_AI");
+			issuingUnit.Property(n => n.StartDate).HasDefaultValue(DateTime.Now);
+			issuingUnit.Property(n => n.PhoneNumber).HasMaxLength(30);
+			issuingUnit.Property(n => n.Address).HasMaxLength(200).IsUnicode(true);
+			issuingUnit.Property(n => n.Email).HasMaxLength(100).IsUnicode(false);
+			issuingUnit.Property(n => n.Status).HasDefaultValue(0);
+			issuingUnit.HasMany(n => n.Purchases).WithOne(n => n.IssuingUnit);
+			issuingUnit.HasMany(n => n.Books).WithOne(n => n.IssuingUnit);
+
+			var job = modelBuilder.Entity<Job>();
+			job.ToTable("Jobs");
+			job.Property(n => n.JobName).HasColumnType("nvarchar(200) COLLATE Latin1_General_CI_AI");
+			job.Property(n => n.Description).HasMaxLength(500).IsUnicode(true);
+			job.Property(n => n.SalaryMin).HasDefaultValue(0).HasColumnType("decimal(18,2)");
+			job.Property(n => n.SalaryMax).HasDefaultValue(0).HasColumnType("decimal(18,2)");
+			job.HasMany(n => n.Staffs).WithOne(n => n.Job);
+
+			var menu = modelBuilder.Entity<Menu>();
+			menu.ToTable("Menus");
+			menu.Property(n => n.Name).HasColumnType("nvarchar(200) COLLATE Latin1_General_CI_AI");
+			menu.Property(n => n.Target).HasMaxLength(30).IsUnicode(false).HasDefaultValue("_blank");
+			menu.Property(n => n.Url).HasMaxLength(200).IsUnicode(false);
+			menu.Property(n => n.CreateBy).HasMaxLength(200).IsUnicode(true);
+			menu.Property(n => n.ModifiedBy).HasMaxLength(200).IsUnicode(true);
+			menu.Property(n => n.CreateDate).HasDefaultValue(DateTime.Now);
+			menu.Property(n => n.Priority).HasDefaultValue(0);
+			menu.Property(n => n.Status).HasDefaultValue(0);
+			menu.HasMany(n => n.Books).WithOne(n => n.Menu);
+
+			var order = modelBuilder.Entity<Order>();
+			order.ToTable("Orders");
+			order.Property(n => n.TotalAmount).HasDefaultValue(0).HasColumnType("decimal(18,2)");
+			order.HasMany(n => n.Shippings).WithOne(n => n.Order);
+			order.HasMany(n => n.Details).WithOne(n => n.Order);
+			order.HasOne(n => n.Client).WithMany(n => n.Order).HasForeignKey(n => n.ClientID);
+
+			var orderDetail = modelBuilder.Entity<OrderDetail>();
+			orderDetail.ToTable("OrderDetails");
+			orderDetail.HasKey(n => new { n.OrderID, n.BookID });
+			orderDetail.Property(n => n.NetPrice).HasDefaultValue(0).HasColumnType("decimal(18,2)");
+			orderDetail.Property(n => n.UnitPrice).HasDefaultValue(0).HasColumnType("decimal(18,2)");
+			orderDetail.Property(n => n.Quantity).HasDefaultValue(0);
+			orderDetail.HasOne(n => n.Order).WithMany(n => n.Details).HasForeignKey(n => n.OrderID);
+			orderDetail.HasOne(n => n.Book).WithMany(n => n.OrderDetails).HasForeignKey(n => n.BookID);
+
+			var purchase = modelBuilder.Entity<Purchase>();
+			purchase.ToTable("Purchase");
+			purchase.Property(n => n.TotalAmount).HasDefaultValue(0).HasColumnType("decimal(18,2)");
+			purchase.HasMany(n => n.PurchaseDetails).WithOne(n => n.Purchase);
+			purchase.HasOne(n => n.IssuingUnit).WithMany(n => n.Purchases).HasForeignKey(n => n.IssuingUnitID);
+
+			var purchaseDetail = modelBuilder.Entity<PurchaseDetail>();
+			purchaseDetail.ToTable("PurchaseDetails");
+			purchaseDetail.HasKey(n => new { n.PurchaseID, n.BookID });
+			purchaseDetail.Property(n => n.NetPrice).HasDefaultValue(0).HasColumnType("decimal(18,2)");
+			purchaseDetail.Property(n => n.UnitPrice).HasDefaultValue(0).HasColumnType("decimal(18,2)");
+			purchaseDetail.Property(n => n.Quantity).HasDefaultValue(0);
+			purchaseDetail.HasOne(n => n.Purchase).WithMany(n => n.PurchaseDetails).HasForeignKey(n => n.PurchaseID);
+			purchaseDetail.HasOne(n => n.Book).WithMany(n => n.PurchaseDetails).HasForeignKey(n => n.BookID);
+
+			var qa=modelBuilder.Entity<QuestionAndAnswer>();
+			qa.ToTable("QuestionAndAnswer");
+			qa.Property(n => n.Answer).HasColumnType("nvarchar(200) COLLATE Latin1_General_CI_AI");
+			qa.Property(n =>n.Question ).HasColumnType("nvarchar(2000) COLLATE Latin1_General_CI_AI");
+			qa.Property(n => n.CreateDate).HasDefaultValue(DateTime.Now);
+			qa.Property(n => n.Status).HasDefaultValue(0);
+
+			var shipping=modelBuilder.Entity<Shipping>();
+			shipping.ToTable("Shipping");
+			shipping.HasKey(n => n.OrderID);
+			shipping.Property(n => n.ShoppingCost).HasDefaultValue(0).HasColumnType("decimal(18,2)");
+			shipping.Property(n => n.Carrier).HasMaxLength(500).IsUnicode(true);
+			shipping.HasOne(n => n.Order).WithMany(n => n.Shippings).HasForeignKey(n => n.OrderID);
+
+			var shoppingCart = modelBuilder.Entity<ShoppingCart>();
+			shoppingCart.ToTable("ShoppingCarts");
+			shoppingCart.HasKey(n => new { n.UserID, n.BookID });
+			shoppingCart.Property(n => n.Code).HasMaxLength(100).IsUnicode(false);
+            shoppingCart.Property(n => n.Status).HasDefaultValue(0);
+			shoppingCart.HasOne(n => n.User).WithMany(u => u.ShoppingCarts).HasForeignKey(n => n.UserID);
+			shoppingCart.HasOne(n => n.Book).WithMany(b => b.ShoppingCarts).HasForeignKey(n => n.BookID);
 
 		}
 	}

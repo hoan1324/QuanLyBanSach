@@ -18,9 +18,9 @@ namespace ApiDomain.Entity
 		public DateTime? ModifiedDate { get; set; }
         public Guid ParentID { get; set; }
 		public int? Priority {  get; set; }
-		public int Status {  get; set; } //trann thais banner hoatj dong,khong hoat dong,da xoa
+		public int Status {  get; set; } //0:đang xử lý,1:hoạt động,2:ngừng hoạt động
 		
-
+		public ICollection<Book>? Books { get; set; }
 
 	}
 }
