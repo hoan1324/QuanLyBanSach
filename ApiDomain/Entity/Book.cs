@@ -21,6 +21,7 @@ namespace ApiDomain.Entity
 		public string? Translator { get; set; }
 		//public string? AgeRestriction {  get; set; }
 		public required string PublishingHouse { get; set; }
+		public int Status {  get; set; }//0:đc bán,1:ngưng bán
 		public string? Url {  get; set; }
 		public Guid MenuID { get; set; }
 		public Guid IssuingUnitID {  get; set; }

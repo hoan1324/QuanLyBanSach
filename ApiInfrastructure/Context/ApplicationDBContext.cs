@@ -1,5 +1,6 @@
 ﻿using ApiDomain.Entity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -118,6 +119,7 @@ namespace ApiInfrastructure.Context
 			book.Property(n => n.Language).HasColumnType("nvarchar(100) COLLATE Latin1_General_CI_AI");
 			book.Property(n => n.CoverType).HasColumnType("nvarchar(50) COLLATE Latin1_General_CI_AI");
 			book.Property(n => n.ISBN).HasMaxLength(50);
+			book.Property(n => n.Status).HasDefaultValue(0);
 			book.Property(n => n.Translator).HasColumnType("nvarchar(200) COLLATE Latin1_General_CI_AI");
 			book.Property(n => n.Url).HasMaxLength(200).IsUnicode(false);
 			book.Property(n => n.PublishingHouse).HasColumnType("nvarchar(200) COLLATE Latin1_General_CI_AI");
@@ -151,7 +153,7 @@ namespace ApiInfrastructure.Context
 			var bookReview = modelBuilder.Entity<BookReview>();
 			bookReview.ToTable("BookReviews");
 			bookReview.HasKey(n => n.BookID);
-			bookReview.Property(n => n.CreateDate).HasDefaultValue(DateTime.Now);
+			bookReview.Property(n => n.Rate).HasColumnType("decimal(1,1)");
 			bookReview.HasOne(n => n.Book).WithMany(n => n.BookReviews).HasForeignKey(n => n.BookID);
 
 			var bookGenres = modelBuilder.Entity<BookGenres>();
@@ -192,6 +194,7 @@ namespace ApiInfrastructure.Context
 
 			var comboBook = modelBuilder.Entity<ComboBook>();
 			comboBook.ToTable("ComboBooks");
+			comboBook.HasKey(n => new { n.ComboID, n.BookID });
 			comboBook.HasOne(n => n.Book).WithMany(n => n.ComboBooks).HasForeignKey(n => n.BookID);
 			comboBook.HasOne(n => n.Combo).WithMany(n => n.Books).HasForeignKey(n => n.ComboID);
 
@@ -262,7 +265,7 @@ namespace ApiInfrastructure.Context
 			purchaseDetail.Property(n => n.UnitPrice).HasDefaultValue(0).HasColumnType("decimal(18,2)");
 			purchaseDetail.Property(n => n.Quantity).HasDefaultValue(0);
 			purchaseDetail.HasOne(n => n.Purchase).WithMany(n => n.PurchaseDetails).HasForeignKey(n => n.PurchaseID);
-			purchaseDetail.HasOne(n => n.Book).WithMany(n => n.PurchaseDetails).HasForeignKey(n => n.BookID);
+			purchaseDetail.HasOne(n => n.Book).WithMany(n => n.PurchaseDetails).HasForeignKey(n => n.BookID).OnDelete(DeleteBehavior.Restrict);
 
 			var qa=modelBuilder.Entity<QuestionAndAnswer>();
 			qa.ToTable("QuestionAndAnswer");
@@ -283,9 +286,50 @@ namespace ApiInfrastructure.Context
 			shoppingCart.HasKey(n => new { n.UserID, n.BookID });
 			shoppingCart.Property(n => n.Code).HasMaxLength(100).IsUnicode(false);
             shoppingCart.Property(n => n.Status).HasDefaultValue(0);
-			shoppingCart.HasOne(n => n.User).WithMany(u => u.ShoppingCarts).HasForeignKey(n => n.UserID);
-			shoppingCart.HasOne(n => n.Book).WithMany(b => b.ShoppingCarts).HasForeignKey(n => n.BookID);
+			shoppingCart.HasOne(n => n.User).WithMany(n => n.ShoppingCarts).HasForeignKey(n => n.UserID);
+			shoppingCart.HasOne(n => n.Book).WithMany(n => n.ShoppingCarts).HasForeignKey(n => n.BookID);
+
+			var staff = modelBuilder.Entity<Staff>();
+			staff.ToTable("Staffs");
+			staff.Property(n => n.StaffName).HasColumnType("nvarchar(200) COLLATE Latin1_General_CI_AI");
+			staff.Property(n => n.Biography).HasColumnType("nvarchar(max)");
+			staff.Property(n => n.DateOfBirth).IsRequired();
+			staff.Property(n =>n.Salary ).IsRequired().HasDefaultValue(0).HasColumnType("decimal(18,2)");
+			staff.Property(n => n.Address).HasColumnType("nvarchar(100) COLLATE Latin1_General_CI_AI");
+			staff.Property(n => n.PhoneNumber).HasMaxLength(30).IsUnicode(false);
+			staff.Property(n => n.Gender).HasColumnType("nvarchar(30)");
+			staff.Property(n => n.Email).HasMaxLength(100).IsUnicode(false);
+			staff.Property(n=>n.StartDate).HasDefaultValue(DateTime.Now);
+			staff.Property(n => n.Avatar).HasMaxLength(200).IsUnicode(false);
+			staff.Property(n => n.Status).HasDefaultValue(0);
+
+			var config = modelBuilder.Entity<SystemConfig>();
+			config.ToTable("SystemConfigs");
+			config.Property(n => n.Value).HasMaxLength(500).IsUnicode(true);
+			config.Property(n => n.Data).HasMaxLength(500).IsUnicode(true);
+			config.Property(n => n.ExData).HasMaxLength(1000).IsUnicode(true);
+			config.Property(n => n.Image).HasMaxLength(500).IsUnicode(true);
+			config.Property(n => n.Status).HasDefaultValue(0);
+
+			var wareHouse = modelBuilder.Entity<Warehouse>();
+			wareHouse.ToTable("WareHouses");
+			wareHouse.HasKey(n => n.BookID);
+			wareHouse.Property(n => n.InventoryQuantity).IsRequired();
+			wareHouse.HasOne(n => n.Book).WithMany(n => n.Warehouses).HasForeignKey(n => n.BookID);
+
 
 		}
 	}
+	public class AppDbContextFactory : IDesignTimeDbContextFactory<ApplicationDBContext>
+	{
+		public ApplicationDBContext CreateDbContext(string[] args)
+		{
+			var builder = new DbContextOptionsBuilder<ApplicationDBContext>();
+			var connectionString = "Data Source=LAPTOP-FT5F2K76\\SQLEXPRESS;Initial Catalog=QuanLyBanSach;User Id=sa;Password=123456;TrustServerCertificate=True";
+			builder.UseSqlServer(connectionString);
+
+			return new ApplicationDBContext(builder.Options);
+		}
+	}
+
 }

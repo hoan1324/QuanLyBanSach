@@ -15,6 +15,7 @@ namespace ApiDomain.Entity
 		public string? Data { get; set; }
 		public string? Url { get; set; }
 		public string? Icon { get; set; }
+		public string? ExData { get; set; }
 		public int Status { get; set; }
 	}
 }

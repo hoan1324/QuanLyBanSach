@@ -10,7 +10,6 @@ namespace ApiDomain.Entity
 	public class BookReview
 	{
 		public Guid BookID { get; set; }
-		public DateTime? CreateDate{ get; set; }
 		public int? salesTotal {  get; set; }
 		public decimal? Rate {  get; set; }
 		public Book? Book { get; set; }
