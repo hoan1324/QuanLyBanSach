@@ -29,7 +29,7 @@ namespace ApiInfrastructure.Base
 			return (IRepository<T>)_repositories[repoType];
 		}
 		#endregion
-		public UnitOfWork(ApplicationDBContext dbFactory)
+		public UnitOfWork (ApplicationDBContext dbFactory)
 		{
 			_dbFactory = dbFactory;
 		}
