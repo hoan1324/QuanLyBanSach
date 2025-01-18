@@ -15,6 +15,12 @@ namespace APIBook.Services
 			_jobRepo = jobRepo;
 			_mapper = mapper;
 		}
+
+		public async Task<int> CountAsync()
+		{
+			return await _jobRepo.Count();
+		}
+
 		public async Task<JobDto> CreateAsync(JobDto request)
 		{
 			request.Id = Guid.NewGuid();
@@ -50,10 +56,6 @@ namespace APIBook.Services
 		{
 
 			var position = _mapper.Map<Job>(request);
-			if (position == null)
-			{
-				return null;
-			}
 			var update=await _jobRepo.UpdateAsync(position);
 			return _mapper.Map<JobDto>(update);
 		}

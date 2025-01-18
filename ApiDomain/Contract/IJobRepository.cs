@@ -12,6 +12,7 @@ namespace ApiDomain.Contract
 	{
 		Task<List<Job>> GetPaggination(PaginationModel request);
 		Task<List<Job>> GetAll();
+		Task<int> Count();
 		Task<Job> FindByIdAsync(Guid id);
 		Task<Job> InsertAsync(Job job);
 		Task<Job> UpdateAsync(Job job);

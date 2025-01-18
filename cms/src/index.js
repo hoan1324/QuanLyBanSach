@@ -6,6 +6,7 @@ import { ServiceProvider } from './boot/services';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import GlobalStyle from './Components/GlobalStyle';
+import CkEditorConfig from './boot/ckEditor';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

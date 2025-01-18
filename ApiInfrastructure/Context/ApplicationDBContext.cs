@@ -289,6 +289,7 @@ namespace ApiInfrastructure.Context
 			shoppingCart.HasOne(n => n.User).WithMany(n => n.ShoppingCarts).HasForeignKey(n => n.UserID);
 			shoppingCart.HasOne(n => n.Book).WithMany(n => n.ShoppingCarts).HasForeignKey(n => n.BookID);
 
+
 			var staff = modelBuilder.Entity<Staff>();
 			staff.ToTable("Staffs");
 			staff.Property(n => n.StaffName).HasColumnType("nvarchar(200) COLLATE Latin1_General_CI_AI");

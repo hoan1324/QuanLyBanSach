@@ -9,6 +9,7 @@ namespace ApiDomain.Base
 {
 	public interface IRepository<T> where T : class
 	{
+		Task<int> CountAsync();
 		Task<T?> FindAsync(object id);
 		Task<T> AddAsync(T entity);
 		Task<List<T>> AddRangeAsync(List<T> entity);

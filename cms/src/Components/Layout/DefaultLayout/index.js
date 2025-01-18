@@ -1,23 +1,39 @@
-import Header from "../Components/Header";
-import Footer from "../Components/Footer";
-import LeftNavBar from "../Components/LeftNavBar"
-import styles from "./DefaultLayouStyle.module.scss"
-import classNames from "classnames/bind";
+import React, { useState } from 'react';
+import { Layout, theme } from 'antd';
+import LeftSideBar from '../Components/LeftSideBar';
+import HeaderBar from '../Components/HeaderBar';
 
-function DefaultLayout({ children }) {
-    const cx = classNames.bind(styles)
-    return (
-        <div className={cx("body")} >
-            <div className={cx("body-content","d-flex")} >
-                <LeftNavBar />
-                <div className={cx("content")}>
-                    <Header />
-                    <div className={cx("content-detail")}>{children}</div>
-                    <Footer />
-                </div>
-            </div>
-        </div>
-    );
-}
+const { Content } = Layout;
+
+const DefaultLayout = ({children}) => {
+  const [collapsed, setCollapsed] = useState(false);
+  const {
+    token: { colorBgContainer, borderRadiusLG },
+  } = theme.useToken();
+
+  return (
+    <Layout >
+      <LeftSideBar collapsed={collapsed} />
+      <Layout>
+        <HeaderBar
+          collapsed={collapsed}
+          setCollapsed={setCollapsed}
+          backgroundColor={colorBgContainer}
+        />
+        <Content
+          style={{
+            margin: '24px 16px',
+            padding: 24,
+            minHeight: 280,
+            background: colorBgContainer,
+            borderRadius: borderRadiusLG,
+          }}
+        >
+          {children}
+        </Content>
+      </Layout>
+    </Layout>
+  );
+};
 
 export default DefaultLayout;

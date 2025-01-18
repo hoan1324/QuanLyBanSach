@@ -1,9 +1,16 @@
 import React from "react"
 
-function Home(){
-    
-    return(
-        <div>Trang chủ</div>
+import CkEditorCustom from "../../boot/ckEditor"
+
+
+function Home() {
+
+    return (
+
+        <div>
+            Trang chủ
+        </div>
+
     )
 }
 export default Home

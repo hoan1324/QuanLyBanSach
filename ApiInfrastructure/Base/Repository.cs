@@ -20,7 +20,10 @@ namespace ApiInfrastructure.Base
 			_appDbContext = NeacDbContext;
 			_dbSet = _appDbContext.Set<T>();
 		}
-
+		public async Task<int> CountAsync()
+		{
+			return await _dbSet.CountAsync();
+		}
 		public async Task<T> AddAsync(T entity)
 		{
 			await _dbSet.AddAsync(entity);

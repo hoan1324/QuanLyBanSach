@@ -24,12 +24,20 @@ namespace ApiInfrastructure.Implement
 			_unitOfWork = unitOfWork;
 		}
 
+		public async Task<int> Count()
+		{
+			return await _jobRepo.CountAsync();
+		}
+
 		public async Task<Job> DeleteAsync(Guid id)
 		{
 			var position=await _jobRepo.FindAsync(id);
-			if (position != null && position.Staffs.Any()) {
+			if (position == null)
+			{
 				return null;
 			}
+			
+			
 			await _jobRepo.DeleteAsync(position);
 			await _unitOfWork.SaveAsync();
 			return position;
@@ -45,7 +53,7 @@ namespace ApiInfrastructure.Implement
 		{
 			return await _jobRepo.GetAll().AsNoTracking().ToListAsync();
 		}
-
+		
 		public async Task<List<Job>> GetPaggination(PaginationModel request)
 		{
 			return await PaginatedList<Job>.CreatePaginatedList(_jobRepo.GetAll(),request);
@@ -68,6 +76,7 @@ namespace ApiInfrastructure.Implement
 			var position = await _jobRepo.FindAsync(job.Id);
 			if (position != null)
 			{
+				_unitOfWork.GetDbContext().Entry(position).State = EntityState.Detached;
 				var updateJob=await _jobRepo.UpdateAsync(job);
 				await _unitOfWork.SaveAsync();
 				return updateJob;

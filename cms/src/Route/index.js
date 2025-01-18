@@ -1,5 +1,5 @@
-import Home from "../../Pages/Home"
-import Job from "../../Pages/Job"
+import Home from "../Pages/Home"
+import Job from "../Pages/Job"
 
 const publicRoute=[
     {path:"/",element:Home},

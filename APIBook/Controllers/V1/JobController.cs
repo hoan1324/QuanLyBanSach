@@ -35,6 +35,21 @@ namespace APIBook.Controllers.V1
 				return StatusCode(StatusCodes.Status500InternalServerError, "Không thể lấy dữ liệu công việc !");
 			}
 		}
+		[HttpGet]
+		[Route("count")]
+		public async Task<IActionResult> GetCountAsync()
+		{
+			try
+			{
+				var response = await _jobService.CountAsync();
+				return Ok(ResponseModel.Success(response));
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex.Message);
+				return StatusCode(StatusCodes.Status500InternalServerError, "Không thể lấy dữ liệu số lượng công việc !");
+			}
+		}
 
 		[HttpGet]
 		[Route("dropdown")]

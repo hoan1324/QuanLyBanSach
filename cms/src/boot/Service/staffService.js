@@ -1,16 +1,12 @@
 import axiosClient from "../axiosClient"
 
 export default {
-    url: `/Job`,
+    url: `/Staff`,
     getList(request){
         return axiosClient.get(this.url, {params: request})
     },
     getListDropdown(){
         return axiosClient.get(`${this.url}/dropdown`)
-    },
-    getCount(){
-        return axiosClient.get(`${this.url}/count`)
-
     },
     getById(id){
         return axiosClient.get(`${this.url}/${id}`);

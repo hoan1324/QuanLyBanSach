@@ -21,10 +21,12 @@ namespace APIBook.Configurations
 			#region Repository
 			services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 			services.AddScoped<IJobRepository, JobRepository>();
+			services.AddScoped<IStaffRepository, StaffRepository>();
 			#endregion
 
 			#region Service
 			services.AddScoped<IJobService, JobService>();
+			services.AddScoped<IStaffService, StaffService>();
 			#endregion
 		}
 
