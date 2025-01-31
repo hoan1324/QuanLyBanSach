@@ -1,6 +1,8 @@
 import { Link } from "react-router";
 import { FaHome } from "react-icons/fa";
 import { MdWork } from "react-icons/md";
+import { FaPersonChalkboard } from "react-icons/fa6";
+
 
 const navbarTitle = [
     {
@@ -18,7 +20,7 @@ const navbarTitle = [
                 )
             }
         ]
-       
+
     },
     {
         key: "service",
@@ -33,17 +35,26 @@ const navbarTitle = [
                         Công việc
                     </Link>
                 )
+            },
+            {
+                key: "/Staff",
+                icon: <FaPersonChalkboard />,
+                label: (
+                    <Link to="/Staff">
+                        Nhân viên
+                    </Link>
+                )
             }
         ]
-       
+
     },
-   
+
     {
         key: "user",
         label: "Người dùng",
         type: "group",
         // children: [
-            
+
         // ]
     },
     {
@@ -51,7 +62,7 @@ const navbarTitle = [
         label: "Cấu hình",
         type: "group",
         // children: [
-            
+
         // ]
     },
 ]

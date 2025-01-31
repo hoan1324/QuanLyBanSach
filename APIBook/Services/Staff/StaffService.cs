@@ -2,6 +2,7 @@
 using ApiDomain.Contract;
 using ApiDomain.Entity;
 using AutoMapper;
+using CommonHelper.Enum;
 using CommonHelper.Models;
 
 namespace APIBook.Services
@@ -18,6 +19,7 @@ namespace APIBook.Services
 		public async Task<StaffDto> CreateAsync(StaffDto request)
 		{
 			request.Id = Guid.NewGuid();
+			request.CreatedDate = DateTime.Now;
 			var position= _mapper.Map<Staff>(request);
 			var insert =await _staffRepo.InsertAsync(position);
 			return _mapper.Map<StaffDto>(insert);
@@ -39,11 +41,11 @@ namespace APIBook.Services
 			return _mapper.Map<StaffDto>(await _staffRepo.FindByIdAsync(staffId));
 		}
 
-		public async Task<List<StaffDto>> GetListAsync(FilterRequest request)
+		public async Task<PaginationModel<StaffDto>> GetListAsync(FilterRequest request)
 		{
-			var req=_mapper.Map<PaginationModel>(request);
-			var paggination=await _staffRepo.GetPaggination(req);
-			return _mapper.Map<List<StaffDto>>(paggination);
+			var req = _mapper.Map<PaginationRequestModel>(request);
+			var paggination = await _staffRepo.GetPaggination(req);
+			return _mapper.Map<PaginationModel<StaffDto>>(paggination);
 		}
 
 		public async Task<StaffDto> UpdateAsync(StaffDto request)
@@ -53,5 +55,6 @@ namespace APIBook.Services
 			var update=await _staffRepo.UpdateAsync(position);
 			return _mapper.Map<StaffDto>(update);
 		}
+		
 	}
 }

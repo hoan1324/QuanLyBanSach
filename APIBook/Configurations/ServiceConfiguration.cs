@@ -1,4 +1,7 @@
-﻿using APIBook.Services;
+﻿using Api.Domain.Contracts;
+using Api.Infrastructure.Implement;
+using Api.Services;
+using APIBook.Services;
 using ApiDomain.Base;
 using ApiDomain.Contract;
 using ApiInfrastructure.Base;
@@ -22,11 +25,15 @@ namespace APIBook.Configurations
 			services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 			services.AddScoped<IJobRepository, JobRepository>();
 			services.AddScoped<IStaffRepository, StaffRepository>();
+			services.AddScoped<IAttachmentFolderRepository, AttachmentFolderRepository>();
+			services.AddScoped<IAttachmentRepository, AttachmentRepository>();
 			#endregion
 
 			#region Service
 			services.AddScoped<IJobService, JobService>();
 			services.AddScoped<IStaffService, StaffService>();
+			services.AddScoped<IAttachmentFolderService, AttachmentFolderService>();
+			services.AddScoped<IAttachmentService, AttachmentService>();
 			#endregion
 		}
 

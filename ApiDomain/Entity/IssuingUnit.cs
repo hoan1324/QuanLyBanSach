@@ -15,6 +15,7 @@ namespace ApiDomain.Entity
 		public required string Address {  get; set; }
 		public required string PhoneNumber { get; set; }
 		public required string Email { get; set; }
+		public DateTime? CreatedDate { get; set; }
 		public int Status {  get; set; }//0 đang xử lý,//1hop tac,//2 ngung hop tac
 		public ICollection<Purchase>? Purchases { get; set; }
 		public ICollection<Book>? Books { get; set; }

@@ -13,7 +13,7 @@ namespace ApiDomain.Entity
 		public string? Description {  get; set; }
 		public required string Address { get; set; }
 		public required string PhoneNumber { get; set; }
-		public required string Gender { get; set; }
+		public int Gender { get; set; }
 		public string? Email {  get; set; }
 		public DateTime? DateOfBirth {  get; set; }
 		public DateTime? CreateDate { get; set; }

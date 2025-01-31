@@ -19,7 +19,7 @@ namespace ApiDomain.Entity
 		public  string PhoneNumber { get; set; }
 		public  string Email { get; set; }
 		public string? Avatar {  get; set; }
-		public  string Gender {  get; set; }
+		public  int Gender {  get; set; }
 		public int Status {  get; set; } //0:hoatj dong,//1:bij ban
 		public Guid RoleID { get; set; }
 		public virtual Role? Role { get; set; }

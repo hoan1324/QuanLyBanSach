@@ -2,7 +2,7 @@ import React from 'react';
 import { useState,useEffect } from 'react';
 import { useLocation } from 'react-router';
 import { Menu,Layout } from 'antd';
-import { navbarTitle } from '../../../../CommoHelper/Constant/navbarTitle';
+import {navbarTitle } from "../../../../CommonHelper/Constant/navbarTitle"
 
 
 const LeftSideBar = ({ collapsed }) => {

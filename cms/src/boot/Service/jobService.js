@@ -8,10 +8,7 @@ export default {
     getListDropdown(){
         return axiosClient.get(`${this.url}/dropdown`)
     },
-    getCount(){
-        return axiosClient.get(`${this.url}/count`)
-
-    },
+   
     getById(id){
         return axiosClient.get(`${this.url}/${id}`);
     },

@@ -13,6 +13,7 @@ namespace ApiDomain.Entity
 		public Guid BookID { get; set; }
 		public decimal UnitPrice {  get; set; }
 		public int Quantity {  get; set; }
+		public DateTime? CreatedDate { get; set; }
 		public decimal NetPrice {  get; set; }
 		public virtual Book? Book { get; set; }
 		public  Purchase? Purchase { get; set; }

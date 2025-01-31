@@ -1,91 +1,18 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { CKEditor } from '@ckeditor/ckeditor5-react';
-import {
-	ClassicEditor,
-	Alignment,
-	Autoformat,
-	AutoImage,
-	Autosave,
-	BalloonToolbar,
-	BlockQuote,
-	BlockToolbar,
-	Bold,
-	Bookmark,
-	CloudServices,
-	Code,
-	CodeBlock,
-	Essentials,
-	FindAndReplace,
-	FontBackgroundColor,
-	FontColor,
-	FontFamily,
-	FontSize,
-	FullPage,
-	GeneralHtmlSupport,
-	Heading,
-	Highlight,
-	HorizontalLine,
-	HtmlComment,
-	HtmlEmbed,
-	ImageBlock,
-	ImageCaption,
-	ImageInline,
-	ImageInsertViaUrl,
-	ImageResize,
-	ImageStyle,
-	ImageTextAlternative,
-	ImageToolbar,
-	ImageUpload,
-	Indent,
-	IndentBlock,
-	Italic,
-	Link,
-	LinkImage,
-	List,
-	ListProperties,
-	Mention,
-	PageBreak,
-	Paragraph,
-	PasteFromOffice,
-	RemoveFormat,
-	ShowBlocks,
-	SourceEditing,
-	SpecialCharacters,
-	SpecialCharactersArrows,
-	SpecialCharactersCurrency,
-	SpecialCharactersEssentials,
-	SpecialCharactersLatin,
-	SpecialCharactersMathematical,
-	SpecialCharactersText,
-	Strikethrough,
-	Style,
-	Subscript,
-	Superscript,
-	Table,
-	TableCaption,
-	TableCellProperties,
-	TableColumnResize,
-	TableProperties,
-	TableToolbar,
-	TextPartLanguage,
-	TextTransformation,
-	Title,
-	TodoList,
-	Underline,
-	WordCount
-} from 'ckeditor5';
-
-import translations from 'ckeditor5/translations/vi.js';
-
-import 'ckeditor5/ckeditor5.css';
+import { CKEditor, useCKEditorCloud } from '@ckeditor/ckeditor5-react';
 
 
 const LICENSE_KEY =
-	'eyJhbGciOiJFUzI1NiJ9.eyJleHAiOjE3MzY4MTI3OTksImp0aSI6Ijk0ZWQyZjczLTcyMjMtNGM0ZC1hYmQ5LTI5YmZiYzAwYjQ0YSIsInVzYWdlRW5kcG9pbnQiOiJodHRwczovL3Byb3h5LWV2ZW50LmNrZWRpdG9yLmNvbSIsImRpc3RyaWJ1dGlvbkNoYW5uZWwiOlsiY2xvdWQiLCJkcnVwYWwiLCJzaCJdLCJ3aGl0ZUxhYmVsIjp0cnVlLCJsaWNlbnNlVHlwZSI6InRyaWFsIiwiZmVhdHVyZXMiOlsiKiJdLCJ2YyI6IjQ2NjRiYWUyIn0.NtYeV96EybUPD6X-Ez3CgFVuFcopyEvuLJpScVZvoD7_jX0vsO2TMGc6_H3sOeIVdGIaYIO-i4sZwMdbkGv4XQ';
+	'eyJhbGciOiJFUzI1NiJ9.eyJleHAiOjE3NjcxMzkxOTksImp0aSI6ImIzOTgyZTI2LTU3MGMtNGVmNC05YmY1LTRmODkxY2Y3NmYwYyIsImxpY2Vuc2VkSG9zdHMiOlsiMTI3LjAuMC4xIiwibG9jYWxob3N0IiwiMTkyLjE2OC4qLioiLCIxMC4qLiouKiIsIjE3Mi4qLiouKiIsIioudGVzdCIsIioubG9jYWxob3N0IiwiKi5sb2NhbCJdLCJ1c2FnZUVuZHBvaW50IjoiaHR0cHM6Ly9wcm94eS1ldmVudC5ja2VkaXRvci5jb20iLCJkaXN0cmlidXRpb25DaGFubmVsIjpbImNsb3VkIiwiZHJ1cGFsIl0sImxpY2Vuc2VUeXBlIjoiZGV2ZWxvcG1lbnQiLCJmZWF0dXJlcyI6WyJEUlVQIl0sInZjIjoiNzE5YWQ0MmMifQ.EclK-sGinVO0N8BLnA_LcHzJzg5IKCqPV-rGy8LG7frDrZthg3ABHOJwpYSQJhkdyYH5d3V7bZxsqzO_TFOGug';
 
-export default function CkEditorCustom({...props}) {
-	
+export default function Editor({ ...props }) {
+	const editorContainerRef = useRef(null);
+	const editorRef = useRef(null);
+	const editorWordCountRef = useRef(null);
+	const editorMenuBarRef= useRef(null);
+
 	const [isLayoutReady, setIsLayoutReady] = useState(false);
+	const cloud = useCKEditorCloud({ version: '44.1.0', translations: ['vi'] });
 
 	useEffect(() => {
 		setIsLayoutReady(true);
@@ -93,17 +20,97 @@ export default function CkEditorCustom({...props}) {
 		return () => setIsLayoutReady(false);
 	}, []);
 
-	const { editorConfig } = useMemo(() => {
-		if (!isLayoutReady) {
+	const { ClassicEditor, editorConfig } = useMemo(() => {
+		if (cloud.status !== 'success' || !isLayoutReady) {
 			return {};
 		}
 
+		const {
+			ClassicEditor,
+			Alignment,
+			Autoformat,
+			AutoImage,
+			AutoLink,
+			Autosave,
+			BlockQuote,
+			Bold,
+			Bookmark,
+			Code,
+			CodeBlock,
+			Essentials,
+			FindAndReplace,
+			FontBackgroundColor,
+			FontColor,
+			FontFamily,
+			FontSize,
+			FullPage,
+			GeneralHtmlSupport,
+			Heading,
+			Highlight,
+			HorizontalLine,
+			HtmlComment,
+			HtmlEmbed,
+			ImageBlock,
+			ImageCaption,
+			ImageInline,
+			ImageInsert,
+			ImageInsertViaUrl,
+			ImageResize,
+			ImageStyle,
+			ImageTextAlternative,
+			ImageToolbar,
+			ImageUpload,
+			Indent,
+			IndentBlock,
+			Italic,
+			Link,
+			LinkImage,
+			List,
+			ListProperties,
+			Markdown,
+			MediaEmbed,
+			Mention,
+			PageBreak,
+			Paragraph,
+			PasteFromMarkdownExperimental,
+			PasteFromOffice,
+			RemoveFormat,
+			ShowBlocks,
+			SimpleUploadAdapter,
+			SourceEditing,
+			SpecialCharacters,
+			SpecialCharactersArrows,
+			SpecialCharactersCurrency,
+			SpecialCharactersEssentials,
+			SpecialCharactersLatin,
+			SpecialCharactersMathematical,
+			SpecialCharactersText,
+			Strikethrough,
+			Style,
+			Subscript,
+			Superscript,
+			Table,
+			TableCaption,
+			TableCellProperties,
+			TableColumnResize,
+			TableProperties,
+			TableToolbar,
+			TextPartLanguage,
+			TextTransformation,
+			TodoList,
+			Underline,
+			WordCount
+		} = cloud.CKEditor;
+
 		return {
+			ClassicEditor,
 			editorConfig: {
 				toolbar: {
 					items: [
 						'sourceEditing',
 						'showBlocks',
+						'findAndReplace',
+						'textPartLanguage',
 						'|',
 						'heading',
 						'style',
@@ -116,12 +123,25 @@ export default function CkEditorCustom({...props}) {
 						'bold',
 						'italic',
 						'underline',
+						'strikethrough',
+						'subscript',
+						'superscript',
+						'code',
+						'removeFormat',
 						'|',
+						'specialCharacters',
+						'horizontalLine',
+						'pageBreak',
 						'link',
+						'bookmark',
+						'insertImage',
+						'insertImageViaUrl',
+						'mediaEmbed',
 						'insertTable',
 						'highlight',
 						'blockQuote',
 						'codeBlock',
+						'htmlEmbed',
 						'|',
 						'alignment',
 						'|',
@@ -137,13 +157,11 @@ export default function CkEditorCustom({...props}) {
 					Alignment,
 					Autoformat,
 					AutoImage,
+					AutoLink,
 					Autosave,
-					BalloonToolbar,
 					BlockQuote,
-					BlockToolbar,
 					Bold,
 					Bookmark,
-					CloudServices,
 					Code,
 					CodeBlock,
 					Essentials,
@@ -162,6 +180,7 @@ export default function CkEditorCustom({...props}) {
 					ImageBlock,
 					ImageCaption,
 					ImageInline,
+					ImageInsert,
 					ImageInsertViaUrl,
 					ImageResize,
 					ImageStyle,
@@ -175,12 +194,16 @@ export default function CkEditorCustom({...props}) {
 					LinkImage,
 					List,
 					ListProperties,
+					Markdown,
+					MediaEmbed,
 					Mention,
 					PageBreak,
 					Paragraph,
+					PasteFromMarkdownExperimental,
 					PasteFromOffice,
 					RemoveFormat,
 					ShowBlocks,
+					SimpleUploadAdapter,
 					SourceEditing,
 					SpecialCharacters,
 					SpecialCharactersArrows,
@@ -201,27 +224,9 @@ export default function CkEditorCustom({...props}) {
 					TableToolbar,
 					TextPartLanguage,
 					TextTransformation,
-					Title,
 					TodoList,
 					Underline,
 					WordCount
-				],
-				balloonToolbar: ['bold', 'italic', '|', 'link', '|', 'bulletedList', 'numberedList'],
-				blockToolbar: [
-					'fontSize',
-					'fontColor',
-					'fontBackgroundColor',
-					'|',
-					'bold',
-					'italic',
-					'|',
-					'link',
-					'insertTable',
-					'|',
-					'bulletedList',
-					'numberedList',
-					'outdent',
-					'indent'
 				],
 				fontFamily: {
 					supportAllValues: true
@@ -297,7 +302,7 @@ export default function CkEditorCustom({...props}) {
 						'resizeImage'
 					]
 				},
-				initialData:'',
+				initialData:"",
 				language: 'vi',
 				licenseKey: LICENSE_KEY,
 				link: {
@@ -333,7 +338,7 @@ export default function CkEditorCustom({...props}) {
 				menuBar: {
 					isVisible: true
 				},
-				placeholder: 'Mời nhập văn bản',
+				placeholder: 'Vui lòng nhập dữ liệu',
 				style: {
 					definitions: [
 						{
@@ -385,20 +390,30 @@ export default function CkEditorCustom({...props}) {
 				},
 				table: {
 					contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells', 'tableProperties', 'tableCellProperties']
-				},
-				translations: [translations]
+				}
 			}
 		};
-	}, [isLayoutReady]);
-    
-	return (
-        isLayoutReady && (
-            <CKEditor
-                editor={ClassicEditor}
-                config={editorConfig}
-                {...props}
-            />
-        )
-    );
-}
+	}, [cloud, isLayoutReady]);
 
+	return (
+		<div className="main-container">
+			<div
+				className="editor-container editor-container_classic-editor editor-container_include-style editor-container_include-word-count"
+				ref={editorContainerRef}
+			>
+				<div className="editor-container__editor">
+					<div ref={editorRef}>
+						{ClassicEditor && editorConfig && (
+							<CKEditor
+								
+								editor={ClassicEditor}
+								config={editorConfig}
+								{...props}
+							/>
+						)}
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+}

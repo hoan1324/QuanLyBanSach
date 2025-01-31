@@ -14,6 +14,7 @@ namespace ApiDomain.Entity
 		public string? Description { get; set; }
 		public  decimal SalaryMax { get; set; }
 		public  decimal SalaryMin { get; set; }
+		public DateTime? CreatedDate { get; set; }
 
 		public ICollection<Staff>? Staffs { get; set; }
 	}

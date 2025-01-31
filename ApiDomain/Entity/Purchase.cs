@@ -11,6 +11,8 @@ namespace ApiDomain.Entity
 	{
 		public Guid IssuingUnitID { get; set; }
 		public decimal TotalAmount {  get; set; }
+		public DateTime? CreatedDate { get; set; }
+
 		public virtual IssuingUnit? IssuingUnit { get; set; }
 		public ICollection<PurchaseDetail>? PurchaseDetails { get; set; }
 	}

@@ -13,7 +13,8 @@ namespace CommonHelper.Constant
 
 		public static List<FilterOperator> ListOperator => new List<FilterOperator>
 		{
-			new FilterOperator { Operator = "==", Method = "Equals" },
+			new FilterOperator { Operator = "!=", Method = "NotEqual" },
+			new FilterOperator { Operator = "==", Method = "Equal" },
 			new FilterOperator { Operator = ">", Method = "GreaterThan" },
 			new FilterOperator { Operator = "<", Method = "LessThan" },
 			new FilterOperator { Operator = ">=", Method = "GreaterThanOrEqual" },

@@ -16,14 +16,12 @@ namespace APIBook.Services
 			_mapper = mapper;
 		}
 
-		public async Task<int> CountAsync()
-		{
-			return await _jobRepo.Count();
-		}
+		
 
 		public async Task<JobDto> CreateAsync(JobDto request)
 		{
 			request.Id = Guid.NewGuid();
+			request.CreatedDate = DateTime.Now;
 			var position= _mapper.Map<Job>(request);
 			var insert =await _jobRepo.InsertAsync(position);
 			return _mapper.Map<JobDto>(insert);
@@ -45,11 +43,11 @@ namespace APIBook.Services
 			return _mapper.Map<JobDto>(await _jobRepo.FindByIdAsync(jobId));
 		}
 
-		public async Task<List<JobDto>> GetListAsync(FilterRequest request)
+		public async Task<PaginationModel<JobDto>> GetListAsync(FilterRequest request)
 		{
-			var req=_mapper.Map<PaginationModel>(request);
+			var req=_mapper.Map<PaginationRequestModel>(request);
 			var paggination=await _jobRepo.GetPaggination(req);
-			return _mapper.Map<List<JobDto>>(paggination);
+			return _mapper.Map<PaginationModel<JobDto>>(paggination);
 		}
 
 		public async Task<JobDto> UpdateAsync(JobDto request)
@@ -59,5 +57,7 @@ namespace APIBook.Services
 			var update=await _jobRepo.UpdateAsync(position);
 			return _mapper.Map<JobDto>(update);
 		}
+
+		
 	}
 }

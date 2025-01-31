@@ -1,4 +1,4 @@
-import "./GlobalStyle.module.scss"
+import "./GlobalStyle.module.scss"; // Đảm bảo tệp SCSS đúng đường dẫn
 
 function GlobalStyle({children}){
 

@@ -12,6 +12,7 @@ namespace ApiDomain.Entity
 		public Guid ClientID { get; set; }
 		public decimal TotalAmount {  get; set; }
 		public int Status {  get; set; }
+		public DateTime? CreatedDate { get; set; }
 		public virtual Client? Client { get; set; }
 		public ICollection<OrderDetail>? Details { get; set; }
 		public ICollection<Shipping>? Shippings { get; set; }

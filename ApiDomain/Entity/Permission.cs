@@ -12,6 +12,8 @@ namespace ApiDomain.Entity
 		public  string Name { get; set; }
 		public  string Code { get; set; }
 		public int Status { get; set; }//0:hoatj ddoong,//1 ban
+		public DateTime? CreatedDate { get; set; }
+
 		public ICollection<PermissionRole>? PermissionRoles { get; set; }
 		public ICollection<UserPermission>? UserPermissions { get; set; }	
 	}

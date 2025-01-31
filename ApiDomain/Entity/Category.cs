@@ -12,6 +12,7 @@ namespace ApiDomain.Entity
 		
 		public required string CategoryName { get; set; }
 		public string? Description { get; set; }
-		
+		public DateTime? CreatedDate { get; set; }
+
 	}
 }

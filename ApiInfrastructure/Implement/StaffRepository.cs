@@ -47,7 +47,7 @@ namespace ApiInfrastructure.Implement
 			return await _staffRepo.GetAll().AsNoTracking().ToListAsync();
 		}
 
-		public async Task<List<Staff>> GetPaggination(PaginationModel request)
+		public async Task<PaginationModel<Staff>> GetPaggination(PaginationRequestModel request)
 			
 		{
 			return await PaginatedList<Staff>.CreatePaginatedList(_staffRepo.GetAll(),request);
@@ -70,7 +70,8 @@ namespace ApiInfrastructure.Implement
 			var position = await _staffRepo.FindAsync(Staff.Id);
 			if (position != null)
 			{
-				var updateStaff=await _staffRepo.UpdateAsync(Staff);
+				_unitOfWork.GetDbContext().Entry(position).State = EntityState.Detached;
+				var updateStaff =await _staffRepo.UpdateAsync(Staff);
 				await _unitOfWork.SaveAsync();
 				return updateStaff;
 			}

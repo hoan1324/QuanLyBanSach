@@ -34,7 +34,7 @@ namespace ApiInfrastructure.Context
 					DateOfBirth=DateTime.Now,
 					PhoneNumber="0348966964",
 					Email="hoan3397@gmail.com",
-					Gender="nam",
+					Gender = 0,
 					Status=0,
 					RoleID=roleID
 

@@ -10,6 +10,7 @@ namespace ApiDomain.Entity
 	{
 		public Guid BookID { get; set; }
 		public int InventoryQuantity {  get; set; }
-		public  Book? Book { get; set; }
+		public DateTime? CreatedDate { get; set; }
+		public Book? Book { get; set; }
 	}
 }

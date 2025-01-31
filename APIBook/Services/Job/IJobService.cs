@@ -5,9 +5,8 @@ namespace APIBook.Services
 {
 	public interface IJobService
 	{
-		Task<int> CountAsync();
 		Task<List<JobDto>> GetAllAsync();
-		Task<List<JobDto>> GetListAsync(FilterRequest request);
+		Task<PaginationModel<JobDto>> GetListAsync(FilterRequest request);
 		Task<JobDto> GetByIdAsync(Guid jobId);
 		Task<JobDto> CreateAsync(JobDto request);
 		Task<JobDto> UpdateAsync(JobDto request);

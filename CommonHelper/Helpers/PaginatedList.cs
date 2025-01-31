@@ -13,20 +13,40 @@ namespace CommonHelper.Helpers
 	public class PaginatedList<T>
 	{
 
-		public static async Task<List<T>> CreatePaginatedList(IQueryable<T> source, PaginationModel request)
+		public static async Task<PaginationModel<T>> CreatePaginatedList<T>(IQueryable<T> source, PaginationRequestModel request)
 		{
-			if (source == null || source.Count() <= 0) return new List<T>();
+			if (source == null || !source.Any()) return new PaginationModel<T>();
 
-			if (!string.IsNullOrEmpty(request.OrderByColumn))
+			try
 			{
-				source = LinQ.Sorting(source, request.OrderByType, request.OrderByColumn);
+				var countSource = source.Count();
+				if (request.Filters?.Any() == true)
+				{
+					source = LinQ.Where(source, request.Filters);
+				}
+
+				if (!string.IsNullOrEmpty(request.OrderByColumn) && !string.IsNullOrEmpty(request.OrderByType))
+				{
+					source = LinQ.OrderBy(source, request.OrderByColumn,request.OrderByType);
+				}
+
+				var items = await Task.Run(() => source
+					.Skip((request.PageIndex - 1) * request.PageSize)
+					.Take(request.PageSize)
+					.ToList());
+
+				return new PaginationModel<T>
+				{
+					Data = items,
+					TotalRow =countSource
+				};
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex);
+				return new PaginationModel<T>();
 			}
 
-			var items = source.Skip((request.PageIndex - 1) * request.PageSize).Take(request.PageSize).ToList();
-			return items;
-
 		}
-
-
 	}
 }

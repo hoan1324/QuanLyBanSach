@@ -54,7 +54,7 @@ namespace ApiInfrastructure.Context
 			user.Property(n => n.Password).IsRequired().HasMaxLength(200).IsUnicode(true);
 			user.Property(n => n.PhoneNumber).IsRequired().HasMaxLength(15).IsUnicode(false);
 			user.Property(n => n.Email).IsRequired().HasMaxLength(200).IsUnicode(false);
-			user.Property(n => n.Gender).IsRequired().HasMaxLength(30).IsUnicode(false);
+			user.Property(n => n.Gender).IsRequired().HasDefaultValue(0);
 			user.Property(n => n.Status).HasDefaultValue(0);
 			user.Property(n => n.CreateDate).HasDefaultValue(DateTime.Now);
 			user.HasOne(n => n.Role).WithMany(n => n.Users).HasForeignKey(n => n.RoleID);
@@ -78,10 +78,25 @@ namespace ApiInfrastructure.Context
 			permission.ToTable("Permission");
 			permission.Property(n => n.Name).IsRequired().HasColumnType("nvarchar(200) COLLATE Latin1_General_CI_AI");
 			permission.Property(n => n.Code).IsRequired().HasMaxLength(100).IsUnicode(false);
+			permission.Property(n=>n.CreatedDate).HasDefaultValue(DateTime.Now);
 			permission.Property(n => n.Status).HasDefaultValue(0);
 			permission.HasMany(n => n.UserPermissions).WithOne(n => n.Permission);
 			permission.HasMany(n => n.PermissionRoles).WithOne(n => n.Permission);
 
+			var folder = modelBuilder.Entity<AttachmentFolder>();
+			folder.ToTable("AttachmentFolders");
+			folder.Property(n => n.CreatedDate).HasDefaultValue(DateTime.Now);
+			folder.Property(n => n.Name).HasMaxLength(300).IsUnicode(true).HasColumnType("nvarchar(300) COLLATE Latin1_General_CI_AI");
+			folder.Property(n => n.Description).HasMaxLength(1000).IsUnicode(true);
+			folder.Property(n => n.Status).HasDefaultValue(0);
+			folder.HasMany(n => n.Attachments).WithOne(n => n.AttachmentFolder).HasForeignKey(n => n.AttachmentFolderId);
+
+			var attachment = modelBuilder.Entity<Attachment>();
+			attachment.ToTable("Attachments");
+			attachment.Property(n => n.Name).HasMaxLength(300).IsUnicode(true).HasColumnType("nvarchar(300) COLLATE Latin1_General_CI_AI");
+			attachment.Property(n => n.CreatedDate).HasDefaultValue(DateTime.Now);
+			attachment.HasOne(n => n.AttachmentFolder).WithMany(n => n.Attachments).HasForeignKey(n => n.AttachmentFolderId);
+			
 			var userPermission = modelBuilder.Entity<UserPermission>();
 			userPermission.ToTable("UserPermission");
 			userPermission.HasKey(n => new { n.UserID, n.PermissionID });
@@ -112,6 +127,7 @@ namespace ApiInfrastructure.Context
 
 			var book = modelBuilder.Entity<Book>();
 			book.ToTable("Books");
+			book.Property(n => n.CreatedDate).HasDefaultValue(DateTime.Now);
 			book.Property(n => n.BookName).HasColumnType("nvarchar(300) COLLATE Latin1_General_CI_AI");
 			book.Property(n => n.Description).HasColumnType("nvarchar(max)");
 			book.Property(n => n.Title).HasColumnType("nvarchar(200) COLLATE Latin1_General_CI_AI");
@@ -163,12 +179,15 @@ namespace ApiInfrastructure.Context
 			bookGenres.HasOne(n => n.Genres).WithMany(n => n.BookGenres).HasForeignKey(n => n.GenresID);
 
 			var genres = modelBuilder.Entity<Genres>();
+			genres.ToTable("Genres");
+			genres.Property(n => n.CreatedDate).HasDefaultValue(DateTime.Now);
 			genres.Property(n => n.Name).HasColumnType("nvarchar(200) COLLATE Latin1_General_CI_AI");
 			genres.Property(n => n.Description).HasColumnType("nvarchar(200)");
 			genres.HasMany(n => n.BookGenres).WithOne(n => n.Genres);
 
 			var category = modelBuilder.Entity<Category>();
 			category.ToTable("Categories");
+			category.Property(n => n.CreatedDate).HasDefaultValue(DateTime.Now);
 			category.Property(n => n.CategoryName).HasColumnType("nvarchar(200) COLLATE Latin1_General_CI_AI");
 			category.Property(n => n.Description).HasColumnType("nvarchar(500)");
 
@@ -178,7 +197,7 @@ namespace ApiInfrastructure.Context
 			client.Property(n => n.Description).HasColumnType("nvarchar(500)");
 			client.Property(n => n.Address).HasColumnType("nvarchar(100) COLLATE Latin1_General_CI_AI");
 			client.Property(n => n.PhoneNumber).HasMaxLength(30).IsUnicode(false);
-			client.Property(n => n.Gender).HasColumnType("nvarchar(30)");
+			client.Property(n => n.Gender).IsRequired().HasDefaultValue(0);
 			client.Property(n => n.Email).HasMaxLength(100).IsUnicode(false);
 			client.Property(n => n.CreateDate).HasDefaultValue(DateTime.Now);
 			client.HasMany(n => n.Order).WithOne(n => n.Client);
@@ -207,6 +226,7 @@ namespace ApiInfrastructure.Context
 
 			var issuingUnit = modelBuilder.Entity<IssuingUnit>();
 			issuingUnit.ToTable("IssuingUnits");
+			issuingUnit.Property(n => n.CreatedDate).HasDefaultValue(DateTime.Now);
 			issuingUnit.Property(n => n.Name).HasColumnType("nvarchar(200) COLLATE Latin1_General_CI_AI");
 			issuingUnit.Property(n => n.StartDate).HasDefaultValue(DateTime.Now);
 			issuingUnit.Property(n => n.PhoneNumber).HasMaxLength(30);
@@ -218,6 +238,7 @@ namespace ApiInfrastructure.Context
 
 			var job = modelBuilder.Entity<Job>();
 			job.ToTable("Jobs");
+			job.Property(n => n.CreatedDate).HasDefaultValue(DateTime.Now);
 			job.Property(n => n.JobName).HasColumnType("nvarchar(200) COLLATE Latin1_General_CI_AI");
 			job.Property(n => n.Description).HasMaxLength(500).IsUnicode(true);
 			job.Property(n => n.SalaryMin).HasDefaultValue(0).HasColumnType("decimal(18,2)");
@@ -238,6 +259,7 @@ namespace ApiInfrastructure.Context
 
 			var order = modelBuilder.Entity<Order>();
 			order.ToTable("Orders");
+			order.Property(n => n.CreatedDate).HasDefaultValue(DateTime.Now);
 			order.Property(n => n.TotalAmount).HasDefaultValue(0).HasColumnType("decimal(18,2)");
 			order.HasMany(n => n.Shippings).WithOne(n => n.Order);
 			order.HasMany(n => n.Details).WithOne(n => n.Order);
@@ -246,6 +268,7 @@ namespace ApiInfrastructure.Context
 			var orderDetail = modelBuilder.Entity<OrderDetail>();
 			orderDetail.ToTable("OrderDetails");
 			orderDetail.HasKey(n => new { n.OrderID, n.BookID });
+			orderDetail.Property(n => n.CreatedDate).HasDefaultValue(DateTime.Now);
 			orderDetail.Property(n => n.NetPrice).HasDefaultValue(0).HasColumnType("decimal(18,2)");
 			orderDetail.Property(n => n.UnitPrice).HasDefaultValue(0).HasColumnType("decimal(18,2)");
 			orderDetail.Property(n => n.Quantity).HasDefaultValue(0);
@@ -254,6 +277,7 @@ namespace ApiInfrastructure.Context
 
 			var purchase = modelBuilder.Entity<Purchase>();
 			purchase.ToTable("Purchase");
+			purchase.Property(n => n.CreatedDate).HasDefaultValue(DateTime.Now);
 			purchase.Property(n => n.TotalAmount).HasDefaultValue(0).HasColumnType("decimal(18,2)");
 			purchase.HasMany(n => n.PurchaseDetails).WithOne(n => n.Purchase);
 			purchase.HasOne(n => n.IssuingUnit).WithMany(n => n.Purchases).HasForeignKey(n => n.IssuingUnitID);
@@ -261,6 +285,7 @@ namespace ApiInfrastructure.Context
 			var purchaseDetail = modelBuilder.Entity<PurchaseDetail>();
 			purchaseDetail.ToTable("PurchaseDetails");
 			purchaseDetail.HasKey(n => new { n.PurchaseID, n.BookID });
+			purchaseDetail.Property(n => n.CreatedDate).HasDefaultValue(DateTime.Now);
 			purchaseDetail.Property(n => n.NetPrice).HasDefaultValue(0).HasColumnType("decimal(18,2)");
 			purchaseDetail.Property(n => n.UnitPrice).HasDefaultValue(0).HasColumnType("decimal(18,2)");
 			purchaseDetail.Property(n => n.Quantity).HasDefaultValue(0);
@@ -277,6 +302,7 @@ namespace ApiInfrastructure.Context
 			var shipping=modelBuilder.Entity<Shipping>();
 			shipping.ToTable("Shipping");
 			shipping.HasKey(n => n.OrderID);
+			shipping.Property(n => n.CreatedDate).HasDefaultValue(DateTime.Now);
 			shipping.Property(n => n.ShoppingCost).HasDefaultValue(0).HasColumnType("decimal(18,2)");
 			shipping.Property(n => n.Carrier).HasMaxLength(500).IsUnicode(true);
 			shipping.HasOne(n => n.Order).WithMany(n => n.Shippings).HasForeignKey(n => n.OrderID);
@@ -292,13 +318,14 @@ namespace ApiInfrastructure.Context
 
 			var staff = modelBuilder.Entity<Staff>();
 			staff.ToTable("Staffs");
+			staff.Property(n => n.CreatedDate).HasDefaultValue(DateTime.Now);
 			staff.Property(n => n.StaffName).HasColumnType("nvarchar(200) COLLATE Latin1_General_CI_AI");
 			staff.Property(n => n.Biography).HasColumnType("nvarchar(max)");
 			staff.Property(n => n.DateOfBirth).IsRequired();
 			staff.Property(n =>n.Salary ).IsRequired().HasDefaultValue(0).HasColumnType("decimal(18,2)");
 			staff.Property(n => n.Address).HasColumnType("nvarchar(100) COLLATE Latin1_General_CI_AI");
 			staff.Property(n => n.PhoneNumber).HasMaxLength(30).IsUnicode(false);
-			staff.Property(n => n.Gender).HasColumnType("nvarchar(30)");
+			staff.Property(n => n.Gender).IsRequired().HasDefaultValue(0);
 			staff.Property(n => n.Email).HasMaxLength(100).IsUnicode(false);
 			staff.Property(n=>n.StartDate).HasDefaultValue(DateTime.Now);
 			staff.Property(n => n.Avatar).HasMaxLength(200).IsUnicode(false);
@@ -306,6 +333,7 @@ namespace ApiInfrastructure.Context
 
 			var config = modelBuilder.Entity<SystemConfig>();
 			config.ToTable("SystemConfigs");
+			config.Property(n => n.CreatedDate).HasDefaultValue(DateTime.Now);
 			config.Property(n => n.Value).HasMaxLength(500).IsUnicode(true);
 			config.Property(n => n.Data).HasMaxLength(500).IsUnicode(true);
 			config.Property(n => n.ExData).HasMaxLength(1000).IsUnicode(true);
@@ -315,6 +343,7 @@ namespace ApiInfrastructure.Context
 			var wareHouse = modelBuilder.Entity<Warehouse>();
 			wareHouse.ToTable("WareHouses");
 			wareHouse.HasKey(n => n.BookID);
+			wareHouse.Property(n => n.CreatedDate).HasDefaultValue(DateTime.Now);
 			wareHouse.Property(n => n.InventoryQuantity).IsRequired();
 			wareHouse.HasOne(n => n.Book).WithMany(n => n.Warehouses).HasForeignKey(n => n.BookID);
 

@@ -24,11 +24,7 @@ namespace ApiInfrastructure.Implement
 			_unitOfWork = unitOfWork;
 		}
 
-		public async Task<int> Count()
-		{
-			return await _jobRepo.CountAsync();
-		}
-
+		
 		public async Task<Job> DeleteAsync(Guid id)
 		{
 			var position=await _jobRepo.FindAsync(id);
@@ -54,7 +50,7 @@ namespace ApiInfrastructure.Implement
 			return await _jobRepo.GetAll().AsNoTracking().ToListAsync();
 		}
 		
-		public async Task<List<Job>> GetPaggination(PaginationModel request)
+		public async Task<PaginationModel<Job>> GetPaggination(PaginationRequestModel request)
 		{
 			return await PaginatedList<Job>.CreatePaginatedList(_jobRepo.GetAll(),request);
 		}

@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { ServiceProvider } from './boot/services';
+// import { ServiceProvider } from './boot/services';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import GlobalStyle from './Components/GlobalStyle';
@@ -12,11 +12,11 @@ import CkEditorConfig from './boot/ckEditor';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <ServiceProvider>
+    {/* <ServiceProvider> */}
       <GlobalStyle>
         <App/>
       </GlobalStyle>
-    </ServiceProvider>
+    {/* </ServiceProvider> */}
   </React.StrictMode>
 );
 

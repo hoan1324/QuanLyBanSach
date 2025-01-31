@@ -1,5 +1,5 @@
 import { Modal } from 'antd';
-function InputModal({ title, isOpen,handleClose, handleOk, children }) {
+function InputModal({ title, isOpen,handleClose, handleOk, children ,width,diasbled}) {
     return (
         <Modal
             title={title}
@@ -11,9 +11,9 @@ function InputModal({ title, isOpen,handleClose, handleOk, children }) {
             okText="Xác nhận"
             cancelText="Hủy"
             centered
-            width={1000}
-
-        >
+            width={width}
+            footer={diasbled ? null : undefined} // Sử dụng điều kiện để kiểm soát footer
+            >
             {children}
         </Modal>
     )

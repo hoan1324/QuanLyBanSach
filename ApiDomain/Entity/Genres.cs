@@ -11,6 +11,8 @@ namespace ApiDomain.Entity
 	{
 		public required string Name { get; set; }
 		public string? Description { get; set; }
+		public DateTime? CreatedDate { get; set; }
+
 		public ICollection<BookGenres>? BookGenres { get; set; }
 		
 	}

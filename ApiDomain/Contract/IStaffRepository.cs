@@ -10,7 +10,7 @@ namespace ApiDomain.Contract
 {
 	public interface IStaffRepository
 	{
-		Task<List<Staff>> GetPaggination(PaginationModel request);
+		Task<PaginationModel<Staff>> GetPaggination(PaginationRequestModel request);
 		Task<List<Staff>> GetAll();
 		Task<Staff> FindByIdAsync(Guid id);
 		Task<Staff> InsertAsync(Staff staff);

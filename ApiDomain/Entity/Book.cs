@@ -19,6 +19,8 @@ namespace ApiDomain.Entity
 		public string? CoverType { get; set; }//loaij bia
 		public string? ISBN { get; set; }
 		public string? Translator { get; set; }
+		public DateTime? CreatedDate { get; set; }
+
 		//public string? AgeRestriction {  get; set; }
 		public required string PublishingHouse { get; set; }
 		public int Status {  get; set; }//0:đc bán,1:ngưng bán

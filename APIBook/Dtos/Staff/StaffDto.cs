@@ -13,7 +13,8 @@
 		public DateTime StartDate { get; set; }
 		public DateTime? EndDate { get; set; }
 		public string? Avatar { get; set; }
-		public required string Gender { get; set; }
+		public int Gender { get; set; }
+		public DateTime? CreatedDate { get; set; }
 		public int Status { get; set; }//0:DDANG LAM,1:NGHI VIEC
 		public Guid JobID { get; set; }
 	}

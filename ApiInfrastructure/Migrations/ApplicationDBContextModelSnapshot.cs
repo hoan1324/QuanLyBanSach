@@ -34,7 +34,7 @@ namespace ApiInfrastructure.Migrations
                     b.Property<DateTime?>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2024, 12, 26, 17, 32, 19, 902, DateTimeKind.Local).AddTicks(9267));
+                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 178, DateTimeKind.Local).AddTicks(4451));
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(500) ");
@@ -46,6 +46,87 @@ namespace ApiInfrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ActionLogs", (string)null);
+                });
+
+            modelBuilder.Entity("ApiDomain.Entity.Attachment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("AttachmentFolderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 175, DateTimeKind.Local).AddTicks(2596));
+
+                    b.Property<string>("Extention")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(300)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(300) COLLATE Latin1_General_CI_AI");
+
+                    b.Property<float?>("Size")
+                        .HasColumnType("real");
+
+                    b.Property<string>("Url")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AttachmentFolderId");
+
+                    b.ToTable("Attachments", (string)null);
+                });
+
+            modelBuilder.Entity("ApiDomain.Entity.AttachmentFolder", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 174, DateTimeKind.Local).AddTicks(974));
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(300)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(300) COLLATE Latin1_General_CI_AI");
+
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Status")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AttachmentFolders", (string)null);
                 });
 
             modelBuilder.Entity("ApiDomain.Entity.Banner", b =>
@@ -63,7 +144,7 @@ namespace ApiInfrastructure.Migrations
                     b.Property<DateTime?>("CreateDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2024, 12, 26, 17, 32, 19, 903, DateTimeKind.Local).AddTicks(78));
+                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 178, DateTimeKind.Local).AddTicks(7409));
 
                     b.Property<string>("Description")
                         .HasMaxLength(2000)
@@ -130,6 +211,11 @@ namespace ApiInfrastructure.Migrations
 
                     b.Property<string>("CoverType")
                         .HasColumnType("nvarchar(50) COLLATE Latin1_General_CI_AI");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 179, DateTimeKind.Local).AddTicks(2901));
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -235,7 +321,7 @@ namespace ApiInfrastructure.Migrations
                     b.Property<DateTime?>("CreateDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2024, 12, 26, 17, 32, 19, 904, DateTimeKind.Local).AddTicks(8197));
+                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 186, DateTimeKind.Local).AddTicks(961));
 
                     b.Property<int>("Rating")
                         .HasColumnType("int");
@@ -273,6 +359,11 @@ namespace ApiInfrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(200) COLLATE Latin1_General_CI_AI");
 
+                    b.Property<DateTime?>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 191, DateTimeKind.Local).AddTicks(2243));
+
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(500)");
 
@@ -294,7 +385,7 @@ namespace ApiInfrastructure.Migrations
                     b.Property<DateTime?>("CreateDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2024, 12, 26, 17, 32, 19, 906, DateTimeKind.Local).AddTicks(2828));
+                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 191, DateTimeKind.Local).AddTicks(9130));
 
                     b.Property<DateTime?>("DateOfBirth")
                         .HasColumnType("datetime2");
@@ -307,9 +398,10 @@ namespace ApiInfrastructure.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(100)");
 
-                    b.Property<string>("Gender")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(30)");
+                    b.Property<int>("Gender")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -338,7 +430,7 @@ namespace ApiInfrastructure.Migrations
                     b.Property<DateTime?>("CreateDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2024, 12, 26, 17, 32, 19, 906, DateTimeKind.Local).AddTicks(4940));
+                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 192, DateTimeKind.Local).AddTicks(6709));
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -389,7 +481,7 @@ namespace ApiInfrastructure.Migrations
                     b.Property<DateTime?>("CreateDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2024, 12, 26, 17, 32, 19, 907, DateTimeKind.Local).AddTicks(582));
+                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 195, DateTimeKind.Local).AddTicks(45));
 
                     b.Property<string>("Detail")
                         .IsRequired()
@@ -416,6 +508,11 @@ namespace ApiInfrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime?>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 190, DateTimeKind.Local).AddTicks(7016));
+
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(200)");
 
@@ -425,7 +522,7 @@ namespace ApiInfrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Genres");
+                    b.ToTable("Genres", (string)null);
                 });
 
             modelBuilder.Entity("ApiDomain.Entity.IssuingUnit", b =>
@@ -439,6 +536,11 @@ namespace ApiInfrastructure.Migrations
                         .HasMaxLength(200)
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 195, DateTimeKind.Local).AddTicks(6286));
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -461,7 +563,7 @@ namespace ApiInfrastructure.Migrations
                     b.Property<DateTime>("StartDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2024, 12, 26, 17, 32, 19, 907, DateTimeKind.Local).AddTicks(2150));
+                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 195, DateTimeKind.Local).AddTicks(8342));
 
                     b.Property<int>("Status")
                         .ValueGeneratedOnAdd()
@@ -478,6 +580,11 @@ namespace ApiInfrastructure.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 196, DateTimeKind.Local).AddTicks(6453));
 
                     b.Property<string>("Description")
                         .HasMaxLength(500)
@@ -517,7 +624,7 @@ namespace ApiInfrastructure.Migrations
                     b.Property<DateTime?>("CreateDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2024, 12, 26, 17, 32, 19, 907, DateTimeKind.Local).AddTicks(7098));
+                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 197, DateTimeKind.Local).AddTicks(9186));
 
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(200)
@@ -570,6 +677,11 @@ namespace ApiInfrastructure.Migrations
                     b.Property<Guid>("ClientID")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime?>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 198, DateTimeKind.Local).AddTicks(5953));
+
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
@@ -592,6 +704,11 @@ namespace ApiInfrastructure.Migrations
 
                     b.Property<Guid>("BookID")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 205, DateTimeKind.Local).AddTicks(5988));
 
                     b.Property<decimal>("NetPrice")
                         .ValueGeneratedOnAdd()
@@ -626,6 +743,11 @@ namespace ApiInfrastructure.Migrations
                         .HasMaxLength(100)
                         .IsUnicode(false)
                         .HasColumnType("varchar(100)");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 160, DateTimeKind.Local).AddTicks(4361));
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -662,6 +784,11 @@ namespace ApiInfrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime?>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 207, DateTimeKind.Local).AddTicks(318));
+
                     b.Property<Guid>("IssuingUnitID")
                         .HasColumnType("uniqueidentifier");
 
@@ -684,6 +811,11 @@ namespace ApiInfrastructure.Migrations
 
                     b.Property<Guid>("BookID")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 209, DateTimeKind.Local).AddTicks(9254));
 
                     b.Property<decimal>("NetPrice")
                         .ValueGeneratedOnAdd()
@@ -723,7 +855,7 @@ namespace ApiInfrastructure.Migrations
                     b.Property<DateTime?>("CreateDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2024, 12, 26, 17, 32, 19, 909, DateTimeKind.Local).AddTicks(4069));
+                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 210, DateTimeKind.Local).AddTicks(9296));
 
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
@@ -760,7 +892,7 @@ namespace ApiInfrastructure.Migrations
                     b.Property<DateTime?>("CreateDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2024, 12, 26, 17, 32, 19, 901, DateTimeKind.Local).AddTicks(6085));
+                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 159, DateTimeKind.Local).AddTicks(2926));
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(500)");
@@ -788,6 +920,11 @@ namespace ApiInfrastructure.Migrations
                         .HasMaxLength(500)
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 212, DateTimeKind.Local).AddTicks(2467));
 
                     b.Property<decimal>("ShoppingCost")
                         .ValueGeneratedOnAdd()
@@ -845,6 +982,11 @@ namespace ApiInfrastructure.Migrations
                     b.Property<string>("Biography")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 215, DateTimeKind.Local).AddTicks(2092));
+
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("datetime2");
 
@@ -857,9 +999,10 @@ namespace ApiInfrastructure.Migrations
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Gender")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(30)");
+                    b.Property<int>("Gender")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
 
                     b.Property<Guid>("JobID")
                         .HasColumnType("uniqueidentifier");
@@ -882,7 +1025,7 @@ namespace ApiInfrastructure.Migrations
                     b.Property<DateTime>("StartDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2024, 12, 26, 17, 32, 19, 910, DateTimeKind.Local).AddTicks(6877));
+                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 215, DateTimeKind.Local).AddTicks(8688));
 
                     b.Property<int>("Status")
                         .ValueGeneratedOnAdd()
@@ -901,6 +1044,11 @@ namespace ApiInfrastructure.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 216, DateTimeKind.Local).AddTicks(1817));
 
                     b.Property<string>("Data")
                         .HasMaxLength(500)
@@ -957,7 +1105,7 @@ namespace ApiInfrastructure.Migrations
                     b.Property<DateTime?>("CreateDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2024, 12, 26, 17, 32, 19, 901, DateTimeKind.Local).AddTicks(1111));
+                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 156, DateTimeKind.Local).AddTicks(8147));
 
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("datetime2");
@@ -968,11 +1116,10 @@ namespace ApiInfrastructure.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(200)");
 
-                    b.Property<string>("Gender")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(30)");
+                    b.Property<int>("Gender")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
 
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
@@ -1031,12 +1178,26 @@ namespace ApiInfrastructure.Migrations
                     b.Property<Guid>("BookID")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime?>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 217, DateTimeKind.Local).AddTicks(5077));
+
                     b.Property<int>("InventoryQuantity")
                         .HasColumnType("int");
 
                     b.HasKey("BookID");
 
                     b.ToTable("WareHouses", (string)null);
+                });
+
+            modelBuilder.Entity("ApiDomain.Entity.Attachment", b =>
+                {
+                    b.HasOne("ApiDomain.Entity.AttachmentFolder", "AttachmentFolder")
+                        .WithMany("Attachments")
+                        .HasForeignKey("AttachmentFolderId");
+
+                    b.Navigation("AttachmentFolder");
                 });
 
             modelBuilder.Entity("ApiDomain.Entity.Book", b =>
@@ -1315,6 +1476,11 @@ namespace ApiInfrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Book");
+                });
+
+            modelBuilder.Entity("ApiDomain.Entity.AttachmentFolder", b =>
+                {
+                    b.Navigation("Attachments");
                 });
 
             modelBuilder.Entity("ApiDomain.Entity.Book", b =>
