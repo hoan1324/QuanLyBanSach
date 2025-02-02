@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Api.Domain.Base;
-using Api.Domain.Entities;
-using ComonHelpers.Helpers;
-using ComonHelpers.Models;
 using Microsoft.EntityFrameworkCore;
+using ApiDomain.Entity;
+using ApiDomain.Base;
+using CommonHelper.Models;
+using CommonHelper.Helpers;
 
 namespace Api.Infrastructure.Implement
 {
@@ -33,7 +33,7 @@ namespace Api.Infrastructure.Implement
 
         public async Task<PaginationModel<Attachment>> GetPaggination(PaginationRequestModel request)
         {
-            return await _attachmentRepo.GetAll().Paggination(request);
+			return await PaginatedList<Attachment>.CreatePaginatedList(_attachmentRepo.GetAll(), request);
         }
 
         public async Task<Attachment?> GetByIdAsync(Guid attachmentId)
@@ -86,5 +86,7 @@ namespace Api.Infrastructure.Implement
             await _unitOfWork.SaveAsync();
             return request;
         }
-    }
+
+	
+	}
 }

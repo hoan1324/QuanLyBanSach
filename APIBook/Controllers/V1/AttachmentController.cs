@@ -14,9 +14,6 @@ namespace APIBook.Controllers.V1
 		private readonly ILogger<AttachmentController> _logger;
 		private readonly IAttachmentService _attachmentService;
 		
-
-
-
 		public AttachmentController(ILogger<AttachmentController> logger, IAttachmentService attachmentService, IWebHostEnvironment webHostEnvironment)
 		{
 			_logger = logger;

@@ -34,7 +34,7 @@ namespace ApiInfrastructure.Migrations
                     b.Property<DateTime?>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 178, DateTimeKind.Local).AddTicks(4451));
+                        .HasDefaultValue(new DateTime(2025, 2, 2, 22, 12, 44, 241, DateTimeKind.Local).AddTicks(7219));
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(500) ");
@@ -63,7 +63,7 @@ namespace ApiInfrastructure.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 175, DateTimeKind.Local).AddTicks(2596));
+                        .HasDefaultValue(new DateTime(2025, 2, 2, 22, 12, 44, 241, DateTimeKind.Local).AddTicks(817));
 
                     b.Property<string>("Extention")
                         .HasColumnType("nvarchar(max)");
@@ -98,7 +98,7 @@ namespace ApiInfrastructure.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 174, DateTimeKind.Local).AddTicks(974));
+                        .HasDefaultValue(new DateTime(2025, 2, 2, 22, 12, 44, 240, DateTimeKind.Local).AddTicks(8876));
 
                     b.Property<string>("Description")
                         .HasMaxLength(1000)
@@ -144,7 +144,7 @@ namespace ApiInfrastructure.Migrations
                     b.Property<DateTime?>("CreateDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 178, DateTimeKind.Local).AddTicks(7409));
+                        .HasDefaultValue(new DateTime(2025, 2, 2, 22, 12, 44, 241, DateTimeKind.Local).AddTicks(7698));
 
                     b.Property<string>("Description")
                         .HasMaxLength(2000)
@@ -215,7 +215,7 @@ namespace ApiInfrastructure.Migrations
                     b.Property<DateTime?>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 179, DateTimeKind.Local).AddTicks(2901));
+                        .HasDefaultValue(new DateTime(2025, 2, 2, 22, 12, 44, 241, DateTimeKind.Local).AddTicks(8849));
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -321,7 +321,7 @@ namespace ApiInfrastructure.Migrations
                     b.Property<DateTime?>("CreateDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 186, DateTimeKind.Local).AddTicks(961));
+                        .HasDefaultValue(new DateTime(2025, 2, 2, 22, 12, 44, 243, DateTimeKind.Local).AddTicks(2310));
 
                     b.Property<int>("Rating")
                         .HasColumnType("int");
@@ -362,7 +362,7 @@ namespace ApiInfrastructure.Migrations
                     b.Property<DateTime?>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 191, DateTimeKind.Local).AddTicks(2243));
+                        .HasDefaultValue(new DateTime(2025, 2, 2, 22, 12, 44, 246, DateTimeKind.Local).AddTicks(4727));
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(500)");
@@ -385,7 +385,7 @@ namespace ApiInfrastructure.Migrations
                     b.Property<DateTime?>("CreateDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 191, DateTimeKind.Local).AddTicks(9130));
+                        .HasDefaultValue(new DateTime(2025, 2, 2, 22, 12, 44, 246, DateTimeKind.Local).AddTicks(5860));
 
                     b.Property<DateTime?>("DateOfBirth")
                         .HasColumnType("datetime2");
@@ -430,7 +430,7 @@ namespace ApiInfrastructure.Migrations
                     b.Property<DateTime?>("CreateDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 192, DateTimeKind.Local).AddTicks(6709));
+                        .HasDefaultValue(new DateTime(2025, 2, 2, 22, 12, 44, 246, DateTimeKind.Local).AddTicks(7242));
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -481,7 +481,7 @@ namespace ApiInfrastructure.Migrations
                     b.Property<DateTime?>("CreateDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 195, DateTimeKind.Local).AddTicks(45));
+                        .HasDefaultValue(new DateTime(2025, 2, 2, 22, 12, 44, 247, DateTimeKind.Local).AddTicks(1369));
 
                     b.Property<string>("Detail")
                         .IsRequired()
@@ -511,7 +511,7 @@ namespace ApiInfrastructure.Migrations
                     b.Property<DateTime?>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 190, DateTimeKind.Local).AddTicks(7016));
+                        .HasDefaultValue(new DateTime(2025, 2, 2, 22, 12, 44, 246, DateTimeKind.Local).AddTicks(3873));
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(200)");
@@ -540,7 +540,7 @@ namespace ApiInfrastructure.Migrations
                     b.Property<DateTime?>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 195, DateTimeKind.Local).AddTicks(6286));
+                        .HasDefaultValue(new DateTime(2025, 2, 2, 22, 12, 44, 247, DateTimeKind.Local).AddTicks(2623));
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -563,7 +563,7 @@ namespace ApiInfrastructure.Migrations
                     b.Property<DateTime>("StartDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 195, DateTimeKind.Local).AddTicks(8342));
+                        .HasDefaultValue(new DateTime(2025, 2, 2, 22, 12, 44, 247, DateTimeKind.Local).AddTicks(3030));
 
                     b.Property<int>("Status")
                         .ValueGeneratedOnAdd()
@@ -584,7 +584,7 @@ namespace ApiInfrastructure.Migrations
                     b.Property<DateTime?>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 196, DateTimeKind.Local).AddTicks(6453));
+                        .HasDefaultValue(new DateTime(2025, 2, 2, 22, 12, 44, 247, DateTimeKind.Local).AddTicks(4895));
 
                     b.Property<string>("Description")
                         .HasMaxLength(500)
@@ -624,7 +624,7 @@ namespace ApiInfrastructure.Migrations
                     b.Property<DateTime?>("CreateDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 197, DateTimeKind.Local).AddTicks(9186));
+                        .HasDefaultValue(new DateTime(2025, 2, 2, 22, 12, 44, 247, DateTimeKind.Local).AddTicks(7319));
 
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(200)
@@ -680,7 +680,7 @@ namespace ApiInfrastructure.Migrations
                     b.Property<DateTime?>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 198, DateTimeKind.Local).AddTicks(5953));
+                        .HasDefaultValue(new DateTime(2025, 2, 2, 22, 12, 44, 247, DateTimeKind.Local).AddTicks(8467));
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -708,7 +708,7 @@ namespace ApiInfrastructure.Migrations
                     b.Property<DateTime?>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 205, DateTimeKind.Local).AddTicks(5988));
+                        .HasDefaultValue(new DateTime(2025, 2, 2, 22, 12, 44, 248, DateTimeKind.Local).AddTicks(2869));
 
                     b.Property<decimal>("NetPrice")
                         .ValueGeneratedOnAdd()
@@ -747,7 +747,7 @@ namespace ApiInfrastructure.Migrations
                     b.Property<DateTime?>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 160, DateTimeKind.Local).AddTicks(4361));
+                        .HasDefaultValue(new DateTime(2025, 2, 2, 22, 12, 44, 240, DateTimeKind.Local).AddTicks(6619));
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -787,7 +787,7 @@ namespace ApiInfrastructure.Migrations
                     b.Property<DateTime?>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 207, DateTimeKind.Local).AddTicks(318));
+                        .HasDefaultValue(new DateTime(2025, 2, 2, 22, 12, 44, 248, DateTimeKind.Local).AddTicks(5082));
 
                     b.Property<Guid>("IssuingUnitID")
                         .HasColumnType("uniqueidentifier");
@@ -815,7 +815,7 @@ namespace ApiInfrastructure.Migrations
                     b.Property<DateTime?>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 209, DateTimeKind.Local).AddTicks(9254));
+                        .HasDefaultValue(new DateTime(2025, 2, 2, 22, 12, 44, 248, DateTimeKind.Local).AddTicks(9109));
 
                     b.Property<decimal>("NetPrice")
                         .ValueGeneratedOnAdd()
@@ -855,7 +855,7 @@ namespace ApiInfrastructure.Migrations
                     b.Property<DateTime?>("CreateDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 210, DateTimeKind.Local).AddTicks(9296));
+                        .HasDefaultValue(new DateTime(2025, 2, 2, 22, 12, 44, 249, DateTimeKind.Local).AddTicks(1249));
 
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
@@ -892,7 +892,7 @@ namespace ApiInfrastructure.Migrations
                     b.Property<DateTime?>("CreateDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 159, DateTimeKind.Local).AddTicks(2926));
+                        .HasDefaultValue(new DateTime(2025, 2, 2, 22, 12, 44, 240, DateTimeKind.Local).AddTicks(4683));
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(500)");
@@ -924,7 +924,7 @@ namespace ApiInfrastructure.Migrations
                     b.Property<DateTime?>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 212, DateTimeKind.Local).AddTicks(2467));
+                        .HasDefaultValue(new DateTime(2025, 2, 2, 22, 12, 44, 249, DateTimeKind.Local).AddTicks(4941));
 
                     b.Property<decimal>("ShoppingCost")
                         .ValueGeneratedOnAdd()
@@ -985,7 +985,7 @@ namespace ApiInfrastructure.Migrations
                     b.Property<DateTime?>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 215, DateTimeKind.Local).AddTicks(2092));
+                        .HasDefaultValue(new DateTime(2025, 2, 2, 22, 12, 44, 250, DateTimeKind.Local).AddTicks(1625));
 
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("datetime2");
@@ -1025,7 +1025,7 @@ namespace ApiInfrastructure.Migrations
                     b.Property<DateTime>("StartDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 215, DateTimeKind.Local).AddTicks(8688));
+                        .HasDefaultValue(new DateTime(2025, 2, 2, 22, 12, 44, 250, DateTimeKind.Local).AddTicks(2870));
 
                     b.Property<int>("Status")
                         .ValueGeneratedOnAdd()
@@ -1048,7 +1048,7 @@ namespace ApiInfrastructure.Migrations
                     b.Property<DateTime?>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 216, DateTimeKind.Local).AddTicks(1817));
+                        .HasDefaultValue(new DateTime(2025, 2, 2, 22, 12, 44, 250, DateTimeKind.Local).AddTicks(3596));
 
                     b.Property<string>("Data")
                         .HasMaxLength(500)
@@ -1105,7 +1105,7 @@ namespace ApiInfrastructure.Migrations
                     b.Property<DateTime?>("CreateDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 156, DateTimeKind.Local).AddTicks(8147));
+                        .HasDefaultValue(new DateTime(2025, 2, 2, 22, 12, 44, 239, DateTimeKind.Local).AddTicks(9888));
 
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("datetime2");
@@ -1181,7 +1181,7 @@ namespace ApiInfrastructure.Migrations
                     b.Property<DateTime?>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2025, 1, 31, 20, 10, 3, 217, DateTimeKind.Local).AddTicks(5077));
+                        .HasDefaultValue(new DateTime(2025, 2, 2, 22, 12, 44, 250, DateTimeKind.Local).AddTicks(7234));
 
                     b.Property<int>("InventoryQuantity")
                         .HasColumnType("int");

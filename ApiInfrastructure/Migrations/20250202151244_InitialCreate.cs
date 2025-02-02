@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ApiInfrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,11 +19,30 @@ namespace ApiInfrastructure.Migrations
                     Title = table.Column<string>(type: "nvarchar(200)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(500)", nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2024, 12, 26, 17, 32, 19, 902, DateTimeKind.Local).AddTicks(9267))
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2025, 2, 2, 22, 12, 44, 241, DateTimeKind.Local).AddTicks(7219))
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ActionLogs", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AttachmentFolders",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    ParentId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2025, 2, 2, 22, 12, 44, 240, DateTimeKind.Local).AddTicks(8876)),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Status = table.Column<int>(type: "int", nullable: false, defaultValue: 0)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AttachmentFolders", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -36,7 +55,7 @@ namespace ApiInfrastructure.Migrations
                     Summary = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     Url = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreateBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2024, 12, 26, 17, 32, 19, 903, DateTimeKind.Local).AddTicks(78)),
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2025, 2, 2, 22, 12, 44, 241, DateTimeKind.Local).AddTicks(7698)),
                     ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: true),
@@ -56,7 +75,8 @@ namespace ApiInfrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CategoryName = table.Column<string>(type: "nvarchar(200)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(500)", nullable: true)
+                    Description = table.Column<string>(type: "nvarchar(500)", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2025, 2, 2, 22, 12, 44, 246, DateTimeKind.Local).AddTicks(4727))
                 },
                 constraints: table =>
                 {
@@ -72,10 +92,10 @@ namespace ApiInfrastructure.Migrations
                     Description = table.Column<string>(type: "nvarchar(500)", nullable: true),
                     Address = table.Column<string>(type: "nvarchar(100)", nullable: false),
                     PhoneNumber = table.Column<string>(type: "varchar(30)", unicode: false, maxLength: 30, nullable: false),
-                    Gender = table.Column<string>(type: "nvarchar(30)", nullable: false),
+                    Gender = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
                     Email = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: true),
                     DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2024, 12, 26, 17, 32, 19, 906, DateTimeKind.Local).AddTicks(2828)),
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2025, 2, 2, 22, 12, 44, 246, DateTimeKind.Local).AddTicks(5860)),
                     UserID = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
@@ -91,7 +111,7 @@ namespace ApiInfrastructure.Migrations
                     Name = table.Column<string>(type: "nvarchar(200)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Image = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: true),
-                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2024, 12, 26, 17, 32, 19, 906, DateTimeKind.Local).AddTicks(4940)),
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2025, 2, 2, 22, 12, 44, 246, DateTimeKind.Local).AddTicks(7242)),
                     IsActive = table.Column<bool>(type: "bit", nullable: true, defaultValue: false)
                 },
                 constraints: table =>
@@ -105,7 +125,8 @@ namespace ApiInfrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(200)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(200)", nullable: true)
+                    Description = table.Column<string>(type: "nvarchar(200)", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2025, 2, 2, 22, 12, 44, 246, DateTimeKind.Local).AddTicks(3873))
                 },
                 constraints: table =>
                 {
@@ -118,11 +139,12 @@ namespace ApiInfrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(200)", nullable: false),
-                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2024, 12, 26, 17, 32, 19, 907, DateTimeKind.Local).AddTicks(2150)),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2025, 2, 2, 22, 12, 44, 247, DateTimeKind.Local).AddTicks(3030)),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Address = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     PhoneNumber = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     Email = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2025, 2, 2, 22, 12, 44, 247, DateTimeKind.Local).AddTicks(2623)),
                     Status = table.Column<int>(type: "int", nullable: false, defaultValue: 0)
                 },
                 constraints: table =>
@@ -138,7 +160,8 @@ namespace ApiInfrastructure.Migrations
                     JobName = table.Column<string>(type: "nvarchar(200)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     SalaryMax = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m),
-                    SalaryMin = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m)
+                    SalaryMin = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2025, 2, 2, 22, 12, 44, 247, DateTimeKind.Local).AddTicks(4895))
                 },
                 constraints: table =>
                 {
@@ -154,7 +177,7 @@ namespace ApiInfrastructure.Migrations
                     Target = table.Column<string>(type: "varchar(30)", unicode: false, maxLength: 30, nullable: true, defaultValue: "_blank"),
                     Url = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: true),
                     CreateBy = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
-                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2024, 12, 26, 17, 32, 19, 907, DateTimeKind.Local).AddTicks(7098)),
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2025, 2, 2, 22, 12, 44, 247, DateTimeKind.Local).AddTicks(7319)),
                     ModifiedBy = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ParentID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -173,7 +196,8 @@ namespace ApiInfrastructure.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(200)", nullable: false),
                     Code = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false, defaultValue: 0)
+                    Status = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2025, 2, 2, 22, 12, 44, 240, DateTimeKind.Local).AddTicks(6619))
                 },
                 constraints: table =>
                 {
@@ -188,7 +212,7 @@ namespace ApiInfrastructure.Migrations
                     Question = table.Column<string>(type: "nvarchar(2000)", nullable: false),
                     Answer = table.Column<string>(type: "nvarchar(200)", nullable: false),
                     CreateBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2024, 12, 26, 17, 32, 19, 909, DateTimeKind.Local).AddTicks(4069)),
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2025, 2, 2, 22, 12, 44, 249, DateTimeKind.Local).AddTicks(1249)),
                     ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Status = table.Column<int>(type: "int", nullable: false, defaultValue: 0)
@@ -206,7 +230,7 @@ namespace ApiInfrastructure.Migrations
                     Name = table.Column<string>(type: "nvarchar(200)", nullable: false),
                     Code = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(500)", nullable: true),
-                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2024, 12, 26, 17, 32, 19, 901, DateTimeKind.Local).AddTicks(6085)),
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2025, 2, 2, 22, 12, 44, 240, DateTimeKind.Local).AddTicks(4683)),
                     IsAdmin = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
                 },
                 constraints: table =>
@@ -226,11 +250,35 @@ namespace ApiInfrastructure.Migrations
                     Url = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Icon = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ExData = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2025, 2, 2, 22, 12, 44, 250, DateTimeKind.Local).AddTicks(3596)),
                     Status = table.Column<int>(type: "int", nullable: false, defaultValue: 0)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_SystemConfigs", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Attachments",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: true),
+                    Extention = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Url = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Size = table.Column<float>(type: "real", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2025, 2, 2, 22, 12, 44, 241, DateTimeKind.Local).AddTicks(817)),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    AttachmentFolderId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Attachments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Attachments_AttachmentFolders_AttachmentFolderId",
+                        column: x => x.AttachmentFolderId,
+                        principalTable: "AttachmentFolders",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -240,7 +288,8 @@ namespace ApiInfrastructure.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ClientID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     TotalAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m),
-                    Status = table.Column<int>(type: "int", nullable: false)
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2025, 2, 2, 22, 12, 44, 247, DateTimeKind.Local).AddTicks(8467))
                 },
                 constraints: table =>
                 {
@@ -259,7 +308,8 @@ namespace ApiInfrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IssuingUnitID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TotalAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m)
+                    TotalAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2025, 2, 2, 22, 12, 44, 248, DateTimeKind.Local).AddTicks(5082))
                 },
                 constraints: table =>
                 {
@@ -284,10 +334,11 @@ namespace ApiInfrastructure.Migrations
                     Address = table.Column<string>(type: "nvarchar(100)", nullable: false),
                     PhoneNumber = table.Column<string>(type: "varchar(30)", unicode: false, maxLength: 30, nullable: false),
                     Email = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
-                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2024, 12, 26, 17, 32, 19, 910, DateTimeKind.Local).AddTicks(6877)),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2025, 2, 2, 22, 12, 44, 250, DateTimeKind.Local).AddTicks(2870)),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Avatar = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: true),
-                    Gender = table.Column<string>(type: "nvarchar(30)", nullable: false),
+                    Gender = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2025, 2, 2, 22, 12, 44, 250, DateTimeKind.Local).AddTicks(1625)),
                     Status = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
                     JobID = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
@@ -317,6 +368,7 @@ namespace ApiInfrastructure.Migrations
                     CoverType = table.Column<string>(type: "nvarchar(50)", nullable: true),
                     ISBN = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     Translator = table.Column<string>(type: "nvarchar(200)", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2025, 2, 2, 22, 12, 44, 241, DateTimeKind.Local).AddTicks(8849)),
                     PublishingHouse = table.Column<string>(type: "nvarchar(200)", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
                     Url = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: true),
@@ -373,13 +425,13 @@ namespace ApiInfrastructure.Migrations
                     Password = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreateBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2024, 12, 26, 17, 32, 19, 901, DateTimeKind.Local).AddTicks(1111)),
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2025, 2, 2, 22, 12, 44, 239, DateTimeKind.Local).AddTicks(9888)),
                     ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     PhoneNumber = table.Column<string>(type: "varchar(15)", unicode: false, maxLength: 15, nullable: false),
                     Email = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: false),
                     Avatar = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Gender = table.Column<string>(type: "varchar(30)", unicode: false, maxLength: 30, nullable: false),
+                    Gender = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
                     Status = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
                     RoleID = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
@@ -401,7 +453,8 @@ namespace ApiInfrastructure.Migrations
                     OrderID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ShoppingCost = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m),
                     Status = table.Column<int>(type: "int", nullable: false),
-                    Carrier = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true)
+                    Carrier = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2025, 2, 2, 22, 12, 44, 249, DateTimeKind.Local).AddTicks(4941))
                 },
                 constraints: table =>
                 {
@@ -509,7 +562,8 @@ namespace ApiInfrastructure.Migrations
                     BookID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UnitPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m),
                     Quantity = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
-                    NetPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m)
+                    NetPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2025, 2, 2, 22, 12, 44, 248, DateTimeKind.Local).AddTicks(2869))
                 },
                 constraints: table =>
                 {
@@ -536,6 +590,7 @@ namespace ApiInfrastructure.Migrations
                     BookID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UnitPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m),
                     Quantity = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2025, 2, 2, 22, 12, 44, 248, DateTimeKind.Local).AddTicks(9109)),
                     NetPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m)
                 },
                 constraints: table =>
@@ -560,7 +615,8 @@ namespace ApiInfrastructure.Migrations
                 columns: table => new
                 {
                     BookID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    InventoryQuantity = table.Column<int>(type: "int", nullable: false)
+                    InventoryQuantity = table.Column<int>(type: "int", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2025, 2, 2, 22, 12, 44, 250, DateTimeKind.Local).AddTicks(7234))
                 },
                 constraints: table =>
                 {
@@ -580,7 +636,7 @@ namespace ApiInfrastructure.Migrations
                     BookID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Rating = table.Column<int>(type: "int", nullable: false),
-                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2024, 12, 26, 17, 32, 19, 904, DateTimeKind.Local).AddTicks(8197))
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2025, 2, 2, 22, 12, 44, 243, DateTimeKind.Local).AddTicks(2310))
                 },
                 constraints: table =>
                 {
@@ -608,7 +664,7 @@ namespace ApiInfrastructure.Migrations
                     UserID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ParentID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Detail = table.Column<string>(type: "nvarchar(1000)", nullable: false),
-                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2024, 12, 26, 17, 32, 19, 907, DateTimeKind.Local).AddTicks(582))
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2025, 2, 2, 22, 12, 44, 247, DateTimeKind.Local).AddTicks(1369))
                 },
                 constraints: table =>
                 {
@@ -676,6 +732,11 @@ namespace ApiInfrastructure.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Attachments_AttachmentFolderId",
+                table: "Attachments",
+                column: "AttachmentFolderId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BookGenres_GenresID",
@@ -770,6 +831,9 @@ namespace ApiInfrastructure.Migrations
                 name: "ActionLogs");
 
             migrationBuilder.DropTable(
+                name: "Attachments");
+
+            migrationBuilder.DropTable(
                 name: "Banners");
 
             migrationBuilder.DropTable(
@@ -822,6 +886,9 @@ namespace ApiInfrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "WareHouses");
+
+            migrationBuilder.DropTable(
+                name: "AttachmentFolders");
 
             migrationBuilder.DropTable(
                 name: "Genres");

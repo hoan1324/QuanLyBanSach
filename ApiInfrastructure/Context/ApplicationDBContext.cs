@@ -46,6 +46,8 @@ namespace ApiInfrastructure.Context
 		public DbSet<Staff> Staffs { get; set; }
 		public DbSet<SystemConfig> SystemConfigs { get; set; }
 		public DbSet<Warehouse> Warehouses { get; set; }
+		public DbSet<Attachment> Attachments { get; set; }
+		public DbSet<AttachmentFolder> AttachmentFolders { get; set; }
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			var user = modelBuilder.Entity<User>();
