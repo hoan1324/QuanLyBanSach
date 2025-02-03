@@ -4,6 +4,9 @@
     resigned:"Đã thôi việc",
     currentlyEmployed:"Đang làm việc",
     male:"Nam",
-    female:"Nữ"
+    female:"Nữ",
+    document:"Tài liệu",
+    file:"Tệp",
+    image:"Ảnh"
 }
 export default vnConst

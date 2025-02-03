@@ -85,7 +85,9 @@ namespace Api.Infrastructure.Implement
             return null;
         }
 
-		
-		
+        public async Task<List<AttachmentFolder>> GetAll ()
+		{
+            return await _attachmentFolderRepo.GetAll().AsNoTracking().ToListAsync();
+		}
 	}
 }

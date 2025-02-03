@@ -17,6 +17,8 @@ namespace APIBook
 			builder.Services.AddControllers();
 			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 			builder.Services.AddEndpointsApiExplorer();
+			builder.Services.AddHttpContextAccessor();
+
 			builder.Services.AddSwaggerGen(option =>
 			{
 				option.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
@@ -45,7 +47,7 @@ namespace APIBook
 				.AllowAnyMethod()
 				.AllowAnyHeader();
 			});
-
+			app.UseStaticFiles();
 			app.UseHttpsRedirection();
 
 			app.UseAuthorization();

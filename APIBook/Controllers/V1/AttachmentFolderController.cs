@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace APIBook.Controllers.V1
 {
-	[Route("api/[controller]")]
+	[Route("v1/[controller]")]
 	[ApiController]
 	public class AttachmentFolderController : ControllerBase
 	{
@@ -39,7 +39,21 @@ namespace APIBook.Controllers.V1
 				return StatusCode(StatusCodes.Status500InternalServerError, "Không thể lấy dữ liệu thư mục thuộc thư mục này !");
 			}
 		}
-
+		[HttpGet]
+		[Route("dropdown")]
+		public async Task<IActionResult> GetAllAsync()
+		{
+			try
+			{
+				var response = await _attachmentFolderService.GetAllAsync();
+				return Ok(ResponseModel.Success(response));
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex.Message);
+				return StatusCode(StatusCodes.Status500InternalServerError, "Không thể lấy dữ liệu thư mục !");
+			}
+		}
 		//[HttpGet]
 		//[Route("my-folders")]
 		//public async Task<IActionResult> GetMyFoldersAsync()

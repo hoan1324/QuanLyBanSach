@@ -31,7 +31,12 @@ namespace Api.Services
                 await _attachmentFolderRepository.DeleteAsync(id));
         }
 
-        public async Task<PaginationModel<AttachmentDto>> GetAttachmentsInFolderAsync(AttachmentInFolderDto request)
+		public async Task<List<AttachmentFolderDto>> GetAllAsync()
+		{
+			return  _mapper.Map<List<AttachmentFolderDto>>(await _attachmentFolderRepository.GetAll());
+		}
+
+		public async Task<PaginationModel<AttachmentDto>> GetAttachmentsInFolderAsync(AttachmentInFolderDto request)
 		{
             //return _mapper.Map<List<Attachment>, List<AttachmentDto>>(await _attachmentFolderRepository.GetAttachmentsByFolder(request.FolderId, request.TextSearch, request.Ext));
             return _mapper.Map<PaginationModel<ApiDomain.Entity.Attachment>, PaginationModel<AttachmentDto>>(await _attachmentFolderRepository.GetPageAttachmentsByFolder(request.FolderId, request.TextSearch, request.Ext, request.PageIndex, 21));

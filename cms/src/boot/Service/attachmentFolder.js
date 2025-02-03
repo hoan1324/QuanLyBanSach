@@ -5,6 +5,9 @@ export default {
     getFileInFolder(request){
         return axiosClient.get(`${this.url}/files`, {params: request})
     },
+    getListDropdown(){
+        return axiosClient.get(`${this.url}/dropdown`)
+    },
     create(request){
         return axiosClient.post(`${this.url}`, request);
     },
