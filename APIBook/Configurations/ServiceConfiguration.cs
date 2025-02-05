@@ -18,7 +18,7 @@ namespace APIBook.Configurations
 
 			services.AddAutoMapper(typeof(AutoMapperProfile));
 			services.AddDbContext<ApplicationDBContext>(options => options.UseSqlServer(configuration.GetConnectionString("ApplicationDBContext")));
-			
+
 			services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 			#region Repository

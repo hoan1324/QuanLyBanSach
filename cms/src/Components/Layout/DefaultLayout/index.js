@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
-import { Layout, theme } from 'antd';
+import { Layout, theme, message } from 'antd';
 import LeftSideBar from '../Components/LeftSideBar';
 import HeaderBar from '../Components/HeaderBar';
 
 const { Content } = Layout;
 
-const DefaultLayout = ({children}) => {
+const DefaultLayout = ({ children }) => {
   const [collapsed, setCollapsed] = useState(false);
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
-
+  const [contextHolder] = message.useMessage();
   return (
     <Layout >
       <LeftSideBar collapsed={collapsed} />

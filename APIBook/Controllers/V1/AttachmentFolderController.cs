@@ -201,6 +201,7 @@ namespace APIBook.Controllers.V1
 					var fileName = StringHelper.BuildNewsUnsignName(Path.GetFileNameWithoutExtension(files[0].FileName)) + DateTime.Now.ToString("ddMMyyyyHHmmss") + Path.GetExtension(files[0].FileName);
 					var absolutePath = Path.Combine("uploads", fileName);
 					var fullPath = Path.Combine(_webHostEnvironment.WebRootPath, absolutePath);
+					
 					using (var stream = new FileStream(fullPath, FileMode.Create))
 					{
 						await files[0].CopyToAsync(stream);

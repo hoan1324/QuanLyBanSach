@@ -352,7 +352,6 @@ function Staff() {
 
   return (
     <div>
-      {contextHolder}
 
       <div className="d-flex justify-content-end mb-3">
         <Button size="large" onClick={(e) => handleOpenModel('Tạo mới nhân viên')} icon={<IoIosAddCircleOutline />} type="primary">
