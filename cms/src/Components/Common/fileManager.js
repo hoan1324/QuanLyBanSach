@@ -1,4 +1,4 @@
-import { Popconfirm, message, Form, Input, Button, Modal, Layout, Menu, Flex, Space, Tooltip, Drawer } from "antd";
+import { Radio,Card,Popconfirm, message, Form, Input, Button, Modal, Layout, Menu, Flex, Space, Tooltip, Drawer } from "antd";
 import { useState, useEffect } from "react";
 import { AiOutlineFolderAdd, AiOutlineExclamationCircle } from "react-icons/ai";
 import { MdDelete } from "react-icons/md";
@@ -77,7 +77,6 @@ function FileManager() {
   const [title, setTitle] = useState();
   const [form] = useForm();
   const [openModal, setOpenModal] = useState()
-  const [messageApi, contextHolder] = message.useMessage();
 
   const fetchData = async () => {
     const attachmentFolder = await fetchAttachmentFolderData(service);
@@ -130,22 +129,13 @@ function FileManager() {
 
       if (response.isSuccess) {
 
-        messageApi.open({
-          type: 'success',
-          content: response.messsage,
-        });
+        message.success(response.messsage)
         fetchData(); // Làm mới dữ liệu
       } else {
-        messageApi.open({
-          type: 'error',
-          content: response.messsage,
-        });
+        message.error(response.messsage)
       }
     } catch (error) {
-      messageApi.open({
-        type: 'error',
-        content: "Có lỗi xảy ra khi xử lý dữ liệu",
-      });
+      message.error("Co loi ")
     }
   }
   const onFinish = async (values) => {
@@ -169,23 +159,18 @@ function FileManager() {
       const response = await actionAttachmentFolderData(service, values);
 
       if (response.isSuccess) {
+        console.log(response);
+        
+        message.success(response.messsage)
 
-        messageApi.open({
-          type: 'success',
-          content: response.messsage,
-        });
         fetchData(); // Làm mới dữ liệu
       } else {
-        messageApi.open({
-          type: 'error',
-          content: response.messsage,
-        });
+        message.error(response.messsage)
+
       }
     } catch (error) {
-      messageApi.open({
-        type: 'error',
-        content: "Có lỗi xảy ra khi xử lý dữ liệu",
-      });
+      message.error("Co loi ")
+
     } finally {
       handleClose();
     }
@@ -202,7 +187,6 @@ function FileManager() {
   }, []); // Chạy lại khi filter thay đổi
   return (
     <div>
-      {contextHolder}
       <Button onClick={() => setOpen(true)}> Mở</Button>
       <Modal className="position-relative overflow-hidden" title={"Quản lý file"} centered width={1100} onCancel={() => setOpen(false)} open={open} okText={"Chọn"}>
         <Layout className="bg-white rounded" style={{ minHeight: '800px' }}>
@@ -245,7 +229,9 @@ function FileManager() {
                 </Space>
               </Flex>
             </Header>
-            <Content>Content</Content>
+            <Content>
+              
+            </Content>
 
           </Layout>
         </Layout>

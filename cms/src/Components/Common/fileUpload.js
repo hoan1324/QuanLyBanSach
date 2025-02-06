@@ -1,4 +1,4 @@
-import { Button, Upload } from "antd"
+import { Button, Upload,message } from "antd"
 import { UploadOutlined } from '@ant-design/icons'
 import services from "../../boot/services"
 const UploadFile = async (lengthFile, service, folderId, formData) => {
@@ -51,9 +51,11 @@ function FileUpload({ folderId }) {
         }
     }
     const beforeUpload = (file, fileList) => {
-        const imageTypes = ['.jpg', '.jpeg', '.png', '.gif'];
-        const documentTypes = ['.pdf', '.docx', '.doc', '.txt', '.xlsx', '.pptx'];
-        const mediaTypes = ['.mp4', '.mp3', '.avi', '.mkv', '.wav'];
+        const imageTypes = ['.jpeg','.jpg','.png','.gif','.bmp','.webp','.tiff'];
+        const documentTypes = ['.doc','.docx','.ppt','.pptx','.xls','.xlsx','.odt','.pdf','.txt'];
+        const videoTypes = ['.avi','.mov','.webm','.mp4'];
+        const audioTypes=['.mp3','.flac','.aac','.ogg']
+        const compressedTypes=['.7z','.rar','.zip','.gz']
         
         const fileExtension = file.name.toLowerCase().split('.').pop(); // Lấy phần mở rộng của file
         const fileSizeMB = file.size / 1024 / 1024; // Kích thước file tính theo MB
@@ -69,9 +71,14 @@ function FileUpload({ folderId }) {
             //message.error(`${file.name} (Tài liệu) phải có kích thước nhỏ hơn 10MB!`);
             return false;
           }
-        } else if (mediaTypes.includes(`.${fileExtension}`)) {
-          if (fileSizeMB < 50 || fileSizeMB > 100) {
+        } else if (audioTypes.includes(`.${fileExtension}`) && videoTypes.includes(`.${fileExtension}`)) {
+          if ( fileSizeMB > 100) {
             //message.error(`${file.name} (Media) phải có kích thước từ 50MB đến 100MB!`);
+            return false;
+          }
+        }
+        else if (compressedTypes.includes(`.${fileExtension}`)) {
+          if ( fileSizeMB > 200) {
             return false;
           }
         } else {
