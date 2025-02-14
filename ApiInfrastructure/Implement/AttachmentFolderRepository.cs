@@ -13,6 +13,7 @@ namespace Api.Infrastructure.Implement
         private readonly IUnitOfWork _unitOfWork;
         private readonly IRepository<AttachmentFolder> _attachmentFolderRepo;
         private readonly IRepository<Attachment> _attachmentRepo;
+
         public AttachmentFolderRepository(IUnitOfWork unitOfWork, IRepository<AttachmentFolder> attachmentFolderRepo, IRepository<Attachment> attachmentRepo)
         {
             _unitOfWork = unitOfWork;
@@ -85,9 +86,14 @@ namespace Api.Infrastructure.Implement
             return null;
         }
 
-        public async Task<List<AttachmentFolder>> GetAll ()
+		public async Task<List<AttachmentFolder>> GetAll ()
 		{
             return await _attachmentFolderRepo.GetAll().AsNoTracking().ToListAsync();
+		}
+
+		public async Task<AttachmentFolder?> GetByIdAsync(Guid attachmentId)
+		{
+            return await _attachmentFolderRepo.FindAsync(attachmentId);
 		}
 	}
 }

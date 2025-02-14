@@ -80,44 +80,44 @@ function FileManager() {
     const attachmentFolder = await fetchAttachmentFolderData(service);
     setDataFolder(attachmentFolder);
   }
-  const fetchDataFile = async () => {
+  const fetchDataFile = useCallback(async () => {
     if (filter.status === "List") {
       const { attachment, total } = await fetchAttachmentData(services.attachment, filter.request);
       setDataFile(attachment);
       setTotalFile(total);
-    }
-    else {
+    } else {
       const { attachment, total } = await fetchAttachmentInFolder(service, filter.request);
       setDataFile(attachment);
       setTotalFile(total);
     }
+  }, [filter, service]);  // Hàm chỉ được tạo lại khi `filter` hoặc `service` thay đổi
 
-
-  };
-  const handlePageChange = (page) => {
+  const handlePageChange = useCallback((page) => {
     setFilter(prevFilter => ({
       ...prevFilter,
       request: { ...prevFilter.request, pageIndex: page },
     }));
-  };
-  const handleSelect = (info, openKeys) => {
+  }, []);
+  const handleSelect = useCallback((info, openKeys) => {
     if (!collapsed && info === undefined && openKeys.length === 0) {
-      setCurrentFolderSelect(undefined)
-      setCurrentFileSelect(undefined)
-      setStatus("folder")
+      setCurrentFolderSelect(undefined);
+      setCurrentFileSelect(undefined);
+      setStatus("folder");
       setFilter({
         status: "List",
         request: {
           pageIndex: 1,
           orderByColumn: "Name",
         }
-      })
+      });
+      return;
     }
+
     if (info !== undefined) {
-      const dataSelect = dataFolder.find(item => item.id === info)
-      setCurrentFolderSelect(dataSelect)
-      setCurrentFileSelect(undefined)
-      setStatus("folder")
+      const dataSelect = dataFolder.find(item => item.id === info);
+      setCurrentFolderSelect(dataSelect);
+      setCurrentFileSelect(undefined);
+      setStatus("folder");
       setFilter(prevFilter => ({
         status: "List",
         request: {
@@ -128,36 +128,32 @@ function FileManager() {
               value: dataSelect?.id,
               condition: "==",
               filterType: ""
-
             }
           ]),
         }
-
-      }))
+      }));
     }
-  }
-  const handleClick = (id) => {
+  }, [collapsed, dataFolder]);  // Chỉ tạo lại khi `collapsed` hoặc `dataFolder` thay đổi
+  const handleClick = useCallback((id) => {
     if (currentFileSelect !== undefined && currentFileSelect.id === id) {
-      setCurrentFileSelect(undefined)
-      setStatus("folder")
-      return
+      setCurrentFileSelect(undefined);
+      setStatus("folder");
+      return;
     }
-    const dataClick = dataFile.find(item => item.id === id)
-    setCurrentFileSelect(dataClick)
-    setStatus("file")
-  }
+    const dataClick = dataFile.find(item => item.id === id);
+    setCurrentFileSelect(dataClick);
+    setStatus("file");
+  }, [currentFileSelect, dataFile]);
   useEffect(() => {
     fetchData();
   }, []);
-const handleFinishSearch=(request)=>{
-  setFilter(request)
-}
+  const handleFinishSearch = (request) => {
+    setFilter(request)
+  }
   useEffect(() => {
-    if ((filter.status === "List" && filter.request?.filters === undefined) || (filter.status === "InFolder" && filter.request === undefined)) {
-      return;
-    }
-    fetchDataFile()
-  }, [filter])
+    if (!filter?.request) return;
+    fetchDataFile();
+  }, [filter, fetchDataFile]);
   // Chạy lại khi filter thay đổi
   return (
     <div>
@@ -223,7 +219,7 @@ const handleFinishSearch=(request)=>{
                 <Empty />
               }
             </Content>
-            {currentFolderSelect !== undefined ||  (filter.status === "List" && filter.request.filters !== undefined) ? (
+            {currentFolderSelect !== undefined || (filter.status === "List" && filter.request.filters !== undefined) ? (
               dataFile.length > 0 ?
                 <Footer>
                   <Pagination className="mt-4" align="center" onChange={handlePageChange} current={filter?.request.pageIndex || 1} defaultCurrent={1} pageSize={21} total={totalFile} />

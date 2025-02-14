@@ -10,7 +10,9 @@ namespace Api.Domain.Contracts
 {
     public interface IAttachmentFolderRepository
     {
-        Task<List<AttachmentFolder>> GetByUser(Guid userId);
+		Task<AttachmentFolder?> GetByIdAsync(Guid attachmentId);
+
+		Task<List<AttachmentFolder>> GetByUser(Guid userId);
         Task<List<Attachment>> GetAttachmentsByFolder(Guid folderId, string textSearch, List<string> ext);
         Task<PaginationModel<Attachment>> GetPageAttachmentsByFolder(Guid folderId, string textSearch, List<string>? ext, int pageIndex = 1, int pageSize = 21);
         Task<List<AttachmentFolder>> GetAll();

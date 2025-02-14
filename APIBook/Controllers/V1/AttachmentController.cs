@@ -121,30 +121,6 @@ namespace APIBook.Controllers.V1
 				var response = await _attachmentService.DeleteAsync(id);
 				if (response != null)
 				{
-					List<PaginationFilterModel> filters = new List<PaginationFilterModel>()
-					{
-						new PaginationFilterModel()
-					{
-						FilterFields=new List<string>() { "Url"},
-						Value=response.Url,
-						FilterType="String",
-						Condition="=="
-					}
-					};
-
-					FilterRequest request = new FilterRequest()
-					{
-						Filters = JsonConvert.SerializeObject(filters)
-					};
-					var searchSameAttachment = await _attachmentService.GetListAsync(request);
-					if (searchSameAttachment.TotalRow == 0)
-					{
-						var fullPath = Path.Combine(_webHostEnvironment.WebRootPath, response.Url);
-						if (System.IO.File.Exists(fullPath))
-						{
-							System.IO.File.Delete(fullPath); // Xóa file
-						}
-					}
 					return Ok(ResponseModel.Success(response, "Xóa tệp thành công !"));
 				}
 				else return Ok(ResponseModel.Error(null, "Xóa tệp thất bại !"));

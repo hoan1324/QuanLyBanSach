@@ -1,7 +1,9 @@
 ﻿using Api.Domain.Contracts;
 using APIBook.Dtos;
 using AutoMapper;
+using CommonHelper.Helpers;
 using CommonHelper.Models;
+using Microsoft.AspNetCore.Hosting;
 using Newtonsoft.Json;
 
 namespace Api.Services
@@ -11,11 +13,13 @@ namespace Api.Services
 		private readonly IAttachmentFolderRepository _attachmentFolderRepository;
 		private readonly IAttachmentRepository _attachmentRepository;
 		private readonly IMapper _mapper;
-		public AttachmentFolderService(IAttachmentFolderRepository attachmentFolderRepository, IAttachmentRepository attachmentRepository, IMapper mapper)
+		private readonly IWebHostEnvironment _webHostEnvironment;
+		public AttachmentFolderService(IAttachmentFolderRepository attachmentFolderRepository, IAttachmentRepository attachmentRepository, IMapper mapper, IWebHostEnvironment webHostEnvironment)
 		{
 			_attachmentFolderRepository = attachmentFolderRepository;
 			_attachmentRepository = attachmentRepository;
 			_mapper = mapper;
+			_webHostEnvironment = webHostEnvironment;
 		}
 		public async Task<AttachmentFolderDto> CreateAsync(AttachmentFolderDto request)
 		{
@@ -26,11 +30,32 @@ namespace Api.Services
 				await _attachmentFolderRepository.CreateAsync(attachment));
 		}
 
+
 		public async Task<AttachmentFolderDto> DeleteAsync(Guid id)
 		{
-			return _mapper.Map<ApiDomain.Entity.AttachmentFolder, AttachmentFolderDto>(
-				await _attachmentFolderRepository.DeleteAsync(id));
+			var attachmentFolder = await _attachmentFolderRepository.GetByIdAsync(id);
+			if (attachmentFolder == null)
+				return null;
+
+			var attachmentsInFolder = await _attachmentFolderRepository.GetAttachmentsByFolder(id, null, null);
+			if (attachmentsInFolder.Any())
+			{
+				var fileUrls = attachmentsInFolder.Select(item => Path.Combine(_webHostEnvironment.WebRootPath, item.Url)).Distinct().ToList();
+
+				bool allFilesDeleted = await FileHelper.DeleteFilesAsync(fileUrls);
+				if (!allFilesDeleted)
+				{
+					// Ghi log nếu cần hoặc trả về thông báo lỗi
+					return null;
+				}
+			}
+
+			// Xóa folder sau khi tất cả file đã được xóa thành công
+			var deletedFolder = await _attachmentFolderRepository.DeleteAsync(id);
+
+			return _mapper.Map<ApiDomain.Entity.AttachmentFolder, AttachmentFolderDto>(deletedFolder);
 		}
+
 
 		public async Task<List<AttachmentFolderDto>> GetAllAsync()
 		{

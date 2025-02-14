@@ -88,6 +88,10 @@ namespace Api.Infrastructure.Implement
             return request;
         }
 
-		
+		public async Task<bool> IsFileInUseAsync(string fileUrl, Guid currentAttachmentId)
+		{
+            var attachments = await _attachmentRepo.GetByExpression(a => a.Url == fileUrl && a.Id != currentAttachmentId).ToListAsync();
+			return attachments.Any();
+		}
 	}
 }
