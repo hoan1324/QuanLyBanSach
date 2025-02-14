@@ -19,5 +19,5 @@ namespace Api.Domain.Contracts
         Task<List<Attachment>> CreateManyAsync(List<Attachment> request);
         Task<Attachment> UpdateAsync(Attachment request);
         Task<Attachment> DeleteAsync(Guid AttachmentId);
-    }
+	}
 }

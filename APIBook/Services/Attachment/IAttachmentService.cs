@@ -12,5 +12,6 @@ namespace Api.Services
         Task<List<AttachmentDto>> CreateManyAsync(List<AttachmentDto> request);
         Task<AttachmentDto> UpdateAsync(AttachmentDto request);
         Task<AttachmentDto> DeleteAsync(Guid AttachmentId);
-    }
+
+	}
 }

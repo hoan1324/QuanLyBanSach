@@ -55,7 +55,8 @@ namespace Api.Infrastructure.Implement
             var attachment = await _attachmentRepo.FindAsync(request.Id);
             if (attachment != null)
             {
-                TypeHelper.NormalMapping(request, attachment, "Id", "CreatedDate", "CreatedBy");
+				_unitOfWork.GetDbContext().Entry(attachment).State = EntityState.Detached;
+				TypeHelper.NormalMapping(request, attachment, "Id", "CreatedDate", "CreatedBy");
                 var attachmentUpdate = await _attachmentRepo.UpdateAsync(request);
                 await _unitOfWork.SaveAsync();
                 return attachmentUpdate;
@@ -87,6 +88,6 @@ namespace Api.Infrastructure.Implement
             return request;
         }
 
-	
+		
 	}
 }

@@ -1,15 +1,17 @@
-import React from "react"
+import React, { useState } from 'react';
+import FileManager from '../../Components/Common/fileManager';
 
-import FileManager from "../../Components/Common/fileManager"
-function Home() {
+
+
+const Home = () => {
 
     return (
-
         <div>
-            Trang chủ
-            <FileManager></FileManager>
+            Trang chu
+            <FileManager />
         </div>
 
-    )
-}
-export default Home
+    );
+};
+
+export default Home;

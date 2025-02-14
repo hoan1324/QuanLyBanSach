@@ -8,6 +8,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CommonHelper.Helpers
 {
@@ -98,6 +99,18 @@ namespace CommonHelper.Helpers
 				var propValue = Expression.Constant(filter.Value);
 				MethodInfo parseMethod = null;
 
+				if (type == typeof(string) && valueType == typeof(JArray))
+				{
+					var values = (filter.Value as JArray).ToObject<List<string>>();
+					MethodInfo containsMethod = typeof(List<string>).GetMethod("Contains", new[] { typeof(string) });
+
+					// Tạo một biểu thức để kiểm tra xem prop có nằm trong danh sách không
+					var listExpression = Expression.Constant(values); // Danh sách giá trị
+
+					return Expression.Call(listExpression, containsMethod, prop);
+				}
+
+
 				if (type == typeof(string))
 				{
 					MethodInfo method = typeof(string).GetMethod("Contains", new[] { typeof(string) });
@@ -110,13 +123,13 @@ namespace CommonHelper.Helpers
 					ConstantExpression todayConstant = Expression.Constant(date.Date, typeof(DateTime));
 					MemberExpression dateProperty = Expression.Property(prop, "Date");
 
-					var methodInfo= StringHelper.GetOperator(filter.Condition);
-					if(methodInfo != null)
-					{
-						MethodInfo method=typeof(string).GetMethod(methodInfo, new[] { typeof(string) });
-						return Expression.Call(dateProperty, method,todayConstant);
-					}
-					
+					if (filter.Condition == "==") return Expression.Equal(dateProperty, todayConstant);
+					else if (filter.Condition == "!=") return Expression.NotEqual(dateProperty, todayConstant);
+					else if (filter.Condition == ">") return Expression.GreaterThan(dateProperty, todayConstant);
+					else if (filter.Condition == "<") return Expression.LessThan(dateProperty, todayConstant);
+					else if (filter.Condition == ">=") return Expression.GreaterThanOrEqual(dateProperty, todayConstant);
+					else if (filter.Condition == "<=") return Expression.LessThanOrEqual(dateProperty, todayConstant);
+
 				}
 				else
 				{
@@ -128,13 +141,13 @@ namespace CommonHelper.Helpers
 				var parseToTargetType = Expression.Convert(parseExpression, type);
 				Expression equalExpression = null;
 
-				var methodInfor = StringHelper.GetOperator(filter.Condition);
-				if (methodInfor != null)
-				{
-					MethodInfo method = typeof(string).GetMethod(methodInfor, new[] { typeof(string) });
-					equalExpression= Expression.Call(prop, method, parseToTargetType);
-				}
-				
+				if (filter.Condition == "==") equalExpression = Expression.Equal(prop, parseToTargetType);
+				else if (filter.Condition == "!=") equalExpression = Expression.NotEqual(prop, parseToTargetType);
+				else if (filter.Condition == ">") equalExpression = Expression.GreaterThan(prop, parseToTargetType);
+				else if (filter.Condition == "<") equalExpression = Expression.LessThan(prop, parseToTargetType);
+				else if (filter.Condition == ">=") equalExpression = Expression.GreaterThanOrEqual(prop, parseToTargetType);
+				else if (filter.Condition == "<=") equalExpression = Expression.LessThanOrEqual(prop, parseToTargetType);
+
 				return equalExpression;
 			}
 			else return null;
@@ -185,6 +198,6 @@ namespace CommonHelper.Helpers
 
 			return null;
 		}
-	    
+
 	}
 }

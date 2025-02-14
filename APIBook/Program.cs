@@ -19,6 +19,13 @@ namespace APIBook
 			builder.Services.AddEndpointsApiExplorer();
 			builder.Services.AddHttpContextAccessor();
 
+			builder.Services.AddCors(options =>
+			{
+				options.AddPolicy("AllowAll",
+					builder => builder.AllowAnyOrigin()
+									  .AllowAnyMethod()
+									  .AllowAnyHeader());
+			});
 			builder.Services.AddSwaggerGen(option =>
 			{
 				option.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
@@ -41,12 +48,8 @@ namespace APIBook
 			}
 			//cho phép các domain khác gọi api từ local
 
-			app.UseCors(builder =>
-			{
-				builder.AllowAnyOrigin()
-				.AllowAnyMethod()
-				.AllowAnyHeader();
-			});
+			app.UseCors("AllowAll"); // Đặt trước app.UseAuthorization()
+
 			app.UseStaticFiles();
 			app.UseHttpsRedirection();
 

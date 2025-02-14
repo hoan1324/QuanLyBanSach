@@ -3,23 +3,24 @@ using APIBook.Dtos;
 using CommonHelper.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace APIBook.Controllers.V1
 {
-	[Route("api/[controller]")]
+	[Route("v1/[controller]")]
 	[ApiController]
 	public class AttachmentController : ControllerBase
 	{
 		private readonly IWebHostEnvironment _webHostEnvironment;
 		private readonly ILogger<AttachmentController> _logger;
 		private readonly IAttachmentService _attachmentService;
-		
+
 		public AttachmentController(ILogger<AttachmentController> logger, IAttachmentService attachmentService, IWebHostEnvironment webHostEnvironment)
 		{
 			_logger = logger;
 			_attachmentService = attachmentService;
 			_webHostEnvironment = webHostEnvironment;
-			
+
 		}
 		[HttpGet]
 		[Route("")]
@@ -120,6 +121,30 @@ namespace APIBook.Controllers.V1
 				var response = await _attachmentService.DeleteAsync(id);
 				if (response != null)
 				{
+					List<PaginationFilterModel> filters = new List<PaginationFilterModel>()
+					{
+						new PaginationFilterModel()
+					{
+						FilterFields=new List<string>() { "Url"},
+						Value=response.Url,
+						FilterType="String",
+						Condition="=="
+					}
+					};
+
+					FilterRequest request = new FilterRequest()
+					{
+						Filters = JsonConvert.SerializeObject(filters)
+					};
+					var searchSameAttachment = await _attachmentService.GetListAsync(request);
+					if (searchSameAttachment.TotalRow == 0)
+					{
+						var fullPath = Path.Combine(_webHostEnvironment.WebRootPath, response.Url);
+						if (System.IO.File.Exists(fullPath))
+						{
+							System.IO.File.Delete(fullPath); // Xóa file
+						}
+					}
 					return Ok(ResponseModel.Success(response, "Xóa tệp thành công !"));
 				}
 				else return Ok(ResponseModel.Error(null, "Xóa tệp thất bại !"));

@@ -2,7 +2,7 @@ import { FaRegFileWord, FaRegFileExcel, FaRegFilePdf } from "react-icons/fa";
 import { PiMicrosoftPowerpointLogoLight } from "react-icons/pi";
 import { IoDocumentTextOutline, IoDocumentAttachOutline } from "react-icons/io5";
 import { LuFileArchive } from "react-icons/lu";
-import { blue, red, green, purple, gray } from "@ant-design/colors";
+import { blue, red, green, purple, gray,volcano } from "@ant-design/colors";
 
 function ExtensionMixin() {
   const mediaTypeElement = [
@@ -19,44 +19,51 @@ function ExtensionMixin() {
   const displayExtension = [
     {
       extensions: [".doc", ".docx"],
-      icon: <FaRegFileWord />,
-      color: blue[5]
+      icon: FaRegFileWord ,
+      bgColor:blue[1],
+      color: blue[3]
     },
     {
       extensions: [".ppt", ".pptx"],
-      icon: <PiMicrosoftPowerpointLogoLight />,
-      color: red[5]
+      icon: PiMicrosoftPowerpointLogoLight ,
+      bgColor:volcano[1],
+      color: volcano[3]
     },
     {
       extensions: [".xls", ".xlsx"],
-      icon: <FaRegFileExcel />,
-      color: green[2]
+      icon: FaRegFileExcel ,
+      bgColor:green[2],
+      color: green[4]
     },
     {
       extensions: [".pdf"],
-      icon: <FaRegFilePdf />,
-      color: red[2]
+      icon: FaRegFilePdf ,
+      bgColor:red[1],
+      color: red[3]
     },
     {
       extensions: [".odt"],
-      icon: <IoDocumentAttachOutline />,
+      icon: IoDocumentAttachOutline ,
+      bgColor:blue[3],
       color: blue[7]
     },
     {
       extensions: [".txt"],
-      icon: <IoDocumentTextOutline />,
-      color: gray[5]
+      icon: IoDocumentTextOutline ,
+      bgColor:gray[1],
+      color: gray[4]
     },
     {
       extensions: [".7z", ".rar", ".zip", ".gz"],
-      icon: <LuFileArchive />,
+      icon: LuFileArchive ,
+      bgColor:purple[1],
       color: purple[3]
     }
   ];
 
   // Flatten extensions to create a lookup table
-  const flatDisplayExtension = displayExtension.flatMap(({ extensions, icon, color }) =>
-    extensions.map(ext => ({ extension: ext, icon, color }))
+  const flatDisplayExtension = displayExtension.flatMap(({ extensions, icon,bgColor, color }) =>
+    extensions.map(ext => ({ extension: ext, icon, bgColor,color }))
   );
 
   return {

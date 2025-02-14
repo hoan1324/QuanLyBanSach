@@ -16,21 +16,21 @@ const iconExtension = (extension) => {
 
 const styleExtentsion = (extension) => {
   const result = flatDisplayExtension.find(item => item.extension === extension);
-  return result ? result.color : "";
+  return result ? result : {};
 };
 
 function TemplateExtension({ extension, url, ...props }) {
-  const ext = extension.toLowerCase();
+  const ext = extension?.toLowerCase();
   const { style = {}, ...restProps } = props;
 
   const renderTemplate = () => {
     if (imageTypes.includes(ext)) {
-      return <Image {...restProps} style={style} src={url} />;
+      return <Image className="w-100" {...restProps} style={style} src={url} />;
     }
 
     if (videoTypes.includes(ext)) {
       return (
-        <video {...restProps} style={style} controls>
+        <video className="w-100" {...restProps} style={style} controls>
           <source src={url} type={mediaType(ext)} />
         </video>
       );
@@ -38,16 +38,20 @@ function TemplateExtension({ extension, url, ...props }) {
 
     if (audioTypes.includes(ext)) {
       return (
-        <audio {...restProps} style={style} controls>
+        <audio className="w-100" {...restProps} style={style} controls>
           <source src={url} type={mediaType(ext)} />
         </audio>
       );
     }
 
     if (documentTypes.includes(ext) || compressedTypes.includes(ext)) {
+      const Icon=iconExtension(ext)
       return (
-        <div style={{ backgroundColor: styleExtentsion(ext), ...style }} {...restProps}>
-          {iconExtension(ext)}
+        <div className=" w-100 d-flex justify-content-center align-items-center" style={{
+          backgroundColor: styleExtentsion(ext)?.bgColor,
+          borderRadius: "8px 8px 0 0", ...style,
+        }} {...restProps}>
+          <Icon style={{fontSize:"100px",color:styleExtentsion(ext)?.color}} />
         </div>
       );
     }
