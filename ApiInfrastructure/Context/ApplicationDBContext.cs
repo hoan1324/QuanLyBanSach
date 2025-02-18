@@ -130,7 +130,7 @@ namespace ApiInfrastructure.Context
 			var book = modelBuilder.Entity<Book>();
 			book.ToTable("Books");
 			book.Property(n => n.CreatedDate).HasDefaultValue(DateTime.Now);
-			book.Property(n => n.BookName).HasColumnType("nvarchar(300) COLLATE Latin1_General_CI_AI");
+			book.Property(n => n.Name).HasColumnType("nvarchar(300) COLLATE Latin1_General_CI_AI");
 			book.Property(n => n.Description).HasColumnType("nvarchar(max)");
 			book.Property(n => n.Title).HasColumnType("nvarchar(200) COLLATE Latin1_General_CI_AI");
 			book.Property(n => n.Author).HasColumnType("nvarchar(200) COLLATE Latin1_General_CI_AI");
@@ -190,7 +190,7 @@ namespace ApiInfrastructure.Context
 			var category = modelBuilder.Entity<Category>();
 			category.ToTable("Categories");
 			category.Property(n => n.CreatedDate).HasDefaultValue(DateTime.Now);
-			category.Property(n => n.CategoryName).HasColumnType("nvarchar(200) COLLATE Latin1_General_CI_AI");
+			category.Property(n => n.Name).HasColumnType("nvarchar(200) COLLATE Latin1_General_CI_AI");
 			category.Property(n => n.Description).HasColumnType("nvarchar(500)");
 
 			var client = modelBuilder.Entity<Client>();
@@ -241,7 +241,7 @@ namespace ApiInfrastructure.Context
 			var job = modelBuilder.Entity<Job>();
 			job.ToTable("Jobs");
 			job.Property(n => n.CreatedDate).HasDefaultValue(DateTime.Now);
-			job.Property(n => n.JobName).HasColumnType("nvarchar(200) COLLATE Latin1_General_CI_AI");
+			job.Property(n => n.Name).HasColumnType("nvarchar(200) COLLATE Latin1_General_CI_AI");
 			job.Property(n => n.Description).HasMaxLength(500).IsUnicode(true);
 			job.Property(n => n.SalaryMin).HasDefaultValue(0).HasColumnType("decimal(18,2)");
 			job.Property(n => n.SalaryMax).HasDefaultValue(0).HasColumnType("decimal(18,2)");
@@ -321,7 +321,7 @@ namespace ApiInfrastructure.Context
 			var staff = modelBuilder.Entity<Staff>();
 			staff.ToTable("Staffs");
 			staff.Property(n => n.CreatedDate).HasDefaultValue(DateTime.Now);
-			staff.Property(n => n.StaffName).HasColumnType("nvarchar(200) COLLATE Latin1_General_CI_AI");
+			staff.Property(n => n.Name).HasColumnType("nvarchar(200) COLLATE Latin1_General_CI_AI");
 			staff.Property(n => n.Biography).HasColumnType("nvarchar(max)");
 			staff.Property(n => n.DateOfBirth).IsRequired();
 			staff.Property(n =>n.Salary ).IsRequired().HasDefaultValue(0).HasColumnType("decimal(18,2)");

@@ -1,64 +1,17 @@
-import { Card, Tag, Pagination, Button, Modal, Layout, Menu, Empty } from "antd";
-import { useState, useEffect, useCallback } from "react";
+import { Card, Tag, Pagination, Button, Modal, Layout, Menu, Empty, message } from "antd";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { attachmentFolderRecursion } from "../../CommonHelper/utils/helper/recursionHelper";
-
 import services from "../../boot/services";
 import { urlApi } from "../../CommonHelper/utils/helper/urlApiFile";
-import TemplateExtension from "./templateExtension";
+import TemplateExtension from "../Common/templateExtension";
 import FunctionButton from "./functionButton";
+import { styleTag } from "../GlobalStyle/Style.js/commonStyle";
+import { styleTemplate } from "../GlobalStyle/Style.js/commonStyle";
+import { getListDropdown,getList,getListDiffirent } from "../../CommonHelper/utils/helper/communicateApi";
+import { styleCard,styleDiv,styleHeader,styleLayout } from "../GlobalStyle/Style.js/fileManageStyle";
 const { Header, Footer, Sider, Content } = Layout;
 
-const fetchAttachmentFolderData = async (service) => {
-  try {
-    const response = await service.getListDropdown()
-
-    if (response.isSuccess) {
-
-      return response.data;
-    }
-
-    return [];
-  } catch (error) {
-    console.error("Lỗi", error);
-    return [];
-  }
-};
-const fetchAttachmentInFolder = async (service, request) => {
-  try {
-    const response = await service.getFileInFolder(request)
-
-    if (response.isSuccess) {
-
-      return { attachment: response.data.data, total: response.data.totalRow };
-
-    }
-    return { attachment: [], total: 0 };
-
-
-  } catch (error) {
-    console.error("Lỗi", error);
-    return { attachment: [], total: 0 };
-  }
-}
-const fetchAttachmentData = async (service, request) => {
-  try {
-    const response = await service.getList(request)
-
-    if (response.isSuccess) {
-
-      return { attachment: response.data.data, total: response.data.totalRow };
-
-    }
-    return { attachment: [], total: 0 };
-
-
-  } catch (error) {
-    console.error("Lỗi", error);
-    return { attachment: [], total: 0 };
-  }
-};
-
-function FileManager() {
+function FileManager({handleChoose}) {
   const service = services.attachmentFolder;
   const [open, setOpen] = useState(false)
   const [collapsed, setCollapsed] = useState(false);
@@ -77,17 +30,20 @@ function FileManager() {
   const [totalFile, setTotalFile] = useState()
   const [hover, setHover] = useState(null)
   const fetchData = async () => {
-    const attachmentFolder = await fetchAttachmentFolderData(service);
+    const attachmentFolder = await getListDropdown(service);
     setDataFolder(attachmentFolder);
   }
   const fetchDataFile = useCallback(async () => {
     if (filter.status === "List") {
-      const { attachment, total } = await fetchAttachmentData(services.attachment, filter.request);
-      setDataFile(attachment);
+      if(!filter?.request?.filters){
+        return;
+      }
+      const { data, total } = await getList(services.attachment,filter.request);
+      setDataFile(data);
       setTotalFile(total);
     } else {
-      const { attachment, total } = await fetchAttachmentInFolder(service, filter.request);
-      setDataFile(attachment);
+      const { data, total } = await getListDiffirent(service,"getFileInFolder",true, [filter.request]);
+      setDataFile(data);
       setTotalFile(total);
     }
   }, [filter, service]);  // Hàm chỉ được tạo lại khi `filter` hoặc `service` thay đổi
@@ -150,6 +106,13 @@ function FileManager() {
   const handleFinishSearch = (request) => {
     setFilter(request)
   }
+  const handleChooseFile=()=>{
+    if(currentFileSelect===undefined){
+      message.error("Bạn chưa chọn file")
+      return;
+    }
+    handleChoose(currentFileSelect?.url)
+  }
   useEffect(() => {
     if (!filter?.request) return;
     fetchDataFile();
@@ -157,10 +120,10 @@ function FileManager() {
   // Chạy lại khi filter thay đổi
   return (
     <div>
-      <Button onClick={() => setOpen(true)}> Mở</Button>
+      <Button className="mb-2" onClick={() => setOpen(true)}>Chọn ảnh</Button>
       <Modal
-        className="position-relative overflow-hidden" title={"Quản lý file"} centered width={1100} onCancel={() => setOpen(false)} open={open} okText={"Chọn"}>
-        <Layout className="bg-white rounded" style={{ minHeight: '800px' }}>
+        className="position-relative overflow-hidden" title={"Quản lý file"} centered width={1100} onOk={handleChooseFile} onCancel={() => setOpen(false)} open={open} okText={"Chọn"}>
+        <Layout className="bg-white rounded" style={styleLayout}>
           <Sider className="bg-white" trigger={null} collapsible collapsed={collapsed} onMouseOut={() => setCollapsed(true)} onMouseOver={() => setCollapsed(false)} onCollapse={(value) => setCollapsed(value)} width="25%" >
             <Menu
               onSelect={(info) => handleSelect(info.key, [])}
@@ -174,8 +137,8 @@ function FileManager() {
             />
           </Sider>
           <Layout>
-            <Header style={{ height: "fit-content" }} className="border-bottom bg-white px-2 pb-3" >
-              <FunctionButton handleFinish={handleFinishSearch} resetField={() => setCurrentFolderSelect(undefined)} fetchDataFile={fetchDataFile} fetchDataFolder={fetchData} status={status} dataFolder={dataFolder} currentFolder={currentFolderSelect} currentFile={currentFileSelect} />
+            <Header style={styleHeader} className="border-bottom bg-white px-2 pb-3" >
+              <FunctionButton handleFinish={handleFinishSearch} fetchDataFile={fetchDataFile} fetchDataFolder={fetchData} status={status} dataFolder={dataFolder} currentFolder={currentFolderSelect} currentFile={currentFileSelect} />
             </Header>
             <Content className={dataFile.length > 0 ? "" : "d-flex justify-content-center align-items-center"}>
               {currentFolderSelect !== undefined || (filter.status === "List" && filter.request.filters !== undefined) ? (
@@ -186,30 +149,18 @@ function FileManager() {
                         <Card className="position-relative "
                           key={data.id}
                           styles={{ body: { padding: 0 } }}
-                          style={{
-                            width: 175,
-                            border: currentFileSelect?.id === data.id ? '2px solid #2f54eb' : '1px solid #d9d9d9',
-                            position: 'relative',
-                            overflow: 'hidden',
-                            transition: 'all 0.3s ease',
-                            zIndex: "10"
-                          }}
+                          style={styleCard(currentFileSelect?.id, data?.id)}
                           hoverable
                           onMouseEnter={() => setHover(data.id)}
                           onMouseLeave={() => setHover(null)}
                           onClick={() => handleClick(data.id)}
                         >
-                          <Tag color="black" style={{ zIndex: "100", position: 'absolute', top: 0, left: 0 }}>{data?.extention?.toUpperCase()}</Tag>
-                          <TemplateExtension style={{ height: 180, maxHeight: 180 }} extension={data?.extention} url={urlApi(data?.url)} />
+                          <Tag color="black" style={styleTag}>{data?.extention?.toUpperCase()}</Tag>
+                          <TemplateExtension style={styleTemplate} extension={data?.extention} url={urlApi(data?.url)} />
                           <div className='ps-2 pe-1  py-1 d-flex justify-content-between nowrap border-top'>
                             <div>{`${data?.name.substring(0, 15)}${data?.name.length > 15 ? "..." : ""}`}</div>
                             {(currentFileSelect?.id === data.id || hover === data.id) && (
-                              <div style={{
-                                transition: 'opacity 0.2s',
-                                opacity: hover === data?.id ? 1 : currentFileSelect.id === data.id ? 1 : 0
-                              }}>
-                                ✔
-                              </div>
+                              <div style={styleDiv(hover, data?.id, currentFileSelect?.id)}>✔</div>
                             )}
                           </div>
                         </Card>
@@ -233,4 +184,5 @@ function FileManager() {
     </div>
   )
 }
+
 export default FileManager

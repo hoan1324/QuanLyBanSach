@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState,useMemo } from "react"
 import React from "react"
 import { Input, Drawer, Flex, Popconfirm,  message, Form,  Modal, Button, Empty } from "antd"
 import checkDefaultFolder from "../../CommonHelper/utils/helper/defaultFolderHelper"
@@ -7,58 +7,15 @@ import { FaRegCopy } from "react-icons/fa";
 import { AiOutlineFolderAdd, AiOutlineExclamationCircle } from "react-icons/ai";
 import { MdDelete, MdOutlineMoveUp, MdOutlineFileDownload, MdArrowBackIosNew } from "react-icons/md";
 import { LuPencilLine } from "react-icons/lu";
-import TemplateExtension from "./templateExtension";
+import TemplateExtension from "../Common/templateExtension";
 import { childrenAttachmentFolder, subsequentRankList } from "../../CommonHelper/utils/helper/recursionHelper";
-import InputModal from "./inputModal";
+import InputModal from "../Common/inputModal";
 import { urlApi } from "../../CommonHelper/utils/helper/urlApiFile";
 import CommonButton from "./commonBtn"
-
-const actionAsync = async (service, request) => {
-  try {
-    console.log("Gia trị request");
-
-    console.log(request);
-
-    let response;
-    if (request.id === undefined) {
-      response = await service.create(request)
-    }
-    else {
-      response = await service.update(request.id, request)
-    }
-    if (response.status === 500) {
-      return { isSuccess: false, message: response.message };
-    }
-    return response
-  }
-  catch (error) {
-    console.log("lỗi vào đây");
-    return {
-      isSuccess: false,
-      message: "Có lỗi xảy ra trong quá trình xử lý.",
-    };
-  }
-}
-const deleteAsync = async (service, id) => {
-  try {
-    const response = await service.delete(id)
-    if (response.status === 500) {
-      return { isSuccess: false, message: response.message };
-    }
-    return response
-  }
-  catch (error) {
-    console.log(error)
-    console.log("lỗi vào đây");
-    return {
-      isSuccess: false,
-      message: "Có lỗi xảy ra trong quá trình xử lý.",
-    };
-  }
-}
+import { actionAsync,deleteAsync } from "../../CommonHelper/utils/helper/communicateApi";
 
 const { TextArea } = Input
-function FunctionButton({handleFinish, resetField, status, fetchDataFolder, fetchDataFile, dataFolder, currentFolder, currentFile }) {
+function FunctionButton({handleFinish,  status, fetchDataFolder, fetchDataFile, dataFolder, currentFolder, currentFile }) {
   const [isOpen, setIsOpen] = useState(false)
   const [openModal, setOpenModal] = useState(false)
   const [openMenu, setOpenMenu] = useState({ open: false, action: "" })
@@ -72,13 +29,11 @@ function FunctionButton({handleFinish, resetField, status, fetchDataFolder, fetc
       if (response.isSuccess) {
 
         message.success(response.messsage)
-        if (status === "file") {
-          await fetchDataFile();
-        }
-        else {
+        if (status === "folder") {
           await fetchDataFolder();
-          resetField()
-        }
+        }    
+          await fetchDataFile();
+        
       } else {
         message.error(response.messsage)
       }
@@ -128,7 +83,7 @@ function FunctionButton({handleFinish, resetField, status, fetchDataFolder, fetc
         if (values.id !== undefined) {
           values = {
             ...currentFile,
-            name: values.name.includes(`.${currentFile.extention}`) ? values.name : `${values.name}${currentFile.extention}`,
+            name: values.name.replace(/\.[^/.]+$/, '') + `.${currentFile.extension}`,
           }
         }
       }
@@ -148,7 +103,6 @@ function FunctionButton({handleFinish, resetField, status, fetchDataFolder, fetc
           }
         }
       }
-      console.log("Gía trị value");
 
       const response = await actionAsync(service, values);
 
@@ -241,6 +195,9 @@ function FunctionButton({handleFinish, resetField, status, fetchDataFolder, fetc
 
 
   }
+  const childrenFolders = useMemo(() => {
+    return childrenAttachmentFolder(dataFolder, actionParent[actionParent.length - 1]);
+  }, [dataFolder, actionParent]);
   if (status === "file") {
     const service = services.attachment
     return (
@@ -275,8 +232,8 @@ function FunctionButton({handleFinish, resetField, status, fetchDataFolder, fetc
           </div>
         } open={openMenu.open} onOk={() => handleOk(service)} onCancel={() => setOpenMenu(pre => ({ ...pre, open: false, action: "" }))}>
           <div className="d-flex flex-column">
-            {childrenAttachmentFolder(dataFolder, actionParent[actionParent.length - 1]).length > 0 ?
-              childrenAttachmentFolder(dataFolder, actionParent[actionParent.length - 1]).map((data, index) => (
+            {childrenFolders.length > 0 ?
+              childrenFolders.map((data, index) => (
                 <Button style={currentSelect?.id === data.id ? { color: "#4096FF" } : {}} className="py-3 mt-1 border-0  d-flex justify-content-start" onDoubleClick={() => setActionParent(pre => (Array.isArray(pre) ? [...pre, data.id] : [data.id]))} onClick={() => setCurrentSelect(data)} key={data.id}>
                   {data.name}
                 </Button>
@@ -304,8 +261,8 @@ function FunctionButton({handleFinish, resetField, status, fetchDataFolder, fetc
         </InputModal>
         <Drawer
           footer={currentFile === undefined ? undefined :
-            <div style={{ textAlign: 'right' }}>
-              <Button onClick={() => setIsOpen(false)} style={{ marginRight: 8 }}>
+            <div className="text-start">
+              <Button className="mr-3" onClick={() => setIsOpen(false)} >
                 Thoát
               </Button>
               <Button type="primary" onClick={handleSubmit}>
@@ -359,7 +316,7 @@ function FunctionButton({handleFinish, resetField, status, fetchDataFolder, fetc
             </Popconfirm>
             <Button onClick={handleRename} hidden={currentFolder !== undefined ? checkDefaultFolder(currentFolder.name) : true} icon={<LuPencilLine />}>Đổi tên  thư mục</Button>
           </Flex>
-          <CommonButton handleFinish={handleFinish} formSearch={formSearch} handleClick={() => setIsOpen(true)} fetchDataFile={fetchDataFile} currentFolder={currentFolder} />
+          <CommonButton handleFinish={handleFinish} handleClick={() => setIsOpen(true)} fetchDataFile={fetchDataFile} currentFolder={currentFolder} />
         </Flex>
         <InputModal title={"Tạo mới "} handleOk={handleSubmit} handleClose={handleClose} isOpen={openModal}>
           <Form onFinish={onFinish} form={form} name="attachmentFolder" layout="vertical">
@@ -394,4 +351,4 @@ function FunctionButton({handleFinish, resetField, status, fetchDataFolder, fetc
   }
 }
 
-export default FunctionButton
+export default React.memo(FunctionButton)

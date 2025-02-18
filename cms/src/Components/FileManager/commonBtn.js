@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { Flex,Tooltip,Button,Form ,Checkbox,Dropdown,Input} from "antd"
 import FileUpload from "./fileUpload"
-import InputModal from "./inputModal";
+import InputModal from "../Common/inputModal";
 import {  AiOutlineExclamationCircle } from "react-icons/ai";
 import { CiSearch } from "react-icons/ci";
-import { imageTypes, compressedTypes, audioTypes, videoTypes, documentTypes, } from "../../CommonHelper/Constant/extensionFiles";
-
+import constantType from "../../CommonHelper/Constant/constantType";
 
 const CommonButton = ({ handleClick, handleFinish, currentFolder, fetchDataFile }) => {
 
@@ -20,6 +19,7 @@ const CommonButton = ({ handleClick, handleFinish, currentFolder, fetchDataFile 
   )
 }
 const SearchFile = ({ currentFolder, handleFinish }) => {
+  const { imageTypes, compressedTypes, audioTypes, videoTypes, documentTypes}=constantType.extension
   const [open, setOpen] = useState(false)
   const [selectedValues, setSelectedValues] = useState([]);
   const [formSearch] = Form.useForm()
@@ -42,8 +42,6 @@ const SearchFile = ({ currentFolder, handleFinish }) => {
       formSearch.submit(); // Submit form nếu validate thành công
     } catch (error) {
       console.log(error);
-
-      console.log('Vui lòng kiểm tra các trường hợp lỗi!');
     }
   };
   const dropdownContent = (

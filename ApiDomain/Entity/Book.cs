@@ -9,7 +9,7 @@ namespace ApiDomain.Entity
 {
 	public class Book : Entity<Guid>
 	{
-		public required string BookName { get; set; }
+		public required string Name { get; set; }
 		public string? Description { get; set; }
 		public string? Title { get; set; }
 		public required string  Author { get; set; }

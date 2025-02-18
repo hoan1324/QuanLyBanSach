@@ -1,25 +1,30 @@
-import { Table, Pagination, Button, Form, InputNumber, Divider, Input, message, Flex, Space } from "antd";
+import { Table, Pagination, Button, Form, InputNumber, Divider, Input, message, Tag, Flex, Card, Space } from "antd";
 import { DatePicker, Select } from 'antd';
-
 import { IoIosAddCircleOutline } from "react-icons/io";
-import { SearchOutlined } from '@ant-design/icons';
 import { useForm } from "antd/es/form/Form";
-import { useContext, useEffect, useState, useCallback, useRef } from "react";
-import { columnNameStaff } from "../../CommonHelper/Constant/columnName";
+import { useEffect, useState, useCallback, useRef } from "react";
+import staffColumn from "../../Components/TableColumn/staffColumn";
 import InputModal from "../../Components/Common/inputModal";
 import TextArea from "antd/es/input/TextArea";
 import services from "../../boot/services";
 import UseStatusMixin from "../../CommonHelper/utils/mixins/status";
-import _default from "antd/es/affix/style";
 import Editor from "../../boot/ckEditor"
+import { getListDropdown, getList, actionAsync, deleteAsync, findByID } from "../../CommonHelper/utils/helper/communicateApi";
 import { convertDates, convertDayjsToString } from "../../CommonHelper/utils/helper/dateHelper";
 import vnConst from "../../i18vn/vi-VN";
 import dayjs from "dayjs";
+import { formatMoneyVn } from "../../CommonHelper/utils/helper/moneyHelper";
+import FileManager from "../../Components/FileManager/fileManager";
+import TemplateExtension from "../../Components/Common/templateExtension";
+import { styleTemplate } from "../../Components/GlobalStyle/Style.js/commonStyle";
+import { urlApi } from "../../CommonHelper/utils/helper/urlApiFile";
+import { styleTag } from "../../Components/GlobalStyle/Style.js/commonStyle";
+import constantType from "../../CommonHelper/Constant/constantType";
 // Chuyển đổi dữ liệu API thành định dạng phù hợp cho bảng
 const dataSource = (data) => {
   return data.map((element) => ({
     key: element.id,
-    staffName: element.staffName,
+    name: element.name,
     dateOfBirth: element.dateOfBirth,
     salary: element.salary,
     address: element.address,
@@ -34,91 +39,6 @@ const dataSource = (data) => {
   }));
 };
 
-const fetchJobsData = async (jobService) => {
-  try {
-    const StaffsResponse = await jobService.getListDropdown()
-
-    if (StaffsResponse.isSuccess) {
-      return StaffsResponse.data;
-    }
-    return [];
-  } catch (error) {
-    console.error("Lỗi trong fetchStaffsData:", error);
-    return [];
-  }
-};// Hàm lấy danh sách nhân viên và tổng số nhân viên
-const fetchStaffsData = async (staffService, filter) => {
-  try {
-    const StaffsResponse = await staffService.getList(filter)
-
-
-    if (StaffsResponse.isSuccess) {
-      return { Staffs: StaffsResponse.data.data, total: StaffsResponse.data.totalRow };
-    }
-    return { Staffs: [], total: 0 };
-  } catch (error) {
-    console.error("Lỗi trong fetchStaffsData:", error);
-    return { Staffs: [], total: 0 };
-  }
-};
-const actionStaffData = async (staffService, StaffData) => {
-  console.log("Bắt đầy vào service");
-
-  console.log(staffService);
-
-  try {
-    let response;
-    if (StaffData.id === undefined) {
-      response = await staffService.create(StaffData)
-    }
-    else {
-      response = await staffService.update(StaffData.id, StaffData)
-    }
-    if (response.status === 500) {
-      return { isSuccess: false, message: response.message };
-    }
-    return response
-  }
-  catch (error) {
-    console.log("lỗi vào đây");
-    console.log(error);
-
-    return {
-      isSuccess: false,
-      message: "Có lỗi xảy ra trong quá trình xử lý.",
-    };
-  }
-}
-const deleteStaffData = async (staffService, id) => {
-  try {
-    const response = await staffService.delete(id)
-    if (response.status === 500) {
-      return { isSuccess: false, message: response.message };
-    }
-    return response
-  }
-  catch (error) {
-    console.log("lỗi vào đây");
-    return {
-      isSuccess: false,
-      message: "Có lỗi xảy ra trong quá trình xử lý.",
-    };
-  }
-}
-const findStaff = async (staffService, id) => {
-  try {
-    const response = await staffService.getById(id)
-    if (response.status === 500 || !response.isSuccess) {
-      return null;
-    }
-    return response.data;
-  }
-  catch (error) {
-    console.log(error);
-    return null
-
-  }
-}
 function Staff() {
   const service = services.staffService; // Lấy staffService từ context
   const [data, setData] = useState([]); // Khởi tạo state để lưu dữ liệu
@@ -129,6 +49,7 @@ function Staff() {
     orderByColumn: "CreatedDate" || null,
 
   });
+  const [fileSelect, setFileSelect] = useState()
   const selectJob = useRef(null)
   const [jobData, setJobData] = useState([])
   const [title, setTitle] = useState();
@@ -138,7 +59,6 @@ function Staff() {
   const [form] = useForm();
   const [formSearch] = useForm()
 
-  const [messageApi, contextHolder] = message.useMessage();
   const [configFilter, setConfigFilter] = useState(
     [
       {
@@ -154,17 +74,14 @@ function Staff() {
   // Hàm lấy dữ liệu nhân viên từ API
   const fetchData = useCallback(async () => {
 
-    const { Staffs, total } = await fetchStaffsData(service, filter);
-    console.log(Staffs);
+    const { data, total } = await getList(service, filter);
 
-    setData(Staffs);
+    setData(data);
     setTotal(total);
   }, [filter, service]);
   const fetchJobData = async () => {
-    const job = await fetchJobsData(services.jobService);
-    console.log(jobData);
+    const job = await getListDropdown(services.jobService);
     setJobData(job)
-    console.log("vào job data");
 
 
   };
@@ -187,6 +104,7 @@ function Staff() {
       {
         form.resetFields()
         setStaffData({})
+        setFileSelect(undefined)
         setOpen(false)
         if (disabled) {
           setDisabled(false)
@@ -195,18 +113,21 @@ function Staff() {
       }
     }
   }
+  useEffect(() => {
+    fetchJobData()
+
+  }, []);
   // Lắng nghe thay đổi filter (khi thay đổi trang)
   useEffect(() => {
     fetchData();
-    fetchJobData()
+    //fetchJobData()
 
   }, [filter]); // Chạy lại khi filter thay đổi
   const validateEndDate = (_, value) => {
-    console.log("vào validate EndDate");
-  
+
     const valueStatus = form.getFieldValue("status");
     const { staffStatus } = UseStatusMixin(); // Giả sử bạn có hàm này trả về status
-  
+
     var search = staffStatus.find(item => item.id === valueStatus);
     if (search !== null) {
       if (search.name === vnConst.currentlyEmployed) {
@@ -218,10 +139,10 @@ function Staff() {
         }
       }
     }
-    
+
     return Promise.resolve();
   };
- //
+  //
   // Xử lý sự kiện khi thay đổi trang
   const handlePageChange = (page) => {
     setFilter(prevFilter => ({
@@ -239,45 +160,38 @@ function Staff() {
   };
 
   const onFinish = async (values) => {
-    console.log(convertDayjsToString(values));
 
     try {
-      console.log("tạo create");
 
-      const response = await actionStaffData(service, convertDayjsToString(values));
-      console.log(response.messsage);
+      const response = await actionAsync(service, convertDayjsToString(values));
 
       if (response.isSuccess) {
 
-        messageApi.open({
-          type: 'success',
-          content: response.messsage,
-        });
+        message.success(response.messsage)
+
         fetchData(); // Làm mới dữ liệu
       } else {
-        messageApi.open({
-          type: 'error',
-          content: response.messsage,
-        });
+        message.error(response?.messsage)
+
       }
     } catch (error) {
-      messageApi.open({
-        type: 'error',
-        content: "Có lỗi xảy ra khi xử lý dữ liệu",
-      });
+      console.log(error);
+
+      message.error("Có lỗi xảy ra khi xử lý dữ liệu")
+
     } finally {
       handleClose();
     }
   }
   const handleEdit = async (id) => {
-    const response = await findStaff(service, id);
+    const response = await findByID(service, id);
     setStaffData(response);
     form.setFieldsValue(convertDates(response));
     handleOpenModel("Chỉnh sửa nhân viên")
 
   }
   const handleDetail = async (id) => {
-    const response = await findStaff(service, id);
+    const response = await findByID(service, id);
     setDisabled(true)
     setStaffData(response);
     form.setFieldsValue(convertDates(response))
@@ -285,27 +199,18 @@ function Staff() {
   }
   const handleDelete = async (id) => {
     try {
-      const response = await deleteStaffData(service, id);
-      console.log(response.messsage);
+      const response = await deleteAsync(service, id);
+      if (response?.isSuccess) {
+        message.success(response?.messsage)
 
-      if (response.isSuccess) {
-
-        messageApi.open({
-          type: 'success',
-          content: response.messsage,
-        });
         fetchData(); // Làm mới dữ liệu
       } else {
-        messageApi.open({
-          type: 'error',
-          content: response.messsage,
-        });
+        message.error(response?.messsage)
+
       }
     } catch (error) {
-      messageApi.open({
-        type: 'error',
-        content: "Có lỗi xảy ra khi xử lý dữ liệu",
-      });
+      message.error("Có lỗi xảy ra khi xử lý dữ liệu")
+
     }
   }
   const onFinishSearch = (values) => {
@@ -331,24 +236,32 @@ function Staff() {
   }
 
   const validateSalary = (_, value) => {
-    console.log("Vào calidate");
 
     const valueSelect = form.getFieldValue("jobID");
     if (!valueSelect) return Promise.reject("Vui lòng chọn công việc");
 
     const selectJob = jobData?.find(item => item.id == valueSelect);
     if (!selectJob) return Promise.reject("Công việc không hợp lệ");
-    console.log(selectJob);
 
     const { salaryMin, salaryMax } = selectJob;
 
     if ((salaryMin != null && value < salaryMin) || (salaryMax != null && value > salaryMax)) {
-      return Promise.reject(`Lương phải từ ${salaryMin.toLocaleString("vi-VN", { style: "currency", currency: "VND" })} 
-        đến ${salaryMax?.toLocaleString("vi-VN", { style: "currency", currency: "VND" }) || "vô cùng"}`);
+      return Promise.reject(`Lương phải từ ${formatMoneyVn(salaryMin)} 
+        đến ${salaryMax ? formatMoneyVn(salaryMax) : "vô cùng"}`);
     }
 
     return Promise.resolve();
   };
+
+
+  const handleChoose = (fileSelect) => {
+    if (!constantType.extension.imageTypes.includes(fileSelect.match(/(\.[0-9a-z]+)$/i)?.[1] || "")) {
+      message.error("File không phải là ảnh");
+      return
+    }
+    setFileSelect(fileSelect)
+    form.setFieldValue('avatar', fileSelect)
+  }
 
   return (
     <div>
@@ -377,7 +290,7 @@ function Staff() {
           </Flex>
         </Form> */}
       </div>
-      <Table dataSource={dataSource(data)} rowKey="key" scroll={{ x: 'max-content', }} pagination={false} bordered columns={columnNameStaff({ handleEdit, handleDelete, handleDetail })} />
+      <Table dataSource={dataSource(data)} rowKey="key" scroll={{ x: 'max-content', }} pagination={false} bordered columns={staffColumn({ handleEdit, handleDelete, handleDetail })} />
       <Pagination className="mt-4" align="center" onChange={handlePageChange} current={filter.pageIndex} defaultCurrent={1} pageSize={filter.pageSize} total={total} />
       <InputModal diasbled={disabled} title={title} handleOk={handleSubmit} handleClose={handleClose} width={1000} isOpen={open}>
         <Divider />
@@ -385,7 +298,17 @@ function Staff() {
           <Form.Item name="id" hidden value={StaffData.id}>
             <Input disabled />
           </Form.Item>
-          <Form.Item label="Tên nhân viên" name="staffName" rules={[{ required: true, message: "Vui lòng nhập tên nhân viên" }]}>
+          <Form.Item name="avatar"  >
+            <Input disabled />
+          </Form.Item>
+          {fileSelect === undefined ? <FileManager className="mt-3" handleChoose={handleChoose} /> :
+            <div className="position-relative p-2 border mb-3 mt-3" style={{ width: 150 }}>
+              <Tag color="red" onClick={() => setFileSelect(undefined)} style={styleTag}>X</Tag>
+              <TemplateExtension style={styleTemplate} url={urlApi(fileSelect)} extension={fileSelect.match(/(\.[0-9a-z]+)$/i)?.[1] || ""} />
+            </div>
+          }
+
+          <Form.Item label="Tên nhân viên" name="name" rules={[{ required: true, message: "Vui lòng nhập tên nhân viên" }]}>
             <Input placeholder="Nhập tên nhân viên" className="w-100"></Input>
           </Form.Item>
           <div className="row">
@@ -400,7 +323,7 @@ function Staff() {
               </Form.Item>
             </div>
             <div className="col-md-4">
-              <Form.Item dependencies={['status']} rules={[{validator:validateEndDate}]} label="Ngày kết thúc làm việc" name="endDate">
+              <Form.Item dependencies={['status']} rules={[{ validator: validateEndDate }]} label="Ngày kết thúc làm việc" name="endDate">
                 <DatePicker format='DD/MM/YYYY' className="w-100" />
               </Form.Item>
             </div>
@@ -409,8 +332,8 @@ function Staff() {
             <div className="col-md-6">
               <Form.Item label="Số điện thoại" name="phoneNumber"
                 rules={[
-                  { required: true, message: 'Vui lòng nhập số điện thoại' },]}>
-                <InputNumber placeholder="Nhập số điện thoại" style={{ width: '100%' }} min={0} />
+                  { required: true, message: 'Vui lòng nhập số điện thoại' }, { pattern: /^[0-9]+$/, message: 'Số điện thoại phải là số' }]}>
+                <Input placeholder="Nhập số điện thoại" style={{ width: '100%' }} min={0} />
               </Form.Item>
             </div>
             <div className="col-md-6">
@@ -447,7 +370,7 @@ function Staff() {
             <div className="col-md-6">
               <Form.Item label="Công việc" name="jobID" rules={[{ required: true, message: "Vui lòng chọn vị trí nhân viên" }]}>
                 <Select className="w-100" key={StaffData} onSelect={handleSelect} ref={selectJob} options={jobData ? jobData.map((element, index) => (
-                  { value: element.id, label: element.jobName, salaryMax: element.salaryMax, salaryMin: element.salaryMin }
+                  { value: element.id, label: element.name, salaryMax: element.salaryMax, salaryMin: element.salaryMin }
                 )) : {}} />
               </Form.Item>
             </div>
@@ -460,11 +383,6 @@ function Staff() {
               }}></TextArea>
           </Form.Item>
           <Form.Item label="Tiểu sử nhân viên" name="biography" >
-            {/* <TextArea placeholder="Nhập tiểu sử nhân viên"
-              autoSize={{
-                minRows: 4,
-                maxRows: 6,
-              }}></TextArea> */}
             <Editor data={StaffData.biography ?? ""}
               onChange={(event, editor) => {
                 const data = editor.getData();
@@ -475,7 +393,7 @@ function Staff() {
         </Form>
       </InputModal>
 
-    </div>
+    </div >
   );
 }
 

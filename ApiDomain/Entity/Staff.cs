@@ -9,7 +9,7 @@ namespace ApiDomain.Entity
 {
 	public class Staff : Entity<Guid>
 	{
-		public required string StaffName { get; set; }
+		public required string Name { get; set; }
 		public string? Biography { get; set; }
 		public  DateTime DateOfBirth { get; set; }
 		public  decimal Salary {  get; set; }

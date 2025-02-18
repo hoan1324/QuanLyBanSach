@@ -1,0 +1,1 @@
+Scaffold-DbContext "Data Source=LAPTOP-FT5F2K76\SQLEXPRESS;Initial Catalog=QuanLyBanGiay;Integrated Security=True;Connect Timeout=90;Encrypt=False;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models

@@ -1,93 +1,28 @@
 import services from "../../boot/services";
 import { Tooltip, Table, Pagination, Button, Form, InputNumber, Divider, Input, message, Flex, Space } from "antd";
-
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { SearchOutlined } from '@ant-design/icons';
 import { useForm } from "antd/es/form/Form";
-
 import { useContext, useEffect, useState, useCallback } from "react";
-import { columnNameJob } from "../../CommonHelper/Constant/columnName";
+import jobColumn from "../../Components/TableColumn/jobColumns";
 import InputModal from "../../Components/Common/inputModal";
 import TextArea from "antd/es/input/TextArea";
+import { getList, actionAsync, deleteAsync, findByID } from "../../CommonHelper/utils/helper/communicateApi";
 
 // Chuyển đổi dữ liệu API thành định dạng phù hợp cho bảng
 const dataSource = (data) => {
   return data.map((element) => ({
     key: element.id,
-    jobName: element.jobName,
+    name: element.name,
     salaryMin: element.salaryMin,
     salaryMax: element.salaryMax,
     description: element.description
   }));
 };
 
-// Hàm lấy danh sách công việc và tổng số công việc
-const fetchJobsData = async (jobService, filter) => {
-  try {
-    const jobsResponse = await jobService.getList(filter)
 
 
-    if (jobsResponse.isSuccess) {
-      return { jobs: jobsResponse.data.data, total: jobsResponse.data.totalRow };
-    }
-    return { jobs: [], total: 0 };
-  } catch (error) {
-    console.error("Lỗi trong fetchJobsData:", error);
-    return { jobs: [], total: 0 };
-  }
-};
-const actionJobData = async (jobService, jobData) => {
-  try {
-    let response;
-    if (jobData.id === undefined) {
-      response = await jobService.create(jobData)
-    }
-    else {
-      response = await jobService.update(jobData.id, jobData)
-    }
-    if (response.status === 500) {
-      return { isSuccess: false, message: response.message };
-    }
-    return response
-  }
-  catch (error) {
-    console.log("lỗi vào đây");
-    return {
-      isSuccess: false,
-      message: "Có lỗi xảy ra trong quá trình xử lý.",
-    };
-  }
-}
-const deleteJobData = async (jobService, id) => {
-  try {
-    const response = await jobService.delete(id)
-    if (response.status === 500) {
-      return { isSuccess: false, message: response.message };
-    }
-    return response
-  }
-  catch (error) {
-    console.log("lỗi vào đây");
-    return {
-      isSuccess: false,
-      message: "Có lỗi xảy ra trong quá trình xử lý.",
-    };
-  }
-}
-const findJob = async (jobService,id) => {
-  try {
-    const response = await jobService.getById(id)
-    if (response.status === 500 || !response.isSuccess) {
-      return null;
-    }
-    return response.data;
-  }
-  catch (error) {
-    console.log(error);
-    return null
-
-  }
-}
+//config gồm :service,
 function Job() {
   const service = services.jobService; // Lấy jobService từ context
   const [data, setData] = useState([]); // Khởi tạo state để lưu dữ liệu
@@ -95,7 +30,7 @@ function Job() {
   const [filter, setFilter] = useState({
     pageIndex: 1,
     pageSize: 20,
-    orderByColumn:"CreatedDate"||null, 
+    orderByColumn: "CreatedDate" || null,
   });
 
   const [title, setTitle] = useState();
@@ -103,8 +38,7 @@ function Job() {
   const [jobData, setJobData] = useState({})
   const [disabled, setDisabled] = useState(false)
   const [form] = useForm();
-  const [formSearch] = useForm()
-  const [messageApi, contextHolder] = message.useMessage();
+  //const [formSearch] = useForm()
   const [configFilter, setConfigFilter] = useState(
     [
       {
@@ -119,7 +53,7 @@ function Job() {
   const validateSalaryRange = (_, value) => {
     const salaryMin = form.getFieldValue('salaryMin');
     const salaryMax = form.getFieldValue('salaryMax');
-    
+
     if (salaryMin !== undefined && salaryMax !== undefined && salaryMin > salaryMax) {
       return Promise.reject('Mức lương tối thiểu không được lớn hơn mức lương tối đa!');
     }
@@ -128,12 +62,11 @@ function Job() {
 
   // Hàm lấy dữ liệu công việc từ API
   const fetchData = useCallback(async () => {
-    
-    const { jobs, total } = await fetchJobsData(service, filter);
-    console.log(jobs);
-    
-    
-    setData(jobs);
+
+    const { data, total } = await getList(service, filter);
+
+
+    setData(data);
     setTotal(total);
   }, [filter, service]);
 
@@ -181,40 +114,32 @@ function Job() {
 
   const onFinish = async (values) => {
     try {
-      const response = await actionJobData(service, values);
+      const response = await actionAsync(service, values);
       console.log(response.messsage);
 
       if (response.isSuccess) {
+        message.success(response.messsage)
 
-        messageApi.open({
-          type: 'success',
-          content: response.messsage,
-        });
         fetchData(); // Làm mới dữ liệu
       } else {
-        messageApi.open({
-          type: 'error',
-          content: response.messsage,
-        });
+        message.error(response.messsage)
       }
     } catch (error) {
-      messageApi.open({
-        type: 'error',
-        content: "Có lỗi xảy ra khi xử lý dữ liệu",
-      });
+      message.error("Có lỗi xảy ra khi xử lý dữ liệu")
+
     } finally {
       handleClose();
     }
   }
   const handleEdit = async (id) => {
-    const response = await findJob(service,id);
+    const response = await findByID(service, id);
     setJobData(response);
     form.setFieldsValue(response)
     handleOpenModel("Chỉnh sửa công việc")
 
   }
   const handleDetail = async (id) => {
-    const response = await findJob(service,id);
+    const response = await findByID(service, id);
     setDisabled(true)
     setJobData(response);
     form.setFieldsValue(response)
@@ -222,59 +147,52 @@ function Job() {
   }
   const handleDelete = async (id) => {
     try {
-      const response = await deleteJobData(service, id);
+      const response = await deleteAsync(service, id);
       console.log(response.messsage);
 
       if (response.isSuccess) {
+        message.success(response.messsage)
 
-        messageApi.open({
-          type: 'success',
-          content: response.messsage,
-        });
         fetchData(); // Làm mới dữ liệu
       } else {
-        messageApi.open({
-          type: 'error',
-          content: response.messsage,
-        });
+        message.error(response.messsage)
+
       }
     } catch (error) {
-      messageApi.open({
-        type: 'error',
-        content: "Có lỗi xảy ra khi xử lý dữ liệu",
-      });
+      message.error("Có lỗi xảy ra khi xử lý dữ liệu")
+
     }
   }
-  const onFinishSearch = (values) => {
-     var jsonConvert=JSON.stringify(assinValue(values))
-     setFilter(pre=>{
-      return{
-        ...pre,
-        filters:jsonConvert
-      }
-     })    
-     formSearch.resetFields() 
-  }
-  const assinValue = (values) => {
-    const filter = configFilter.map((element, index) => (
-      {
-        filterFields: element.filterFields,
-        value: values[element.filterFields.join(",")],
-        condition: element.condition,
-        filterType: element.filterType
-      }
-    ))
-    return filter
-  }
+  // const onFinishSearch = (values) => {
+  //   var jsonConvert = JSON.stringify(assinValue(values))
+  //   setFilter(pre => {
+  //     return {
+  //       ...pre,
+  //       filters: jsonConvert
+  //     }
+  //   })
+  //   formSearch.resetFields()
+  // }
+  // const assinValue = (values) => {
+  //   const filter = configFilter.map((element, index) => (
+  //     {
+  //       filterFields: element.filterFields,
+  //       value: values[element.filterFields.join(",")],
+  //       condition: element.condition,
+  //       filterType: element.filterType
+  //     }
+  //   ))
+  //   return filter
+  // }
   return (
     <div>
-
-      <div className="d-flex justify-content-end mb-3">
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h4 className="mb-0">Quản lý công việc</h4>
         <Button size="large" onClick={(e) => handleOpenModel('Tạo mới công việc')} icon={<IoIosAddCircleOutline />} type="primary">
           Thêm mới
         </Button>
       </div>
-      <div className="mb-3">
+      {/* <div className="mb-3">
         <Form form={formSearch} onFinish={onFinishSearch}>
           <Flex gap="small" justify="end" align="center" wrap>
             {configFilter.map((element, index) => (
@@ -292,8 +210,8 @@ function Job() {
             </Tooltip>
           </Flex>
         </Form>
-      </div>
-      <Table loading={data==[]?true:false} dataSource={dataSource(data)} rowKey="key" scroll={{ x: 'max-content', }} pagination={false} bordered columns={columnNameJob({ handleEdit, handleDelete, handleDetail })} />
+      </div> */}
+      <Table loading={data == [] ? true : false} dataSource={dataSource(data)} rowKey="key" scroll={{ x: 'max-content', }} pagination={false} bordered columns={jobColumn({ handleEdit, handleDelete, handleDetail })} />
       <Pagination className="mt-4" align="center" onChange={handlePageChange} current={filter.pageIndex} defaultCurrent={1} pageSize={filter.pageSize} total={total} />
       <InputModal diasbled={disabled} title={title} handleOk={handleSubmit} handleClose={handleClose} width={1000} isOpen={open}>
         <Divider />
@@ -301,7 +219,7 @@ function Job() {
           <Form.Item name="id" hidden value={jobData.id}>
             <Input disabled />
           </Form.Item>
-          <Form.Item label="Tên công việc" name="jobName" rules={[{ required: true, message: "Vui lòng nhập tên công việc" }]}>
+          <Form.Item label="Tên công việc" name="name" rules={[{ required: true, message: "Vui lòng nhập tên công việc" }]}>
             <Input placeholder="Nhập tên công việc" className="w-100"></Input>
           </Form.Item>
           <div className="row">
