@@ -1,7 +1,9 @@
 ﻿using Api.Services;
+using APIBook.Attributes;
 using APIBook.Dtos;
-using CommonHelper.Constant;
+using CommonHelper.Helpers;
 using CommonHelper.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +11,8 @@ namespace APIBook.Controllers.V1
 {
 	[Route("v1/[controller]")]
 	[ApiController]
+	[Authorize]
+	[UserAuthorize]
 	public class AttachmentFolderController : ControllerBase
 	{
 		private readonly IWebHostEnvironment _webHostEnvironment;
@@ -26,6 +30,8 @@ namespace APIBook.Controllers.V1
 		}
 		[HttpGet]
 		[Route("files")]
+		[PermissionDescription("Xem các tệp đính kèm trong thư mục")]
+
 		public async Task<IActionResult> GetAttachmentsInFolderAsync([FromQuery] AttachmentInFolderDto request)
 		{
 			try
@@ -41,6 +47,7 @@ namespace APIBook.Controllers.V1
 		}
 		[HttpGet]
 		[Route("dropdown")]
+		[PermissionDescription("Xem tất cả các thư mục")]
 		public async Task<IActionResult> GetAllAsync()
 		{
 			try
@@ -72,6 +79,8 @@ namespace APIBook.Controllers.V1
 
 		[HttpPost]
 		[Route("")]
+		[PermissionDescription("Tạo mới thư mục")]
+
 		public async Task<IActionResult> CreateAsync([FromBody] AttachmentFolderDto request)
 		{
 			try
@@ -92,6 +101,8 @@ namespace APIBook.Controllers.V1
 
 		[HttpPut]
 		[Route("{id}")]
+		[PermissionDescription("Chỉnh sửa thư mục")]
+
 		public async Task<IActionResult> UpdateAsync([FromBody] AttachmentFolderDto request)
 		{
 			try
@@ -112,6 +123,8 @@ namespace APIBook.Controllers.V1
 
 		[HttpDelete]
 		[Route("{id}")]
+		[PermissionDescription("Xóa thư mục")]
+
 		public async Task<IActionResult> DeleteAsync([FromRoute] Guid id)
 		{
 			try
@@ -133,6 +146,8 @@ namespace APIBook.Controllers.V1
 		[HttpPut]
 		[Route("{id}/files")]
 		[DisableRequestSizeLimit]
+		[PermissionDescription("Tải các tệp lên")]
+
 		public async Task<IActionResult> UploadFiles([FromRoute] Guid id)
 		{
 			try
@@ -188,6 +203,8 @@ namespace APIBook.Controllers.V1
 		[HttpPut]
 		[Route("{id}/file")]
 		[DisableRequestSizeLimit]
+		[PermissionDescription("Tải tệp lên")]
+
 		public async Task<IActionResult> UploadFile([FromRoute] Guid id)
 		{
 			try

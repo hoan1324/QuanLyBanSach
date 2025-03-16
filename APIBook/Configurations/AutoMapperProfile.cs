@@ -1,4 +1,5 @@
-﻿using APIBook.Dtos;
+﻿using Api.Dtos;
+using APIBook.Dtos;
 using ApiDomain.Entity;
 using AutoMapper;
 using CommonHelper.Models;
@@ -15,6 +16,15 @@ namespace APIBook.Configurations
 				.ForMember(n => n.Filters,
 					m => m.MapFrom(h => JsonConvert.DeserializeObject<List<PaginationFilterModel>>(h.Filters)));
 
+			CreateMap<CurrentUserDto, User>()
+			 .ForMember(n => n.Password, g => g.Ignore())
+			 .ForMember(n => n.UserTokens, g => g.Ignore())
+			 .ForMember(n => n.Role, g => g.Ignore())
+			 .ForMember(n => n.BookRatings, g => g.Ignore())
+			 .ForMember(n => n.ShoppingCarts, g => g.Ignore())
+			 .ForMember(n => n.Comments, g => g.Ignore());
+
+
 			CreateMap<JobDto, Job>()
 				.ForMember(n => n.Staffs, m => m.Ignore())
 				.ReverseMap();
@@ -23,7 +33,6 @@ namespace APIBook.Configurations
 				.ForMember(n => n.Job, m => m.Ignore())
 				.ReverseMap();
 
-			CreateMap(typeof(PaginationModel<>), typeof(PaginationModel<>));
 
 			CreateMap<AttachmentDto, Attachment>()
 			 .ForMember(n => n.AttachmentFolder, g => g.Ignore())
@@ -32,6 +41,46 @@ namespace APIBook.Configurations
 			CreateMap<AttachmentFolderDto, AttachmentFolder>()
 				.ForMember(n => n.Attachments, g => g.Ignore())
 				.ReverseMap();
+			CreateMap<User, CurrentUserDto>()
+			   .ForMember(n => n.IsAdmin, g => g.MapFrom(h => h.Role.IsAdmin));
+
+			
+			
+			CreateMap<UserViewDto, User>()
+			   .ForMember(n => n.Password ,g => g.Ignore())
+			   .ForMember(n => n.UserTokens, g => g.Ignore())
+			   .ForMember(n => n.Role, g => g.MapFrom(n => n.Role))
+			   .ForMember(n => n.UserPermissions, g => g.MapFrom(n => n.UserPermissions))
+			   .ForMember(n => n.BookRatings, g => g.Ignore())
+			   .ForMember(n => n.ShoppingCarts, g => g.Ignore())
+			   .ForMember(n => n.Comments, g => g.Ignore())
+		       .ReverseMap();
+
+			CreateMap<UserCreateDto, User>()
+			  .ForMember(n => n.UserTokens, g => g.Ignore())
+			  .ForMember(n => n.Role, g => g.Ignore())
+			  .ForMember(n => n.Password, g => g.Ignore())
+			  .ForMember(n=>n.UserPermissions,g=>g.Ignore())
+              .ForMember(n => n.BookRatings, g => g.Ignore())
+			  .ForMember(n => n.ShoppingCarts, g => g.Ignore())
+			  .ForMember(n => n.Comments, g => g.Ignore())
+			  .ReverseMap();
+
+			CreateMap<RoleDto, Role>()
+				.ForMember(n => n.Permissions, g => g.Ignore())
+				.ForMember(n => n.Users, g => g.Ignore())
+				.ReverseMap();
+			
+			CreateMap<UserPermissionViewDto, UserPermission>()
+				.ForMember(n => n.User, g => g.Ignore())
+				.ForMember(n => n.Permission, g => g.Ignore())
+				.ReverseMap();
+
+			CreateMap<PermissionDto, Permission>()
+				.ForMember(n => n.UserPermissions, g => g.Ignore())
+				.ForMember(n => n.PermissionRoles, g => g.Ignore())
+				.ReverseMap();
+			CreateMap(typeof(PaginationModel<>), typeof(PaginationModel<>));
 
 		}
 	}

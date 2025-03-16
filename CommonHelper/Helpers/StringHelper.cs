@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommonHelper.Constant;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace CommonHelper.Constant
+namespace CommonHelper.Helpers
 {
 	public static class StringHelper
 	{
@@ -60,6 +61,13 @@ namespace CommonHelper.Constant
 			text = ReplaceSpacesWithHyphens(text);
 			text = RemoveSpecialCharacters(text);
 			return $"{text.ToLower()}";
+		}
+		public static string RandomString(int length)
+		{
+			var _random = new Random();
+			const string chars = "qwertyuiopasdfghjklzxcvbnmABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!*_-";
+			return new string(Enumerable.Repeat(chars, length)
+				.Select(s => s[_random.Next(s.Length)]).ToArray());
 		}
 	}
 }

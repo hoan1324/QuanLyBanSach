@@ -11,11 +11,13 @@ namespace ApiDomain.Entity
 	{
 		public  string UserName { get; set; }
 		public  string Password { get; set; }
+		public  string? Address { get; set; }
 		public  DateTime DateOfBirth { get; set; }
-		public string? CreateBy { get; set; }
+		public Guid? CreateBy { get; set; }
 		public DateTime? CreateDate { get; set; }
-		public string? ModifiedBy { get; set; }
+		public Guid? ModifiedBy { get; set; }
 		public DateTime? ModifiedDate { get; set; }
+		public string? FullName {  get; set; }
 		public  string PhoneNumber { get; set; }
 		public  string Email { get; set; }
 		public string? Avatar {  get; set; }
@@ -23,6 +25,7 @@ namespace ApiDomain.Entity
 		public int Status {  get; set; } //0:hoatj dong,//1:bij ban
 		public Guid RoleID { get; set; }
 		public virtual Role? Role { get; set; }
+		public ICollection<UserToken>? UserTokens { get; set; }
 		public ICollection<UserPermission>? UserPermissions { get; set; }
 		public ICollection<BookRating>? BookRatings { get; set; }
 		public ICollection<ShoppingCart>? ShoppingCarts { get;set; }

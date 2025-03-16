@@ -10,6 +10,8 @@ namespace ApiDomain.Entity
 	{
 		public Guid UserID { get; set; }
 		public Guid PermissionID {  get; set; }
+		public string? PermissionCode { get; set; }
+
 		public virtual Permission? Permission { get; set; }
 		public virtual User? User { get; set; }
 	}

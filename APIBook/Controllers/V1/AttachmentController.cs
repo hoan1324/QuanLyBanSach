@@ -1,6 +1,8 @@
 ﻿using Api.Services;
+using APIBook.Attributes;
 using APIBook.Dtos;
 using CommonHelper.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -9,6 +11,8 @@ namespace APIBook.Controllers.V1
 {
 	[Route("v1/[controller]")]
 	[ApiController]
+	[Authorize]
+	[UserAuthorize]
 	public class AttachmentController : ControllerBase
 	{
 		private readonly IWebHostEnvironment _webHostEnvironment;
@@ -24,6 +28,7 @@ namespace APIBook.Controllers.V1
 		}
 		[HttpGet]
 		[Route("")]
+		[PermissionDescription("Xem danh sách các tệp đính kèm")]
 		public async Task<IActionResult> GetListAsync([FromQuery] FilterRequest request)
 		{
 			try
@@ -56,6 +61,7 @@ namespace APIBook.Controllers.V1
 
 		[HttpGet]
 		[Route("{id}")]
+		[PermissionDescription("Xem chi tiết tệp đính kèm")]
 		public async Task<IActionResult> GetByIdAsync([FromRoute] Guid id)
 		{
 			try
@@ -73,6 +79,8 @@ namespace APIBook.Controllers.V1
 
 		[HttpPost]
 		[Route("")]
+		[PermissionDescription("Tạo mới tệp đính kèm")]
+
 		public async Task<IActionResult> CreateAsync([FromBody] AttachmentDto request)
 		{
 			try
@@ -93,6 +101,8 @@ namespace APIBook.Controllers.V1
 
 		[HttpPut]
 		[Route("{id}")]
+		[PermissionDescription("Chỉnh sửa tệp đính kèm")]
+
 		public async Task<IActionResult> UpdateAsync([FromBody] AttachmentDto request)
 		{
 			try
@@ -114,6 +124,8 @@ namespace APIBook.Controllers.V1
 
 		[HttpDelete]
 		[Route("{id}")]
+		[PermissionDescription("Xóa tệp đính kèm")]
+
 		public async Task<IActionResult> DeleteAsync([FromRoute] Guid id)
 		{
 			try

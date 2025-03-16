@@ -1,7 +1,9 @@
-﻿using APIBook.Dtos;
+﻿using APIBook.Attributes;
+using APIBook.Dtos;
 using APIBook.Services;
 using ApiDomain.Entity;
 using CommonHelper.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +11,8 @@ namespace APIBook.Controllers.V1
 {
 	[Route("v1/[controller]")]
 	[ApiController]
+	[Authorize]
+	[UserAuthorize]
 	public class StaffController : ControllerBase
 	{
 		private readonly ILogger<StaffController> _logger;

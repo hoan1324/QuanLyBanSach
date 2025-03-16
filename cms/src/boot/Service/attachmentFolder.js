@@ -1,6 +1,6 @@
 import axiosClient from "../axiosClient"
 
-export default {
+const attachmentFolder = {
     url: `/AttachmentFolder`,
     getFileInFolder(request) {
         return axiosClient.get(`${this.url}/files`, { params: request })
@@ -17,20 +17,21 @@ export default {
     delete(id) {
         return axiosClient.delete(`${this.url}/${id}`);
     },
-    uploadFile(id,formData) {
+    uploadFile(id, formData) {
         return axiosClient.put(`${this.url}/${id}/file`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
         });
     },
-    uploadFiles(id,formData) {
+    uploadFiles(id, formData) {
         return axiosClient.put(`${this.url}/${id}/files`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
-            
+
         });
     }
 
 }
+export default attachmentFolder

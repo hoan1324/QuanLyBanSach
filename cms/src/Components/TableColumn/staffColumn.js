@@ -1,3 +1,5 @@
+import { Tag, Image } from "antd";
+
 import actionColumn from "./actionColumn";
 import { formatDateVn } from "../../CommonHelper/utils/helper/dateHelper";
 import { formatMoneyVn } from "../../CommonHelper/utils/helper/moneyHelper";
@@ -5,7 +7,7 @@ import services from "../../boot/services";
 import EntityName from "../Common/entityName";
 import UseStatusMixin from "../../CommonHelper/utils/mixins/status";
 import { urlApi } from "../../CommonHelper/utils/helper/urlApiFile";
-import { Tag, Image } from "antd";
+import { commonColumn } from "../../CommonHelper/Constant/commonColumn";
 const statusBadge = (status, id) => {
     const result = status.find(item => item.id === id);
     return result ? result.name : ""; // Trả về giá trị mặc định nếu không tìm thấy
@@ -18,6 +20,7 @@ const statusStyle = (status, id) => {
 
 const staffColumn = ({ handleEdit, handleDelete, handleDetail }) => {
     return [
+        ...commonColumn,
         {
             title: "Tên nhân viên",
             dataIndex: "name",

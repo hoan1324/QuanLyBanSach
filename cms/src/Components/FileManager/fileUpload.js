@@ -1,18 +1,19 @@
 import { Button, Upload, message } from "antd"
 import { UploadOutlined } from '@ant-design/icons'
+import { useState, useMemo } from "react";
+
 import services from "../../boot/services"
-import { useState,useMemo } from "react";
-import {  actionDiffirent } from "../../CommonHelper/utils/helper/communicateApi";
+import { actionDiffirent } from "../../CommonHelper/utils/helper/communicateApi";
 import constantType from "../../CommonHelper/Constant/constantType";
 
-function FileUpload({ folderId,fetchDataFile }) {
+function FileUpload({ folderId, fetchDataFile }) {
   const service = services.attachmentFolder
   const [showUpload, setShowUpload] = useState(false)
-   const {imageTypes, documentTypes, videoTypes, audioTypes, compressedTypes}=constantType.extension
+  const { imageTypes, documentTypes, videoTypes, audioTypes, compressedTypes } = constantType.extension
 
   const customRequest = async (options) => {
     const { file, onProgress, onSuccess, onError } = options;
-    
+
     if (folderId === undefined) {
       setShowUpload(false)
       message.error("Vui lòng chọn thư mục chứa")
@@ -24,14 +25,14 @@ function FileUpload({ folderId,fetchDataFile }) {
     try {
 
       setShowUpload(true)
-     
+
 
       const files = Array.isArray(file) ? file : [file];  // Nếu là mảng thì giữ nguyên, nếu không thì chuyển thành mảng
       const formData = new FormData();
       files.forEach((fileItem, index) => {
         formData.append(`file-${index}`, fileItem);
       })
-      const methodName=files.length>1?"uploadFiles":"uploadFile";
+      const methodName = files.length > 1 ? "uploadFiles" : "uploadFile";
 
       let progress = 0;
       const fakeProgress = setInterval(() => {
@@ -40,11 +41,11 @@ function FileUpload({ folderId,fetchDataFile }) {
         if (progress >= 70) clearInterval(fakeProgress);
       }, 500);
 
-      const response = await actionDiffirent(service,methodName,[folderId,formData])
-      
+      const response = await actionDiffirent(service, methodName, [folderId, formData])
+
       clearInterval(fakeProgress);
       onProgress({ percent: 100 });
-  
+
 
       if (response.isSuccess) {
         message.success(response.messsage)
@@ -54,19 +55,19 @@ function FileUpload({ folderId,fetchDataFile }) {
       else {
         message.error(response.messsage)
         onError(response, file);
-       
+
       }
     }
     catch (error) {
       console.log(error);
       onError("Lỗi", file)
       message.error("Có lỗi xảy ra trong hệ thống")
-      
+
     }
-    finally{
-      setTimeout(()=>setShowUpload(false),3000)
+    finally {
+      setTimeout(() => setShowUpload(false), 3000)
     }
-  
+
 
 
   }
@@ -91,7 +92,7 @@ function FileUpload({ folderId,fetchDataFile }) {
     const fileSizeMB = file.size / 1024 / 1024;
     const fileType = getFileType(fileExtension);
 
-    if (!fileType){
+    if (!fileType) {
       message.error(`${file.name} không đúng định dạng`)
       return false
     };

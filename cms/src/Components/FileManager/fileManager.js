@@ -1,5 +1,6 @@
 import { Card, Tag, Pagination, Button, Modal, Layout, Menu, Empty, message } from "antd";
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+
 import { attachmentFolderRecursion } from "../../CommonHelper/utils/helper/recursionHelper";
 import services from "../../boot/services";
 import { urlApi } from "../../CommonHelper/utils/helper/urlApiFile";
@@ -7,11 +8,12 @@ import TemplateExtension from "../Common/templateExtension";
 import FunctionButton from "./functionButton";
 import { styleTag } from "../GlobalStyle/Style.js/commonStyle";
 import { styleTemplate } from "../GlobalStyle/Style.js/commonStyle";
-import { getListDropdown,getList,getListDiffirent } from "../../CommonHelper/utils/helper/communicateApi";
-import { styleCard,styleDiv,styleHeader,styleLayout } from "../GlobalStyle/Style.js/fileManageStyle";
+import { getListDropdown, getList, getListDiffirent } from "../../CommonHelper/utils/helper/communicateApi";
+import { styleCard, styleDiv, styleHeader, styleLayout } from "../GlobalStyle/Style.js/fileManageStyle";
+
 const { Header, Footer, Sider, Content } = Layout;
 
-function FileManager({handleChoose}) {
+function FileManager({ handleChoose }) {
   const service = services.attachmentFolder;
   const [open, setOpen] = useState(false)
   const [collapsed, setCollapsed] = useState(false);
@@ -29,20 +31,20 @@ function FileManager({handleChoose}) {
   })
   const [totalFile, setTotalFile] = useState()
   const [hover, setHover] = useState(null)
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     const attachmentFolder = await getListDropdown(service);
     setDataFolder(attachmentFolder);
-  }
+  }, [service]); // service là dependency
   const fetchDataFile = useCallback(async () => {
     if (filter.status === "List") {
-      if(!filter?.request?.filters){
+      if (!filter?.request?.filters) {
         return;
       }
-      const { data, total } = await getList(services.attachment,filter.request);
+      const { data, total } = await getList(services.attachment, filter.request);
       setDataFile(data);
       setTotalFile(total);
     } else {
-      const { data, total } = await getListDiffirent(service,"getFileInFolder",true, [filter.request]);
+      const { data, total } = await getListDiffirent(service, "getFileInFolder", true, [filter.request]);
       setDataFile(data);
       setTotalFile(total);
     }
@@ -102,12 +104,12 @@ function FileManager({handleChoose}) {
   }, [currentFileSelect, dataFile]);
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]); // Đưa fetchData vào dependency array
   const handleFinishSearch = (request) => {
     setFilter(request)
   }
-  const handleChooseFile=()=>{
-    if(currentFileSelect===undefined){
+  const handleChooseFile = () => {
+    if (currentFileSelect === undefined) {
       message.error("Bạn chưa chọn file")
       return;
     }

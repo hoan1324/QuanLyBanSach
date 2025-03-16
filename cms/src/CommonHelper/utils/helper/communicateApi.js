@@ -1,3 +1,4 @@
+
 const handleErrorList = (error, haveTotal = false) => {
     console.error("Lỗi:", error);
     return haveTotal ? { data: [], total: 0 } : [];
@@ -22,14 +23,16 @@ const getListDropdown = async (service) => {
     }
 };
 
+
+
 const getListDiffirent = async (service, methodName, haveTotal, params) => {
     if (typeof service[methodName] !== "function") return handleErrorList(null, haveTotal);
 
     try {
         const response = await service[methodName](...params);
         return response.isSuccess
-            ? haveTotal 
-                ? { data: response.data.data, total: response.data.totalRow } 
+            ? haveTotal
+                ? { data: response.data.data, total: response.data.totalRow }
                 : response.data
             : handleErrorList(null, haveTotal);
     } catch (error) {
@@ -39,9 +42,11 @@ const getListDiffirent = async (service, methodName, haveTotal, params) => {
 
 const getList = async (service, request) => {
     try {
+        console.log(request);
+
         const response = await service.getList(request);
-        return response.isSuccess 
-            ? { data: response.data.data, total: response.data.totalRow } 
+        return response.isSuccess
+            ? { data: response.data.data, total: response.data.totalRow }
             : { data: [], total: 0 };
     } catch (error) {
         return handleErrorList(error, true);
@@ -51,16 +56,14 @@ const getList = async (service, request) => {
 const actionAsync = async (service, request) => {
     try {
         console.log(request);
-        
+
         const response = request.id === undefined
             ? await service.create(request)
             : await service.update(request.id, request);
-        console.log("qUA ĐC K??");
-        
+
         return response?.status === 500 ? { isSuccess: false, message: response.message } : response;
-    } catch (error) {  
-        console.log("lỗi vào đây");
-              
+    } catch (error) {
+
         return { isSuccess: false, message: "Có lỗi xảy ra trong quá trình xử lý." };
     }
 };
@@ -79,8 +82,12 @@ const actionDiffirent = async (service, methodName, params) => {
 
     try {
         const response = await service[methodName](...params);
+        console.log(response);
+
         return response?.status === 500 ? { isSuccess: false, message: response.message } : response;
     } catch (error) {
+        console.log(error);
+
         return { isSuccess: false, message: "Có lỗi xảy ra trong quá trình xử lý." };
     }
 };

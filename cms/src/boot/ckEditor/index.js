@@ -8,8 +8,7 @@ const LICENSE_KEY =
 export default function Editor({ ...props }) {
 	const editorContainerRef = useRef(null);
 	const editorRef = useRef(null);
-	const editorWordCountRef = useRef(null);
-	const editorMenuBarRef= useRef(null);
+
 
 	const [isLayoutReady, setIsLayoutReady] = useState(false);
 	const cloud = useCKEditorCloud({ version: '44.1.0', translations: ['vi'] });
@@ -302,7 +301,7 @@ export default function Editor({ ...props }) {
 						'resizeImage'
 					]
 				},
-				initialData:"",
+				initialData: "",
 				language: 'vi',
 				licenseKey: LICENSE_KEY,
 				link: {
@@ -405,7 +404,7 @@ export default function Editor({ ...props }) {
 					<div ref={editorRef}>
 						{ClassicEditor && editorConfig && (
 							<CKEditor
-								
+
 								editor={ClassicEditor}
 								config={editorConfig}
 								{...props}

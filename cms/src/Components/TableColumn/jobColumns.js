@@ -1,8 +1,10 @@
+import { commonColumn } from "../../CommonHelper/Constant/commonColumn";
 import actionColumn from "./actionColumn";
 import { formatMoneyVn } from "../../CommonHelper/utils/helper/moneyHelper";
 const jobColumn = ({ handleEdit, handleDelete, handleDetail }) => {
 
     return [
+        ...commonColumn,
         {
             title: "Tên công việc",
             dataIndex: "name",

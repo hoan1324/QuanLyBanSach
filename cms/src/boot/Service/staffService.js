@@ -1,24 +1,25 @@
 import axiosClient from "../axiosClient"
 
-export default {
+const staffService = {
     url: `/Staff`,
-    getList(request){
-        return axiosClient.get(this.url, {params: request})
+    getList(request) {
+        return axiosClient.get(this.url, { params: request })
     },
-    getListDropdown(){
+    getListDropdown() {
         return axiosClient.get(`${this.url}/dropdown`)
     },
-    getById(id){
+    getById(id) {
         return axiosClient.get(`${this.url}/${id}`);
     },
-    create(request){
+    create(request) {
         return axiosClient.post(`${this.url}`, request);
     },
-    update(id, request){
+    update(id, request) {
         return axiosClient.put(`${this.url}/${id}`, request);
     },
-    delete(id){
+    delete(id) {
         return axiosClient.delete(`${this.url}/${id}`);
     }
-    
+
 }
+export default staffService

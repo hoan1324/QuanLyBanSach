@@ -1,4 +1,6 @@
 ﻿using ApiDomain.Entity;
+using CommonHelper.Enum;
+using Cryptography;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -44,13 +46,14 @@ namespace ApiInfrastructure.Context
 					context.Users.Add(new User
 					{
 						UserName = "admin",
-						Password = "01032004", // Hash mật khẩu
+						Password = CryptionHander.EncryptString("01032004"), // Hash mật khẩu
 						DateOfBirth = DateTime.Now,
 						PhoneNumber = "0348966964",
 						Email = "hoan3397@gmail.com",
-						Gender = 0,
-						Status = 0,
-						RoleID = roleID
+						FullName="Quản trị viên",
+						Gender = (int)GenderEnum.Male,
+						Status = (int)UserStatusEnum.Active,
+						RoleID = roleID,
 					});
 				}
 

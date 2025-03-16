@@ -1,7 +1,8 @@
-import constantType from "../../CommonHelper/Constant/constantType";
 import { Form, Input, Select, DatePicker, Flex, Button, Tooltip } from "antd";
 import { SearchOutlined } from '@ant-design/icons';
+
 import { convertDate, convertDateRangeToObject } from "../../CommonHelper/utils/helper/dateHelper";
+import constantType from "../../CommonHelper/Constant/constantType";
 
 function FilterInput({ filter }) {
   return (
@@ -49,7 +50,7 @@ function FormSearch({ filters, handleSearch }) {
     return filters.map((element) => {
       const value = values[element.filterFields.join(",")];
 
-      if (value === undefined || value === null || (typeof (value) === "string" && value?.trim().length == 0)) return null; // Bỏ qua nếu không có dữ liệu
+      if (value === undefined || value === null || (typeof (value) === "string" && value?.trim().length === 0)) return null; // Bỏ qua nếu không có dữ liệu
 
       if (element?.filterType === constantType.filterType.dateTimePicker) {
         values[element.filterFields.join(",")] = convertDate(value);

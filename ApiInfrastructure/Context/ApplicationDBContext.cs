@@ -16,6 +16,8 @@ namespace ApiInfrastructure.Context
 
 		}
 		public DbSet<User> Users { get; set; }
+		public DbSet<UserToken> UserTokens { get; set; }
+
 		public DbSet<Role> Roles { get; set; }
 		public DbSet<Permission> Permissions { get; set; }
 		public DbSet<UserPermission> UserPermissions { get; set; }
@@ -52,7 +54,8 @@ namespace ApiInfrastructure.Context
 		{
 			var user = modelBuilder.Entity<User>();
 			user.ToTable("Users");
-			user.Property(n => n.UserName).IsRequired().HasColumnType("nvarchar(200) COLLATE Latin1_General_CI_AI");
+			user.Property(n => n.FullName).IsRequired().HasColumnType("nvarchar(200) COLLATE Latin1_General_CI_AI");
+			user.Property(n => n.UserName).IsRequired().HasMaxLength(200).IsUnicode(true);
 			user.Property(n => n.Password).IsRequired().HasMaxLength(200).IsUnicode(true);
 			user.Property(n => n.PhoneNumber).IsRequired().HasMaxLength(15).IsUnicode(false);
 			user.Property(n => n.Email).IsRequired().HasMaxLength(200).IsUnicode(false);
@@ -64,7 +67,16 @@ namespace ApiInfrastructure.Context
 			user.HasMany(n => n.BookRatings).WithOne(n => n.User);
 			user.HasMany(n => n.ShoppingCarts).WithOne(n => n.User);
 			user.HasMany(n => n.Comments).WithOne(n => n.User);
+			user.HasMany(n=>n.UserTokens).WithOne(n => n.User);
 
+			var userToken = modelBuilder.Entity<UserToken>();
+			userToken.ToTable("UserTokens");
+			userToken.Property(n => n.AccessToken).IsRequired().IsUnicode(true);
+			userToken.Property(n => n.RefreshToken).IsRequired().IsUnicode(true);
+			userToken.Property(n => n.AccessTokenExpire).IsRequired();
+			userToken.Property(n => n.RefreshTokenExpire).IsRequired();
+			userToken.HasOne(n => n.User).WithMany(n => n.UserTokens).HasForeignKey(n => n.UserId);
+			userToken.Property(n => n.CreatedDate).HasDefaultValue(DateTime.Now);
 
 			var role = modelBuilder.Entity<Role>();
 			role.ToTable("Roles");

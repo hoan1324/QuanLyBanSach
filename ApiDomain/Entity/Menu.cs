@@ -12,9 +12,9 @@ namespace ApiDomain.Entity
 		public required string Name {  get; set; }
 		public string? Target { get; set; }//Định nghĩa mục tiêu khi người dùng nhấn vào menu. Ví dụ:_self: Mở trong tab hiện tại._blank: Mở trong tab mới.
 		public string? Url { get; set; }
-		public string? CreateBy { get; set; }
+		public Guid CreateBy { get; set; }
 		public DateTime? CreateDate { get; set; }
-		public string? ModifiedBy { get; set; }
+		public Guid? ModifiedBy { get; set; }
 		public DateTime? ModifiedDate { get; set; }
         public Guid ParentID { get; set; }
 		public int? Priority {  get; set; }

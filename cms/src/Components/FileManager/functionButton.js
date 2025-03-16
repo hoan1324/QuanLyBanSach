@@ -1,21 +1,22 @@
-import { useState,useMemo } from "react"
+import { useState, useMemo } from "react"
 import React from "react"
-import { Input, Drawer, Flex, Popconfirm,  message, Form,  Modal, Button, Empty } from "antd"
-import checkDefaultFolder from "../../CommonHelper/utils/helper/defaultFolderHelper"
-import services from "../../boot/services"
+import { Input, Drawer, Flex, Popconfirm, message, Form, Modal, Button, Empty } from "antd"
 import { FaRegCopy } from "react-icons/fa";
-import { AiOutlineFolderAdd, AiOutlineExclamationCircle } from "react-icons/ai";
+import { AiOutlineFolderAdd } from "react-icons/ai";
 import { MdDelete, MdOutlineMoveUp, MdOutlineFileDownload, MdArrowBackIosNew } from "react-icons/md";
 import { LuPencilLine } from "react-icons/lu";
+
+import checkDefaultFolder from "../../CommonHelper/utils/helper/defaultFolderHelper"
+import services from "../../boot/services"
 import TemplateExtension from "../Common/templateExtension";
-import { childrenAttachmentFolder, subsequentRankList } from "../../CommonHelper/utils/helper/recursionHelper";
+import { childrenAttachmentFolder } from "../../CommonHelper/utils/helper/recursionHelper";
 import InputModal from "../Common/inputModal";
 import { urlApi } from "../../CommonHelper/utils/helper/urlApiFile";
 import CommonButton from "./commonBtn"
-import { actionAsync,deleteAsync } from "../../CommonHelper/utils/helper/communicateApi";
+import { actionAsync, deleteAsync } from "../../CommonHelper/utils/helper/communicateApi";
 
 const { TextArea } = Input
-function FunctionButton({handleFinish,  status, fetchDataFolder, fetchDataFile, dataFolder, currentFolder, currentFile }) {
+function FunctionButton({ handleFinish, status, fetchDataFolder, fetchDataFile, dataFolder, currentFolder, currentFile }) {
   const [isOpen, setIsOpen] = useState(false)
   const [openModal, setOpenModal] = useState(false)
   const [openMenu, setOpenMenu] = useState({ open: false, action: "" })
@@ -31,9 +32,9 @@ function FunctionButton({handleFinish,  status, fetchDataFolder, fetchDataFile, 
         message.success(response.messsage)
         if (status === "folder") {
           await fetchDataFolder();
-        }    
-          await fetchDataFile();
-        
+        }
+        await fetchDataFile();
+
       } else {
         message.error(response.messsage)
       }
@@ -56,11 +57,10 @@ function FunctionButton({handleFinish,  status, fetchDataFolder, fetchDataFile, 
   }
   const handleClose = () => {
     if (openModal) {
-      {
-        form.resetFields()
-        setOpenModal(false)
-      }
+      form.resetFields()
+      setOpenModal(false)
     }
+
     if (isOpen) {
       setIsOpen(false)
 
@@ -164,7 +164,7 @@ function FunctionButton({handleFinish,  status, fetchDataFolder, fetchDataFile, 
       value = {
         ...currentFile,
         attachmentFolderId: currentSelect.id,
-        id: undefined
+        id: undefined,
       }
     }
     if (openMenu.action === "Di chuyển") {

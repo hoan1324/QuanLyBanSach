@@ -1,7 +1,9 @@
-﻿using APIBook.Dtos;
+﻿using APIBook.Attributes;
+using APIBook.Dtos;
 using APIBook.Services;
 using ApiDomain.Entity;
 using CommonHelper.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +11,8 @@ namespace APIBook.Controllers.V1
 {
 	[Route("v1/[controller]")]
 	[ApiController]
+	[Authorize]
+	[UserAuthorize]
 	public class JobController : ControllerBase
 	{
 		private readonly ILogger<JobController> _logger;
@@ -22,6 +26,8 @@ namespace APIBook.Controllers.V1
 
 		[HttpGet]
 		[Route("")]
+		[PermissionDescription("Xem danh sách các công việc")]
+
 		public async Task<IActionResult> GetListAsync([FromQuery] FilterRequest request)
 		{
 			try
@@ -39,6 +45,8 @@ namespace APIBook.Controllers.V1
 
 		[HttpGet]
 		[Route("dropdown")]
+		[PermissionDescription("Xem tất cả các công việc")]
+
 		public async Task<IActionResult> GetAllAsync()
 		{
 			try
@@ -55,6 +63,8 @@ namespace APIBook.Controllers.V1
 
 		[HttpGet]
 		[Route("{id}")]
+		[PermissionDescription("Xem chi tiết công việc")]
+
 		public async Task<IActionResult> GetByIdAsync([FromRoute] Guid id)
 		{
 			try
@@ -72,6 +82,8 @@ namespace APIBook.Controllers.V1
 
 		[HttpPost]
 		[Route("")]
+		[PermissionDescription("Tạo mới công việc")]
+
 		public async Task<IActionResult> CreateAsync([FromBody] JobDto request)
 		{
 			try
@@ -96,6 +108,8 @@ namespace APIBook.Controllers.V1
 
 		[HttpPut]
 		[Route("{id}")]
+		[PermissionDescription("Chỉnh sửa công việc")]
+
 		public async Task<IActionResult> UpdateAsync([FromBody] JobDto request)
 		{
 			try
@@ -119,6 +133,8 @@ namespace APIBook.Controllers.V1
 
 		[HttpDelete]
 		[Route("{id}")]
+		[PermissionDescription("Xóa công việc")]
+
 		public async Task<IActionResult> DeleteAsync([FromRoute] Guid id)
 		{
 			try

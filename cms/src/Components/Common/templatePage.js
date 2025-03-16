@@ -1,35 +1,35 @@
-import services from "../../boot/services";
-import { Tooltip, Table, Pagination, Button, Form, InputNumber, Divider, Input, message, Flex, Space } from "antd";
+import { Table, Pagination, Button, Form, Divider, Input, message } from "antd";
 import { IoIosAddCircleOutline } from "react-icons/io";
-import { SearchOutlined } from '@ant-design/icons';
-import { useContext, useEffect, useState, useCallback } from "react";
-import jobColumn from "../../Components/TableColumn/jobColumns";
+import { useMemo, useEffect, useState, useCallback } from "react";
 import InputModal from "../../Components/Common/inputModal";
-import TextArea from "antd/es/input/TextArea";
 import FormSearch from "../Common/formSearch";
 import { getList, actionAsync, deleteAsync, findByID } from "../../CommonHelper/utils/helper/communicateApi";
-import { useState, useMemo, useCallback } from "react";
+import useResponseStore from "../../store/responseStore";
+import usePageStore from "../../store/pageStore";
 
-
-function Table() {
-
-}
-
+// TemplatePage component chính
 function TemplatePage({ children, config }) {
-    const [data, setData] = useState([]); // Khởi tạo state để lưu dữ liệu
-    const [total, setTotal] = useState(1); // Tổng số công việc
+    const [data, setData] = useState([]);
+    const [total, setTotal] = useState(1);
     const [filter, setFilter] = useState({
         pageIndex: 1,
         pageSize: 20,
-        orderByColumn: "CreatedDate" || null,
+        orderByColumn: "CreatedDate",
     });
     const [isLoading, setIsLoading] = useState(false);
     const [title, setTitle] = useState();
     const [open, setOpen] = useState(false);
-    const [disabled, setDisabled] = useState(false)
-    const [form] = config?.form === undefined ? Form.useForm() : config.form;
+    const [disabled, setDisabled] = useState(false);
+    const [defaultForm] = Form.useForm();
+    const { getRequest, getResponse } = useResponseStore();
+    const { setDetailData, setFormInstance } = usePageStore()
+    const form = config?.form ?? defaultForm;
 
+
+    // Memoize the filter to avoid unnecessary re-renders
     const memoizedFilter = useMemo(() => filter, [filter]);
+
+    // Fetch data when filter or service changes
     const fetchData = useCallback(async () => {
         setIsLoading(true);
         try {
@@ -42,126 +42,153 @@ function TemplatePage({ children, config }) {
             setIsLoading(false);
         }
     }, [memoizedFilter, config?.service]);
+
+    const updateFormInstance = useCallback(() => {
+        if (config?.form) {
+            setFormInstance(config.form);
+        }
+    }, [config?.form, setFormInstance]); // ✅ Memo hóa function
+
+    useEffect(() => {
+        updateFormInstance();
+    }, [updateFormInstance]);
     useEffect(() => {
         fetchData();
     }, [fetchData]);
-    const handleOpenModel = (title) => {
-        if (!open) {
-            {
-                setTitle(title)
-                setOpen(true)
-            }
-        }
-    }
-    const handleClose = () => {
-        if (open) {
-            {
-                form.resetFields()
-                setOpen(false)
-                if (disabled) {
-                    setDisabled(false)
-                }
 
-            }
-        }
-    }
-    const handlePageChange = (page) => {
-        setFilter(prevFilter => ({
-            ...prevFilter,
-            pageIndex: page
-        }));
+    const handleOpenModal = (title) => {
+        setTitle(title);
+        setOpen(true);
     };
+
+    const handleClose = () => {
+        form.resetFields();
+        setDetailData({})
+        setOpen(false);
+        setDisabled(false);
+    };
+
+    const handlePageChange = (page) => {
+        setFilter((prevFilter) => ({ ...prevFilter, pageIndex: page }));
+    };
+
     const handleSubmit = async () => {
         try {
-            await form.validateFields(); // Validate tất cả các trường trước khi submit
-            form.submit(); // Submit form nếu validate thành công
+            await form.validateFields();
+            form.submit();
         } catch (error) {
             console.log('Vui lòng kiểm tra các trường hợp lỗi!');
         }
     };
-    const handeleSearch = (filterValue) => {
-        setFilter(pre => {
-            return {
-                ...pre,
-                filters: JSON.stringify(filterValue)
-            }
-        })
-    }
+
+    const handleSearch = (filterValue) => {
+        setFilter((prevFilter) => ({
+            ...prevFilter,
+            pageIndex: 1,
+            filters: JSON.stringify(filterValue),
+        }));
+    };
+
     const onFinish = async (values) => {
         try {
-            const response = await actionAsync(config?.service, values);
+            const response = await actionAsync(config?.service, getRequest(values));
+            console.log(response);
 
             if (response.isSuccess) {
-                message.success(response.messsage)
-
-                fetchData(); // Làm mới dữ liệu
+                message.success(response.message);
+                setFilter({
+                    pageIndex: 1,
+                    pageSize: 20,
+                    orderByColumn: "CreatedDate",
+                });
+                fetchData(); // Refresh data after submission
             } else {
-                message.error(response.messsage)
+                message.error(response.message);
             }
         } catch (error) {
-            message.error("Có lỗi xảy ra khi xử lý dữ liệu")
-
+            message.error("Có lỗi xảy ra khi xử lý dữ liệu");
         } finally {
             handleClose();
         }
-    }
+    };
+
     const handleEdit = async (id) => {
         const response = await findByID(config?.service, id);
-        if (config?.form !== undefined && config?.actiocAssignUrl !== undefined) {
-            config.actiocAssignUrl(response)
+        if (config?.form && config?.actiocAssignUrl) {
+            config.actiocAssignUrl(response);
         }
-        form.setFieldsValue(response)
-        handleOpenModel(`Chỉnh sửa ${config?.modalName}`)
+        setDetailData(response)
+        form.setFieldsValue(getResponse(response));
+        handleOpenModal(`Chỉnh sửa ${config?.modalName}`);
+    };
 
-    }
     const handleDetail = async (id) => {
         const response = await findByID(config?.service, id);
-        if (config?.form !== undefined && config?.actiocAssignUrl !== undefined) {
-            config.actiocAssignUrl(response)
+        if (config?.form && config?.actiocAssignUrl) {
+            config.actiocAssignUrl(response);
         }
-        setDisabled(true)
-        form.setFieldsValue(response)
-        handleOpenModel(`Thông tin ${config?.modalName}`)
-    }
+        setDetailData(response)
+        setDisabled(true);
+        form.setFieldsValue(getResponse(response));
+        handleOpenModal(`Thông tin ${config?.modalName}`);
+    };
+
     const handleDelete = async (id) => {
         try {
             const response = await deleteAsync(config?.service, id);
 
             if (response.isSuccess) {
-                message.success(response.messsage)
-
-                fetchData(); // Làm mới dữ liệu
+                message.success(response.messsage);
+                setFilter({
+                    pageIndex: 1,
+                    pageSize: 20,
+                    orderByColumn: "CreatedDate",
+                });
+                fetchData(); // Refresh data after delete
             } else {
-                message.error(response.messsage)
-
+                message.error(response.messsage);
             }
         } catch (error) {
-            message.error("Có lỗi xảy ra khi xử lý dữ liệu")
-
+            message.error("Có lỗi xảy ra khi xử lý dữ liệu");
         }
-    }
+    };
 
     return (
         <div>
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <h4 className="mb-0">{config?.title}</h4>
-                <Button size="large" onClick={() => handleOpenModel('Tạo mới công việc')} icon={<IoIosAddCircleOutline />} type="primary">
+                <Button size="large" onClick={() => handleOpenModal(`Tạo mới ${config?.modalName}`)} icon={<IoIosAddCircleOutline />} type="primary">
                     Thêm mới
                 </Button>
             </div>
-            <FormSearch handleSearch={handeleSearch} filters={config?.filters} />
-            <Table loading={isLoading} dataSource={config?.dataSource(data)} rowKey="key" scroll={{ x: 'max-content', }} pagination={false} bordered columns={config?.column({ handleEdit, handleDelete, handleDetail })} />
-            <Pagination className="mt-4" align="center" onChange={handlePageChange} current={filter.pageIndex} defaultCurrent={1} pageSize={filter.pageSize} total={total} />
-            <InputModal diasbled={disabled} title={title} handleOk={handleSubmit} handleClose={handleClose} width={1000} isOpen={open}>
+            <FormSearch handleSearch={handleSearch} filters={config?.filters} />
+            <Table
+                loading={isLoading}
+                dataSource={config?.dataSource(data, filter?.pageIndex, filter?.pageSize)}
+                rowKey="key"
+                scroll={{ x: "max-content" }}
+                pagination={false}
+                bordered
+                columns={config?.column({ handleEdit, handleDelete, handleDetail })}
+            />
+            <Pagination
+                className="mt-4"
+                align="center"
+                onChange={handlePageChange}
+                current={filter.pageIndex}
+                defaultCurrent={1}
+                pageSize={filter.pageSize}
+                total={total}
+            />
+            <InputModal disabled={disabled} title={title} handleOk={handleSubmit} handleClose={handleClose} width={1000} isOpen={open}>
                 <Divider />
                 <Form disabled={disabled} form={form} onFinish={onFinish} name="form" layout="vertical">
-                    <Form.Item name="id" hidden >
+                    <Form.Item name="id" hidden>
                         <Input disabled />
                     </Form.Item>
                     {children}
                 </Form>
             </InputModal>
-
         </div>
     );
 }

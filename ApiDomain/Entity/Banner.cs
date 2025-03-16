@@ -13,9 +13,9 @@ namespace ApiDomain.Entity
 		public string? Title { get; set; }
 		public string? Summary {  get; set; }
 		public string? Url { get; set; }
-		public string? CreateBy { get; set; }
+		public Guid? CreateBy { get; set; }
 		public DateTime? CreateDate { get; set; }
-		public string? ModifiedBy { get; set; }
+		public Guid? ModifiedBy { get; set; }
 		public DateTime? ModifiedDate { get; set; }
 		public string? Description {  get; set; }
 		public required string Media {  get; set; }

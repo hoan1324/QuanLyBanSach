@@ -11,9 +11,9 @@ namespace ApiDomain.Entity
 	{
 		public required string Question { get; set; }
 		public required string Answer { get; set; }
-		public string? CreateBy {  get; set; }
+		public Guid? CreateBy {  get; set; }
 		public DateTime? CreateDate { get; set; }
-		public string? ModifiedBy { get; set; }
+		public Guid? ModifiedBy { get; set; }
 		public DateTime? ModifiedDate { get; set; }
 		public int Status { get; set; }//0:đang phê duyệt//đã phê duyệt
 

@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Flex,Tooltip,Button,Form ,Checkbox,Dropdown,Input} from "antd"
+import { Flex, Tooltip, Button, Form, Checkbox, Dropdown, Input } from "antd"
+import { AiOutlineExclamationCircle } from "react-icons/ai";
+import { CiSearch } from "react-icons/ci";
+
 import FileUpload from "./fileUpload"
 import InputModal from "../Common/inputModal";
-import {  AiOutlineExclamationCircle } from "react-icons/ai";
-import { CiSearch } from "react-icons/ci";
 import constantType from "../../CommonHelper/Constant/constantType";
 
 const CommonButton = ({ handleClick, handleFinish, currentFolder, fetchDataFile }) => {
@@ -13,13 +14,13 @@ const CommonButton = ({ handleClick, handleFinish, currentFolder, fetchDataFile 
       <Tooltip className="position-relative" title={"Chi tiết"}>
         <Button onClick={handleClick} icon={<AiOutlineExclamationCircle />}></Button>
       </Tooltip>
-      <SearchFile handleFinish={handleFinish} currentFolder={currentFolder}  />
+      <SearchFile handleFinish={handleFinish} currentFolder={currentFolder} />
       <FileUpload fetchDataFile={fetchDataFile} folderId={currentFolder?.id} />
     </Flex>
   )
 }
 const SearchFile = ({ currentFolder, handleFinish }) => {
-  const { imageTypes, compressedTypes, audioTypes, videoTypes, documentTypes}=constantType.extension
+  const { imageTypes, compressedTypes, audioTypes, videoTypes, documentTypes } = constantType.extension
   const [open, setOpen] = useState(false)
   const [selectedValues, setSelectedValues] = useState([]);
   const [formSearch] = Form.useForm()
@@ -55,17 +56,17 @@ const SearchFile = ({ currentFolder, handleFinish }) => {
   );
   const onFinish = (values) => {
     console.log('Form values:', values);
-  
+
     let filterRequest = {
-      status:"",
-      request:{
-        pageIndex:1
+      status: "",
+      request: {
+        pageIndex: 1
       }
     };
-  
-    if (currentFolder=== undefined) {
+
+    if (currentFolder === undefined) {
       let config = [];
-  
+
       if (values.textSearch?.trim()) {
         config.push({
           filterFields: ["Name", "Extention"],
@@ -74,7 +75,7 @@ const SearchFile = ({ currentFolder, handleFinish }) => {
           filterType: "String"
         });
       }
-  
+
       if (values.extension?.length > 0) {
         config.push({
           filterFields: ["Extention"],
@@ -83,33 +84,34 @@ const SearchFile = ({ currentFolder, handleFinish }) => {
           filterType: "String"
         });
       }
-  
+
       filterRequest = {
-        status:"List",
-        request:{...filterRequest.request,
-            orderByColumn: "Name",
-            filters: JSON.stringify(config)
+        status: "List",
+        request: {
+          ...filterRequest.request,
+          orderByColumn: "Name",
+          filters: JSON.stringify(config)
         }
       };
     } else {
       filterRequest = {
-        status:"InFolder",
-        request:{
-        ...filterRequest.request,
-        folderId:currentFolder?.id,
-        textSearch: values.textSearch?.trim() || null,
-        ext: values.extension?.length > 0 ? JSON.stringify(values.extension) : null
+        status: "InFolder",
+        request: {
+          ...filterRequest.request,
+          folderId: currentFolder?.id,
+          textSearch: values.textSearch?.trim() || null,
+          ext: values.extension?.length > 0 ? JSON.stringify(values.extension) : null
         }
       };
     }
-    
+
     handleClose()
     handleFinish(filterRequest)
-    
-    
+
+
   };
-  const handleClose=()=>{
-    if(open){
+  const handleClose = () => {
+    if (open) {
       formSearch.resetFields()
       setSelectedValues([])
       setOpen(false)

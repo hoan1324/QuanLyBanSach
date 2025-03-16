@@ -1,8 +1,10 @@
-import constantType from "../../CommonHelper/Constant/constantType";
 import { Image } from "antd";
-import ExtensionMixin from "../../CommonHelper/utils/mixins/extension";
 import React from "react";
-import { useRef,useEffect } from "react";
+import { useRef, useEffect } from "react";
+
+import constantType from "../../CommonHelper/Constant/constantType";
+import ExtensionMixin from "../../CommonHelper/utils/mixins/extension";
+
 const { mediaTypeElement, flatDisplayExtension } = ExtensionMixin();
 
 const mediaType = (extension) => {
@@ -26,8 +28,8 @@ function TemplateExtension({ extension, url, ...props }) {
   const divRef = useRef(null);
   useEffect(() => {
     if (divRef.current) {
-    divRef.current.firstChild.classList.add("w-100");
-    
+      divRef.current.firstChild.classList.add("w-100");
+
     }
   }, []);
 
@@ -55,13 +57,13 @@ function TemplateExtension({ extension, url, ...props }) {
     }
 
     if (constantType.extension.documentTypes.includes(ext) || constantType.extension.compressedTypes.includes(ext)) {
-      const Icon=iconExtension(ext)
+      const Icon = iconExtension(ext)
       return (
         <div className=" w-100 d-flex justify-content-center align-items-center" style={{
           backgroundColor: styleExtentsion(ext)?.bgColor,
           borderRadius: "8px 8px 0 0", ...style,
         }} {...restProps}>
-          <Icon style={{fontSize:"100px",color:styleExtentsion(ext)?.color}} />
+          <Icon style={{ fontSize: "100px", color: styleExtentsion(ext)?.color }} />
         </div>
       );
     }

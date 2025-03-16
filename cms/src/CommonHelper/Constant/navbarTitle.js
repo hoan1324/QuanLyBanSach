@@ -11,10 +11,10 @@ const navbarTitle = [
         type: "group",
         children: [
             {
-                key: "/",
+                key: "/Home",
                 icon: <FaHome />,
                 label: (
-                    <Link to="/">
+                    <Link to="/Home">
                         Trang chủ
                     </Link>
                 )
