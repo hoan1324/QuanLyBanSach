@@ -369,7 +369,7 @@ namespace ApiInfrastructure.Context
 		public ApplicationDBContext CreateDbContext(string[] args)
 		{
 			var builder = new DbContextOptionsBuilder<ApplicationDBContext>();
-			var connectionString = "Data Source=LAPTOP-FT5F2K76\\SQLEXPRESS;Initial Catalog=QuanLyBanSach;User Id=sa;Password=123456;TrustServerCertificate=True";
+			var connectionString = "Data Source=DESKTOP-L33PFN4\\SQLEXPRESS;Initial Catalog=QuanLyBanSach;User Id=sa;Password=123456;TrustServerCertificate=True";
 			builder.UseSqlServer(connectionString);
 
 			return new ApplicationDBContext(builder.Options);
