@@ -10,5 +10,7 @@ namespace APIBook.Services
 		Task<ServiceTranferModel<UserLoginResponseDto>> RefreshToken(RefeshTokenDto request);
 		Task<CurrentUserDto> CurrentUser();
 		Task<bool> Logout(Guid userId);
-	}
+        Task<bool> IsTokenExists(string accessToken);
+
+    }
 }

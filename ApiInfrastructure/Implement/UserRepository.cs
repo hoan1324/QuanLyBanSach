@@ -45,14 +45,14 @@ namespace ApiInfrastructure.Implement
 
 		public async Task<User> DeleteAsync(Guid id)
 		{
-			var user = await _userRepository.FindAsync(id);
-			if (user != null)
+			var position = await _userRepository.FindAsync(id);
+			if (position != null)
 			{
 				await _userTokenRepository.DeleteByExpressionAsync(n => n.UserId == id);
 				await _userPermissionRepository.DeleteByExpressionAsync(n => n.UserID== id);
 				await _userRepository.DeleteByExpressionAsync(n => n.Id == id);
 				await _unitOfWork.SaveAsync();
-				return user;
+				return position;
 			}
 			return null;
 		}
@@ -76,48 +76,49 @@ namespace ApiInfrastructure.Implement
 			return await _userRepository.GetAll().AsNoTracking().FirstOrDefaultAsync(n => n.UserName == userName);
 		}
 
-		public async Task<User> InsertAsync(User user)
+		public async Task<User> CreateAsync(User request)
 		{
-			user.Id = Guid.NewGuid();
-			if (await _userRepository.GetAll().AsNoTracking().AnyAsync(n => n.UserName == user.UserName))
+			request.Id = Guid.NewGuid();
+			if (await _userRepository.GetAll().AsNoTracking().AnyAsync(n => n.UserName == request.UserName))
 				return null;
 
-			var userInserted = await _userRepository.AddAsync(user);
+			var create = await _userRepository.AddAsync(request);
 			await _unitOfWork.SaveAsync();
-			return userInserted;
+			return create;
 		}
 
-		public async Task<User> UpdateAsync(User user)
+		public async Task<User> UpdateAsync(User request)
 		{
-			var existsUser = await _userRepository.GetAll().Include(n => n.UserPermissions).FirstOrDefaultAsync(n => n.Id == user.Id);
-			if (existsUser != null)
+			var position = await _userRepository.GetAll().Include(n => n.UserPermissions).FirstOrDefaultAsync(n => n.Id == request.Id);
+			if (position!= null)
 			{
-				user.Password = existsUser.Password;
-				var userUpdated = await _userRepository.UpdateAsync(user);
+				request.Password = position.Password;
+                TypeHelper.NormalMapping(request, position, "Id", "CreatedDate", "CreatedBy");
+                var update = await _userRepository.UpdateAsync(position);
 
-				await _userPermissionRepository.DeleteByExpressionAsync(n => n.UserID == user.Id);
+				await _userPermissionRepository.DeleteByExpressionAsync(n => n.UserID == update.Id);
 				var userPermissions = await _permissionRoleRepository
-				.GetByExpression(n => n.RoleID == user.RoleID)
+				.GetByExpression(n => n.RoleID == request.RoleID)
 				.Select(n => new UserPermission
 				{
-					UserID = user.Id,
+					UserID = request.Id,
 					PermissionCode = n.PermissionCode,
 					PermissionID=n.PermissionID
 				}).ToListAsync();
 				await _userPermissionRepository.AddRangeAsync(userPermissions);
 				await _unitOfWork.SaveAsync();
-				return userUpdated;
+				return update;
 			}
 			return null;
 
 		}
 		public async Task<bool> UpdatePasswordAsync(Guid id, string newPass)
 		{
-			var existsUser = await _userRepository.FindAsync(id);
-			if (existsUser != null)
+			var position = await _userRepository.FindAsync(id);
+			if (position != null)
 			{
-				existsUser.Password = newPass;
-				var userUpdated = await _userRepository.UpdateAsync(existsUser);
+				position.Password = newPass;
+				var userUpdated = await _userRepository.UpdateAsync(position);
 				return await _unitOfWork.SaveAsync() > 0;
 			}
 			return false;
@@ -132,17 +133,17 @@ namespace ApiInfrastructure.Implement
 
 		public async Task<UserToken> UpdateUserTokenAsync(UserToken userToken)
 		{
-			var userUpdated = await _userTokenRepository.UpdateAsync(userToken);
+			var update = await _userTokenRepository.UpdateAsync(userToken);
 			await _unitOfWork.SaveAsync();
-			return userUpdated;
+			return update;
 		}
 
 		public async Task<List<UserToken>> DeleteUserTokenAsync(Guid userId)
 		{
-			var userToken = await _userTokenRepository.GetByExpression(n => n.UserId == userId).ToListAsync();
-			await _userTokenRepository.DeleteRangeAsync(userToken);
+			var position = await _userTokenRepository.GetByExpression(n => n.UserId == userId).ToListAsync();
+			await _userTokenRepository.DeleteRangeAsync(position);
 			await _unitOfWork.SaveAsync();
-			return userToken;
+			return position;
 		}
 
 		public async Task<UserToken> FindUserTokenById(Guid id)

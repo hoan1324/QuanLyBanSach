@@ -14,7 +14,6 @@ namespace ApiDomain.Entity
 		public decimal UnitPrice {  get; set; }
 		public int Quantity {  get; set; }
 		public decimal NetPrice {  get; set; }
-		public DateTime? CreatedDate { get; set; }
 
 		public Order? Order { get; set; }
 		public virtual Book? Book { get; set; }

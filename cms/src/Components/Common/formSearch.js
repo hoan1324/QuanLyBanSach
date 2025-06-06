@@ -1,14 +1,27 @@
-import { Form, Input, Select, DatePicker, Flex, Button, Tooltip } from "antd";
-import { SearchOutlined } from '@ant-design/icons';
-
-import { convertDate, convertDateRangeToObject } from "../../CommonHelper/utils/helper/dateHelper";
+import {
+  Form,
+  Input,
+  Select,
+  DatePicker,
+  Flex,
+  Button,
+  Tooltip,
+  message,
+} from "antd";
+import { useState } from "react";
+import { ReloadOutlined } from "@ant-design/icons";
+import { SearchOutlined } from "@ant-design/icons";
+import { useCallback } from "react";
+import {
+  convertDate,
+  convertDateRangeToObject,
+} from "../../CommonHelper/utils/helper/dateHelper";
 import constantType from "../../CommonHelper/Constant/constantType";
+import useFilterLogic from "../../hooks/useFilterLogic";
 
 function FilterInput({ filter }) {
   return (
-    <Form.Item className="my-0"
-      name={filter?.filterFields.join(",")}
-    >
+    <Form.Item className="my-0" name={filter?.filterFields.join(",")}>
       {filter.filterType === constantType.filterType.textBox && (
         <Input placeholder={filter.title} />
       )}
@@ -20,9 +33,9 @@ function FilterInput({ filter }) {
           options={
             filter?.options
               ? filter.options.map((element) => ({
-                value: element.id,
-                label: element.name,
-              }))
+                  value: element.id,
+                  label: element.name,
+                }))
               : []
           }
         />
@@ -45,56 +58,32 @@ function FilterInput({ filter }) {
 
 function FormSearch({ filters, handleSearch }) {
   const [form] = Form.useForm();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const assignValue = (values) => {
-    return filters.map((element) => {
-      const value = values[element.filterFields.join(",")];
-
-      if (value === undefined || value === null || (typeof (value) === "string" && value?.trim().length === 0)) return null; // Bỏ qua nếu không có dữ liệu
-
-      if (element?.filterType === constantType.filterType.dateTimePicker) {
-        values[element.filterFields.join(",")] = convertDate(value);
-      }
-
-      if (element?.filterType === constantType.filterType.rangeDatePicker) {
-        values[element.filterFields.join(",")] = convertDateRangeToObject(value[0], value[1]);
-      }
-
-      return {
-        filterFields: element.filterFields,
-        value: values[element.filterFields.join(",")],
-        condition: element.condition,
-        filterType: element.filterType
-      };
-    }).filter(item => item !== null); // Loại bỏ các giá trị null
-  };
-
-  const onFinishSearch = (values) => {
-    const filter = assignValue(values);
-    handleSearch(filter);
-    form.resetFields()
-  };
-
-  const handleSubmit = async () => {
+  const handleDebouncedOk = async () => {
     try {
       await form.validateFields();
       const values = form.getFieldsValue(true);
-      const hasValue = Object.values(values).some(val => val !== undefined && val !== "");
 
-      if (!hasValue) {
-        form.setFields([
-          {
-            name: filters[0]?.filterFields.join(","),
-            errors: ["Vui lòng nhập ít nhất một trường!"],
-          },
-        ]);
+      if (!hasValue(values)) {
+        message.warning("Vui lòng nhập ít nhất một trường để tìm kiếm.");
         return;
       }
 
-      form.submit()
+      form.submit();
     } catch (error) {
       console.log("Lỗi xác thực:", error);
     }
+  };
+
+  const { assignValue, hasValue } = useFilterLogic(filters);
+
+  const onFinishSearch = (values) => {
+    const filter = assignValue(values);
+    console.log("filter");
+    console.log(JSON.stringify(filter));
+    handleSearch(JSON.stringify(filter));
+    form.resetFields();
   };
 
   return (
@@ -108,7 +97,18 @@ function FormSearch({ filters, handleSearch }) {
             <Button
               shape="circle"
               icon={<SearchOutlined />}
-              onClick={handleSubmit}
+              onClick={handleDebouncedOk}
+            />
+          </Tooltip>
+
+          <Tooltip title="Đặt lại">
+            <Button
+              type="default"
+              shape="circle"
+              icon={<ReloadOutlined />} // import { ReloadOutlined } from "@ant-design/icons";
+              onClick={() => {
+                form.resetFields();
+              }}
             />
           </Tooltip>
         </Flex>
@@ -116,4 +116,4 @@ function FormSearch({ filters, handleSearch }) {
     </div>
   );
 }
-export default FormSearch
+export default FormSearch;

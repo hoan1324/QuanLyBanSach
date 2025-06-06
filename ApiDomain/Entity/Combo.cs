@@ -13,7 +13,11 @@ namespace ApiDomain.Entity
 		public string? Description { get; set; }
 		public string? Image { get; set; }
 		public DateTime? CreateDate { get; set; }
-		public bool? IsActive { get; set; }
+        public Guid? CreatedBy { get; set; }
+
+        public DateTime? ModifiedDate { get; set; }
+        public Guid? ModifiedBy { get; set; }
+        public bool? IsActive { get; set; }
 		public ICollection<ComboBook>? Books { get; set; }
 	}
 }

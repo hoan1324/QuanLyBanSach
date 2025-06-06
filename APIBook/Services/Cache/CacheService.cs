@@ -31,7 +31,9 @@ namespace APIBook.Services
 			if (cachedUser == null)
 			{
 				var user = await _userRepository.FindByIdAndRoleAsync(userId);
-				if (user != null)
+                var userPermission = await _permissionRepository.GetUserPermission(userId);
+                var rolePermission = await _permissionRepository.GetRolePermission(user.RoleID);
+                if (user != null)
 				{
 					var curentUser = new CurrentUserDto
 					{
@@ -48,8 +50,8 @@ namespace APIBook.Services
 						ModifiedDate = user.ModifiedDate,
 						UserName = user.UserName,
 						RoleID = user.RoleID,
-						UserPermissions = (await _permissionRepository.GetUserPermission(userId)).Select(n => n.Code).ToList(),
-						Gender=user.Gender,
+                        UserPermissions = userPermission.Concat(rolePermission).Select(n => n.Code).Distinct().ToList(),
+                        Gender = user.Gender,
 					};
 					_memoryCache.Set<CurrentUserDto>(userCachedKey, curentUser, new MemoryCacheEntryOptions { AbsoluteExpiration = DateTime.Now.AddMinutes(30) });
 				}

@@ -7,11 +7,11 @@ namespace Api.Services
     {
         //Task<List<AttachmentDto>> GetMyFiles();
         Task<PaginationModel<AttachmentDto>> GetListAsync(FilterRequest request);
-        Task<AttachmentDto> GetByIdAsync(Guid AttachmentId);
+        Task<AttachmentDto> GetByIdAsync(Guid id);
         Task<AttachmentDto> CreateAsync(AttachmentDto request);
         Task<List<AttachmentDto>> CreateManyAsync(List<AttachmentDto> request);
         Task<AttachmentDto> UpdateAsync(AttachmentDto request);
-        Task<AttachmentDto> DeleteAsync(Guid AttachmentId);
+        Task<AttachmentDto> DeleteAsync(Guid id);
 
 	}
 }

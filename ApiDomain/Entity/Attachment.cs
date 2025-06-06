@@ -15,7 +15,9 @@ namespace ApiDomain.Entity
 		public float? Size { get; set; }
 		public DateTime CreatedDate { get; set; }
 		public Guid? CreatedBy { get; set; }
-		public Guid? AttachmentFolderId { get; set; }
+        public DateTime? ModifiedDate { get; set; }
+        public Guid? ModifiedBy { get; set; }
+        public Guid? AttachmentFolderId { get; set; }
 
 		public virtual AttachmentFolder? AttachmentFolder { get; set; }
 	}

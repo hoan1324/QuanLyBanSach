@@ -1,14 +1,17 @@
 ﻿using Api.Dtos;
 using Api.Services;
 using APIBook.Attributes;
+using APIBook.Dtos.Permission;
 using APIBook.Services;
 using Azure;
 using CommonHelper.Enum;
+using CommonHelper.Helpers;
 using CommonHelper.Models;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
 using System.Data;
 using System.Reflection;
 
@@ -18,7 +21,9 @@ namespace Api.Controllers.V1
 	[ApiController]
 	[Authorize]
 	[UserAuthorize]
-	public class PermissionController : ControllerBase
+    [GroupPermissionDescription("Quản lý danh sách quyền")]
+
+    public class PermissionController : ControllerBase
 	{
 		private readonly IPermissionService _permissionService;
 		private readonly ILogger<PermissionController> _logger;
@@ -32,6 +37,8 @@ namespace Api.Controllers.V1
 			//_actionLogService = actionLogService;
 			_authService = authService;
 		}
+
+
 
 		[HttpGet]
 		[Route("")]
@@ -49,7 +56,23 @@ namespace Api.Controllers.V1
 			}
 		}
 
-		[HttpPost]
+        [HttpGet]
+        [Route("group-permission")]
+        [PermissionDescription("Xem danh sách nhóm quyền")]
+        public async Task<IActionResult> GetGroupPermission()
+        {
+            try
+            {
+                return Ok(ResponseModel.Success(await _permissionService.GetGroupPermission()));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Không xem danh sách nhóm quyền, vui lòng xem lại !");
+            }
+        }
+
+        [HttpPost]
 		[Route("init")]
 		[PermissionDescription("Tạo quyền mặc định")]
 		public async Task<IActionResult> InitPermission()
@@ -57,16 +80,16 @@ namespace Api.Controllers.V1
 			try
 			{
 				Assembly asm = Assembly.GetExecutingAssembly();
-				//var listController = asm.GetTypes()
-				//	.Where(type => typeof(ControllerBase).IsAssignableFrom(type))
-				//	.Where(m => m.CustomAttributes.Any(n => n.AttributeType == typeof(PermissionGroupDescriptionAttribute)))
-				//	.Select(n => new GroupPermissionDto
-				//	{
-				//		Id = Guid.Empty,
-				//		GroupPermissionCode = n.Name.Replace("Controller", ""),
-				//		GroupPermissionName = ((PermissionGroupDescriptionAttribute)n.GetCustomAttribute(typeof(PermissionGroupDescriptionAttribute)))?.Description,
-				//		Status = (int)PermissionStatusEnum.Active
-				//	});
+				var listController = asm.GetTypes()
+					.Where(type => typeof(ControllerBase).IsAssignableFrom(type))
+					.Where(m => m.CustomAttributes.Any(n => n.AttributeType == typeof(GroupPermissionDescriptionAttribute)))
+					.Select(n => new GroupPermissionDto
+					{
+						Id = Guid.Empty,
+						Code = n.Name.Replace("Controller", ""),
+						Name = ((GroupPermissionDescriptionAttribute)n.GetCustomAttribute(typeof(GroupPermissionDescriptionAttribute)))?.Description,
+						Status = (int)PermissionStatusEnum.Active
+					}).Distinct().ToList();
 
 				var controllerActionList = asm.GetTypes()
 						.Where(type => typeof(ControllerBase).IsAssignableFrom(type))
@@ -78,10 +101,11 @@ namespace Api.Controllers.V1
 							Code = x.DeclaringType.Name.Replace("Controller", "") + "-" + x.Name,
 							Id = Guid.Empty,
 							Name = ((PermissionDescriptionAttribute)x.GetCustomAttribute(typeof(PermissionDescriptionAttribute)))?.Description,
-							Status = (int)PermissionStatusEnum.Active
-						})
+							Status = (int)PermissionStatusEnum.Active,
+							Method=(AttributeHelper.GetMethodEnum(x.GetCustomAttribute<HttpMethodAttribute>()?.HttpMethods.FirstOrDefault()))
+                        })
 						.OrderBy(x => x.Code).Distinct().ToList();
-				var response = await _permissionService.InitRole( controllerActionList);
+				var response = await _permissionService.InitRole( controllerActionList,listController);
 				//var currentUser = await _authService.CurrentUser();
 				//await _actionLogService.CreateAsync(new ActionLogDto
 				//{

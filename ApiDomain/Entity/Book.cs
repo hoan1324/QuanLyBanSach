@@ -20,9 +20,11 @@ namespace ApiDomain.Entity
 		public string? ISBN { get; set; }
 		public string? Translator { get; set; }
 		public DateTime? CreatedDate { get; set; }
+        public DateTime? ModifiedDate { get; set; }
+        public Guid? ModifiedBy { get; set; }
 
-		//public string? AgeRestriction {  get; set; }
-		public required string PublishingHouse { get; set; }
+        //public string? AgeRestriction {  get; set; }
+        public required string PublishingHouse { get; set; }
 		public int Status {  get; set; }//0:đc bán,1:ngưng bán
 		public string? Url {  get; set; }
 		public Guid MenuID { get; set; }

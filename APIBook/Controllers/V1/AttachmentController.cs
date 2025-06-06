@@ -13,6 +13,7 @@ namespace APIBook.Controllers.V1
 	[ApiController]
 	[Authorize]
 	[UserAuthorize]
+	[GroupPermissionDescription("Quản lý danh sách tệp")]
 	public class AttachmentController : ControllerBase
 	{
 		private readonly IWebHostEnvironment _webHostEnvironment;

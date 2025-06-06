@@ -1,145 +1,163 @@
-import { useState, useMemo } from "react"
-import React from "react"
-import { Input, Drawer, Flex, Popconfirm, message, Form, Modal, Button, Empty } from "antd"
+import { useState, useMemo } from "react";
+import React from "react";
+import {
+  Input,
+  Drawer,
+  Flex,
+  Popconfirm,
+  message,
+  Form,
+  Modal,
+  Button,
+  Empty,
+} from "antd";
 import { FaRegCopy } from "react-icons/fa";
 import { AiOutlineFolderAdd } from "react-icons/ai";
-import { MdDelete, MdOutlineMoveUp, MdOutlineFileDownload, MdArrowBackIosNew } from "react-icons/md";
+import {
+  MdDelete,
+  MdOutlineMoveUp,
+  MdOutlineFileDownload,
+  MdArrowBackIosNew,
+} from "react-icons/md";
 import { LuPencilLine } from "react-icons/lu";
 
-import checkDefaultFolder from "../../CommonHelper/utils/helper/defaultFolderHelper"
-import services from "../../boot/services"
+import checkDefaultFolder from "../../CommonHelper/utils/helper/defaultFolderHelper";
+import services from "../../boot/services";
 import TemplateExtension from "../Common/templateExtension";
 import { childrenAttachmentFolder } from "../../CommonHelper/utils/helper/recursionHelper";
 import InputModal from "../Common/inputModal";
 import { urlApi } from "../../CommonHelper/utils/helper/urlApiFile";
-import CommonButton from "./commonBtn"
-import { actionAsync, deleteAsync } from "../../CommonHelper/utils/helper/communicateApi";
+import CommonButton from "./commonBtn";
+import {
+  actionAsync,
+  deleteAsync,
+} from "../../CommonHelper/utils/helper/communicateApi";
 
-const { TextArea } = Input
-function FunctionButton({ handleFinish, status, fetchDataFolder, fetchDataFile, dataFolder, currentFolder, currentFile }) {
-  const [isOpen, setIsOpen] = useState(false)
-  const [openModal, setOpenModal] = useState(false)
-  const [openMenu, setOpenMenu] = useState({ open: false, action: "" })
-  const [actionParent, setActionParent] = useState([null])
-  const [form, formSearch] = Form.useForm()
-  const [currentSelect, setCurrentSelect] = useState()
+const { TextArea } = Input;
+function FunctionButton({
+  handleFinish,
+  status,
+  fetchDataFolder,
+  fetchDataFile,
+  dataFolder,
+  currentFolder,
+  currentFile,
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
+  const [openMenu, setOpenMenu] = useState({ open: false, action: "" });
+  const [actionParent, setActionParent] = useState([null]);
+  const [form, formSearch] = Form.useForm();
+  const [currentSelect, setCurrentSelect] = useState();
   const handleDelete = async (service, id) => {
     try {
       const response = await deleteAsync(service, id);
 
       if (response.isSuccess) {
-
-        message.success(response.messsage)
+        message.success(response.message);
         if (status === "folder") {
           await fetchDataFolder();
         }
         await fetchDataFile();
-
       } else {
-        message.error(response.messsage)
+        message.error(response.message);
       }
     } catch (error) {
       console.log(error);
 
-      message.error("Co loi ")
+      message.error("Co loi ");
     }
-  }
+  };
   const handleRename = () => {
     if (status === "file") {
-      const value = { ...currentFile, url: urlApi(currentFile.url) }
-      form.setFieldsValue(value)
-      setIsOpen(true)
+      const value = { ...currentFile, url: urlApi(currentFile.url) };
+      form.setFieldsValue(value);
+      setIsOpen(true);
+    } else {
+      form.setFieldsValue(currentFolder);
+      setOpenModal(true);
     }
-    else {
-      form.setFieldsValue(currentFolder)
-      setOpenModal(true)
-    }
-  }
+  };
   const handleClose = () => {
     if (openModal) {
-      form.resetFields()
-      setOpenModal(false)
+      form.resetFields();
+      setOpenModal(false);
     }
 
     if (isOpen) {
-      setIsOpen(false)
-
+      setIsOpen(false);
     }
-  }
+  };
   const handleSubmit = async () => {
     try {
       await form.validateFields(); // Validate tất cả các trường trước khi submit
       form.submit(); // Submit form nếu validate thành công
     } catch (error) {
-      console.log('Vui lòng kiểm tra các trường hợp lỗi!');
+      console.log("Vui lòng kiểm tra các trường hợp lỗi!");
     }
   };
   const onFinish = async (values) => {
-
     try {
       let service;
       if (status === "file") {
-        service = services.attachment
+        service = services.attachment;
         if (values.id !== undefined) {
           values = {
             ...currentFile,
-            name: values.name.replace(/\.[^/.]+$/, '') + `.${currentFile.extension}`,
-          }
+            name:
+              values.name.replace(/\.[^/.]+$/, "") +
+              `.${currentFile.extension}`,
+          };
         }
-      }
-      else {
-        service = services.attachmentFolder
+      } else {
+        service = services.attachmentFolder;
         if (values.id === undefined && currentFolder === undefined) {
-          values.parentId = null
+          values.parentId = null;
         }
         if (currentFolder !== undefined) {
-          values.parentId = currentFolder.id
+          values.parentId = currentFolder.id;
         }
         if (values.id !== undefined) {
           values = {
             ...currentFolder,
             name: values.name,
-            description: values.description
-          }
+            description: values.description,
+          };
         }
       }
 
       const response = await actionAsync(service, values);
 
       if (response.isSuccess) {
-
-        message.success(response.messsage)
+        message.success(response.message);
 
         if (status === "file") {
           await fetchDataFile();
-        }
-        else {
+        } else {
           await fetchDataFolder();
         }
       } else {
-        message.error(response.messsage)
-
+        message.error(response.message);
       }
     } catch (error) {
       console.log(error);
 
-      message.error("Co loi ")
-
+      message.error("Co loi ");
     } finally {
       handleClose();
     }
-  }
+  };
   const handleDownLoad = async (url, name) => {
     try {
       console.log("Bắt đầu tải file...");
 
-      const response = await fetch(url, { cache: 'no-cache' });
+      const response = await fetch(url, { cache: "no-cache" });
       if (!response.ok) throw new Error("Tải file thất bại");
 
       const blob = await response.blob();
       const urlDownLoad = window.URL.createObjectURL(blob);
 
-      const downLoadFile = document.createElement('a');
+      const downLoadFile = document.createElement("a");
       downLoadFile.href = urlDownLoad;
       downLoadFile.download = name;
       document.body.appendChild(downLoadFile);
@@ -150,13 +168,13 @@ function FunctionButton({ handleFinish, status, fetchDataFolder, fetchDataFile, 
 
       console.log("Tải file thành công!");
     } catch (error) {
-      console.error('Lỗi khi tải file:', error);
+      console.error("Lỗi khi tải file:", error);
     }
   };
   const handleOk = async (service) => {
     if (currentSelect === undefined) {
-      message.error("Vui lòng chọn thư mục")
-      return
+      message.error("Vui lòng chọn thư mục");
+      return;
     }
 
     let value;
@@ -165,41 +183,39 @@ function FunctionButton({ handleFinish, status, fetchDataFolder, fetchDataFile, 
         ...currentFile,
         attachmentFolderId: currentSelect.id,
         id: undefined,
-      }
+      };
     }
     if (openMenu.action === "Di chuyển") {
       value = {
         ...currentFile,
         attachmentFolderId: currentSelect.id,
-      }
+      };
     }
     try {
-
       const response = await actionAsync(service, value);
 
       if (response.isSuccess) {
-        message.success(`${openMenu.action} thành công`)
+        message.success(`${openMenu.action} thành công`);
         fetchDataFile();
-
       } else {
-        message.error(`${openMenu.action} thất bại`)
+        message.error(`${openMenu.action} thất bại`);
       }
     } catch (error) {
-      message.error("Co loi ")
+      message.error("Co loi ");
+    } finally {
+      setOpenMenu((pre) => ({ ...pre, open: false, action: "" }));
+      setActionParent([null]);
+      setCurrentSelect(undefined);
     }
-    finally {
-      setOpenMenu(pre => ({ ...pre, open: false, action: "" }));
-      setActionParent([null])
-      setCurrentSelect(undefined)
-    }
-
-
-  }
+  };
   const childrenFolders = useMemo(() => {
-    return childrenAttachmentFolder(dataFolder, actionParent[actionParent.length - 1]);
+    return childrenAttachmentFolder(
+      dataFolder,
+      actionParent[actionParent.length - 1]
+    );
   }, [dataFolder, actionParent]);
   if (status === "file") {
-    const service = services.attachment
+    const service = services.attachment;
     return (
       <div>
         <Flex justify="space-between" gap={10} wrap>
@@ -208,7 +224,10 @@ function FunctionButton({ handleFinish, status, fetchDataFolder, fetchDataFile, 
               title="Xóa tệp"
               description={
                 <>
-                  <p>Bạn có chắc chắn muốn xóa tệp  {currentFile?.name || ""} không?</p>
+                  <p>
+                    Bạn có chắc chắn muốn xóa tệp {currentFile?.name || ""}{" "}
+                    không?
+                  </p>
                 </>
               }
               onConfirm={() => handleDelete(service, currentFile.id)}
@@ -217,138 +236,312 @@ function FunctionButton({ handleFinish, status, fetchDataFolder, fetchDataFile, 
             >
               <Button icon={<MdDelete />}>Xóa tệp</Button>
             </Popconfirm>
-            <Button onClick={handleRename} icon={<LuPencilLine />}>Đổi tên tệp</Button>
-            <Button onClick={() => setOpenMenu(pre => ({ ...pre, open: true, action: "Sao chép" }))} icon={<FaRegCopy />}>Sao chép tệp</Button>
-            <Button onClick={() => setOpenMenu(pre => ({ ...pre, open: true, action: "Di chuyển" }))} icon={<MdOutlineMoveUp />}>Di chuyển tệp</Button>
-            <Button onClick={() => handleDownLoad(currentFile.url, currentFile.name)} icon={<MdOutlineFileDownload />}>Tải xuống</Button>
-
+            <Button onClick={handleRename} icon={<LuPencilLine />}>
+              Đổi tên tệp
+            </Button>
+            <Button
+              onClick={() =>
+                setOpenMenu((pre) => ({
+                  ...pre,
+                  open: true,
+                  action: "Sao chép",
+                }))
+              }
+              icon={<FaRegCopy />}
+            >
+              Sao chép tệp
+            </Button>
+            <Button
+              onClick={() =>
+                setOpenMenu((pre) => ({
+                  ...pre,
+                  open: true,
+                  action: "Di chuyển",
+                }))
+              }
+              icon={<MdOutlineMoveUp />}
+            >
+              Di chuyển tệp
+            </Button>
+            <Button
+              onClick={() => handleDownLoad(currentFile.url, currentFile.name)}
+              icon={<MdOutlineFileDownload />}
+            >
+              Tải xuống
+            </Button>
           </Flex>
-          <CommonButton handleFinish={handleFinish} formSearch={formSearch} handleClick={handleRename} fetchDataFile={fetchDataFile} currentFolder={currentFolder} />
+          <CommonButton
+            handleFinish={handleFinish}
+            formSearch={formSearch}
+            handleClick={handleRename}
+            fetchDataFile={fetchDataFile}
+            currentFolder={currentFolder}
+          />
         </Flex>
-        <Modal title={
-          <div>
-            <Button disabled={actionParent.length <= 1} onClick={() => setActionParent((pre) => [...pre.slice(0, -1)])} icon={<MdArrowBackIosNew />}>Quay lại</Button>
-            <span className="ms-3">Danh sách thư mục</span >
-          </div>
-        } open={openMenu.open} onOk={() => handleOk(service)} onCancel={() => setOpenMenu(pre => ({ ...pre, open: false, action: "" }))}>
+        <Modal
+          title={
+            <div>
+              <Button
+                disabled={actionParent.length <= 1}
+                onClick={() => setActionParent((pre) => [...pre.slice(0, -1)])}
+                icon={<MdArrowBackIosNew />}
+              >
+                Quay lại
+              </Button>
+              <span className="ms-3">Danh sách thư mục</span>
+            </div>
+          }
+          open={openMenu.open}
+          onOk={() => handleOk(service)}
+          onCancel={() =>
+            setOpenMenu((pre) => ({ ...pre, open: false, action: "" }))
+          }
+        >
           <div className="d-flex flex-column">
-            {childrenFolders.length > 0 ?
+            {childrenFolders.length > 0 ? (
               childrenFolders.map((data, index) => (
-                <Button style={currentSelect?.id === data.id ? { color: "#4096FF" } : {}} className="py-3 mt-1 border-0  d-flex justify-content-start" onDoubleClick={() => setActionParent(pre => (Array.isArray(pre) ? [...pre, data.id] : [data.id]))} onClick={() => setCurrentSelect(data)} key={data.id}>
+                <Button
+                  style={
+                    currentSelect?.id === data.id ? { color: "#4096FF" } : {}
+                  }
+                  className="py-3 mt-1 border-0  d-flex justify-content-start"
+                  onDoubleClick={() =>
+                    setActionParent((pre) =>
+                      Array.isArray(pre) ? [...pre, data.id] : [data.id]
+                    )
+                  }
+                  onClick={() => setCurrentSelect(data)}
+                  key={data.id}
+                >
                   {data.name}
                 </Button>
               ))
-              : <Empty />
-            }
+            ) : (
+              <Empty />
+            )}
           </div>
         </Modal>
-        <InputModal title={"Tạo mới "} handleOk={handleSubmit} handleClose={handleClose} isOpen={openModal}>
-          <Form onFinish={onFinish} form={form} name="attachmentFolder" layout="vertical">
-            <Form.Item name="id" hidden >
+        <InputModal
+          title={"Tạo mới "}
+          handleOk={handleSubmit}
+          handleClose={handleClose}
+          isOpen={openModal}
+        >
+          <Form
+            onFinish={onFinish}
+            form={form}
+            name="attachmentFolder"
+            layout="vertical"
+          >
+            <Form.Item name="id" hidden>
               <Input disabled />
             </Form.Item>
-            <Form.Item name="name" label="Tên thư mục" rules={[{ required: true, message: "Vui lòng nhập tên thư mục" }]}>
+            <Form.Item
+              name="name"
+              label="Tên thư mục"
+              rules={[{ required: true, message: "Vui lòng nhập tên thư mục" }]}
+            >
               <Input placeholder="Nhập tên thư mục" className="w-100"></Input>
             </Form.Item>
-            <Form.Item name="description" label="Mô tả thư mục" >
-              <TextArea placeholder="Nhập mô tả công việc"
+            <Form.Item name="description" label="Mô tả thư mục">
+              <TextArea
+                placeholder="Nhập mô tả công việc"
                 autoSize={{
                   minRows: 4,
                   maxRows: 6,
-                }}></TextArea>
+                }}
+              ></TextArea>
             </Form.Item>
           </Form>
         </InputModal>
         <Drawer
-          footer={currentFile === undefined ? undefined :
-            <div className="text-start">
-              <Button className="mr-3" onClick={() => setIsOpen(false)} >
-                Thoát
-              </Button>
-              <Button type="primary" onClick={handleSubmit}>
-                Lưu
-              </Button>
-            </div>
+          footer={
+            currentFile === undefined ? undefined : (
+              <div className="text-start">
+                <Button className="mr-3" onClick={() => setIsOpen(false)}>
+                  Thoát
+                </Button>
+                <Button type="primary" onClick={handleSubmit}>
+                  Lưu
+                </Button>
+              </div>
+            )
           }
-          closable={false} getContainer={false} title="Chi tiết thư mục" onClose={() => setIsOpen(false)} open={isOpen}>
-          {currentFile &&
+          closable={false}
+          getContainer={false}
+          title="Chi tiết thư mục"
+          onClose={() => setIsOpen(false)}
+          open={isOpen}
+        >
+          {currentFile && (
             <div>
-              <TemplateExtension className="my-3 d-flex justify-content-center align-items-center" style={{ height: 192 }} extension={currentFile.extention} url={urlApi(currentFile?.url)}></TemplateExtension>
+              <TemplateExtension
+                className="my-3 d-flex justify-content-center align-items-center"
+                style={{ height: 192 }}
+                extension={currentFile.extention}
+                url={urlApi(currentFile?.url)}
+              ></TemplateExtension>
               <p style={{ height: 15 }}>Kích thước : {currentFile.size} KB</p>
-              <p className="mb-0">Ngày tạo : {currentFile.createdDate ? new Date(currentFile.createdDate).toLocaleDateString("vi-VN") : ""}</p>
-              <Form onFinish={onFinish} form={form} initialValues={currentFile} name="attachment" layout="vertical">
-                <Form.Item name="id" hidden >
+              <p className="mb-0">
+                Ngày tạo :{" "}
+                {currentFile.createdDate
+                  ? new Date(currentFile.createdDate).toLocaleDateString(
+                      "vi-VN"
+                    )
+                  : ""}
+              </p>
+              <Form
+                onFinish={onFinish}
+                form={form}
+                initialValues={currentFile}
+                name="attachment"
+                layout="vertical"
+              >
+                <Form.Item name="id" hidden>
                   <Input disabled />
                 </Form.Item>
-                <Form.Item name="name" label="Tên tệp" rules={[{ required: true, message: "Vui lòng nhập tên tệp" }]}>
+                <Form.Item
+                  name="name"
+                  label="Tên tệp"
+                  rules={[{ required: true, message: "Vui lòng nhập tên tệp" }]}
+                >
                   <Input placeholder="Nhập tên tệp" className="w-100"></Input>
                 </Form.Item>
-                <Form.Item label="Đường dẫn" name="url" >
+                <Form.Item label="Đường dẫn" name="url">
                   <Input className="w-100" disabled />
                 </Form.Item>
               </Form>
             </div>
-          }
+          )}
         </Drawer>
       </div>
-    )
-  }
-  else {
-    const service = services.attachmentFolder
+    );
+  } else {
+    const service = services.attachmentFolder;
     return (
       <div>
         <Flex justify="space-between" gap={10} wrap>
           <Flex wrap gap={10}>
-            <Button onClick={() => setOpenModal(true)} icon={<AiOutlineFolderAdd />}>Thêm thư mục</Button>
+            <Button
+              onClick={() => setOpenModal(true)}
+              icon={<AiOutlineFolderAdd />}
+            >
+              Thêm thư mục
+            </Button>
             <Popconfirm
               title="Xóa thư mục"
               description={
                 <>
-                  <p>Bạn có chắc chắn muốn xóa thư mục {currentFolder?.name || ""} không?</p>
-                  <p><strong>Lưu ý:</strong> Tất cả các tệp và thư mục con sẽ bị xóa!</p>
+                  <p>
+                    Bạn có chắc chắn muốn xóa thư mục{" "}
+                    {currentFolder?.name || ""} không?
+                  </p>
+                  <p>
+                    <strong>Lưu ý:</strong> Tất cả các tệp và thư mục con sẽ bị
+                    xóa!
+                  </p>
                 </>
               }
               onConfirm={() => handleDelete(service, currentFolder.id)}
               okText="Xác nhận"
               cancelText="Hủy"
             >
-              <Button hidden={currentFolder !== undefined ? checkDefaultFolder(currentFolder.name) : true} icon={<MdDelete />}>Xóa thư mục</Button>
+              <Button
+                hidden={
+                  currentFolder !== undefined
+                    ? checkDefaultFolder(currentFolder.name)
+                    : true
+                }
+                icon={<MdDelete />}
+              >
+                Xóa thư mục
+              </Button>
             </Popconfirm>
-            <Button onClick={handleRename} hidden={currentFolder !== undefined ? checkDefaultFolder(currentFolder.name) : true} icon={<LuPencilLine />}>Đổi tên  thư mục</Button>
+            <Button
+              onClick={handleRename}
+              hidden={
+                currentFolder !== undefined
+                  ? checkDefaultFolder(currentFolder.name)
+                  : true
+              }
+              icon={<LuPencilLine />}
+            >
+              Đổi tên thư mục
+            </Button>
           </Flex>
-          <CommonButton handleFinish={handleFinish} handleClick={() => setIsOpen(true)} fetchDataFile={fetchDataFile} currentFolder={currentFolder} />
+          <CommonButton
+            handleFinish={handleFinish}
+            handleClick={() => setIsOpen(true)}
+            fetchDataFile={fetchDataFile}
+            currentFolder={currentFolder}
+          />
         </Flex>
-        <InputModal title={"Tạo mới "} handleOk={handleSubmit} handleClose={handleClose} isOpen={openModal}>
-          <Form onFinish={onFinish} form={form} name="attachmentFolder" layout="vertical">
-            <Form.Item name="id" hidden >
+        <InputModal
+          title={"Tạo mới "}
+          handleOk={handleSubmit}
+          handleClose={handleClose}
+          isOpen={openModal}
+        >
+          <Form
+            onFinish={onFinish}
+            form={form}
+            name="attachmentFolder"
+            layout="vertical"
+          >
+            <Form.Item name="id" hidden>
               <Input disabled />
             </Form.Item>
-            <Form.Item name="name" label="Tên thư mục" rules={[{ required: true, message: "Vui lòng nhập tên thư mục" }]}>
+            <Form.Item
+              name="name"
+              label="Tên thư mục"
+              rules={[{ required: true, message: "Vui lòng nhập tên thư mục" }]}
+            >
               <Input placeholder="Nhập tên thư mục" className="w-100"></Input>
             </Form.Item>
-            <Form.Item name="description" label="Mô tả thư mục" >
-              <TextArea placeholder="Nhập mô tả công việc"
+            <Form.Item name="description" label="Mô tả thư mục">
+              <TextArea
+                placeholder="Nhập mô tả công việc"
                 autoSize={{
                   minRows: 4,
                   maxRows: 6,
-                }}></TextArea>
+                }}
+              ></TextArea>
             </Form.Item>
           </Form>
         </InputModal>
-        <Drawer closable={false} getContainer={false} title="Chi tiết" onClose={() => setIsOpen(false)} open={isOpen}>
-          {currentFolder &&
+        <Drawer
+          closable={false}
+          getContainer={false}
+          title="Chi tiết"
+          onClose={() => setIsOpen(false)}
+          open={isOpen}
+        >
+          {currentFolder && (
             <div>
               <div>Tên thư mục : {currentFolder.name}</div>
               <div>Mô tả : {currentFolder.description}</div>
-              <div>Ngày tạo : {currentFolder.createdDate ? new Date(currentFolder.createdDate).toLocaleDateString("vi-VN") : ""}</div>
-              <div>Ngày sửa : {currentFolder.modifiedDate ? new Date(currentFolder.modifiedDate).toLocaleDateString("vi-VN") : ""}</div>
-
+              <div>
+                Ngày tạo :{" "}
+                {currentFolder.createdDate
+                  ? new Date(currentFolder.createdDate).toLocaleDateString(
+                      "vi-VN"
+                    )
+                  : ""}
+              </div>
+              <div>
+                Ngày sửa :{" "}
+                {currentFolder.modifiedDate
+                  ? new Date(currentFolder.modifiedDate).toLocaleDateString(
+                      "vi-VN"
+                    )
+                  : ""}
+              </div>
             </div>
-          }
+          )}
         </Drawer>
       </div>
-    )
+    );
   }
 }
 
-export default React.memo(FunctionButton)
+export default React.memo(FunctionButton);

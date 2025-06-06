@@ -2,12 +2,14 @@
 using ApiDomain.Contract;
 using ApiDomain.Entity;
 using ApiInfrastructure.Base;
+using Azure.Core;
 using CommonHelper.Helpers;
 using CommonHelper.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -55,27 +57,28 @@ namespace ApiInfrastructure.Implement
 			return await PaginatedList<Job>.CreatePaginatedList(_jobRepo.GetAll(),request);
 		}
 
-		public async Task<Job> InsertAsync(Job job)
+		public async Task<Job> CreateAsync(Job request)
 		{
-			var position = await _jobRepo.FindAsync(job.Id);
+			var position = await _jobRepo.FindAsync(request.Id);
 			if(position == null)
 			{
-				var insertJob=await _jobRepo.AddAsync(job);
+				var create = await _jobRepo.AddAsync(request);
 				await _unitOfWork.SaveAsync();
-				return insertJob;
+				return create;
 			}
 			return null;
 		}
 
-		public async Task<Job> UpdateAsync(Job job)
+		public async Task<Job> UpdateAsync(Job request)
 		{
-			var position = await _jobRepo.FindAsync(job.Id);
+			var position = await _jobRepo.FindAsync(request.Id);
 			if (position != null)
 			{
-				_unitOfWork.GetDbContext().Entry(position).State = EntityState.Detached;
-				var updateJob=await _jobRepo.UpdateAsync(job);
+				//_unitOfWork.GetDbContext().Entry(position).State = EntityState.Detached;
+                TypeHelper.NormalMapping(request, position, "Id", "CreatedDate", "CreatedBy");
+                var update =await _jobRepo.UpdateAsync(position);
 				await _unitOfWork.SaveAsync();
-				return updateJob;
+				return update;
 			}
 			return null;
 		}

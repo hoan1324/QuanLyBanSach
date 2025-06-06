@@ -21,6 +21,8 @@ namespace ApiDomain.Base
 		Task<T> DeleteAsync(T entity);
 		Task<T> UpdateAsync(T entity);
 		IQueryable<T> GetAll();
+		IQueryable<T> GetAllEagerLoading(params Expression<Func<T, object>>[] includes);
+
 		IQueryable<T> GetByExpression(Expression<Func<T, bool>> expression);
 		Task<bool> DeleteByExpressionAsync(Expression<Func<T, bool>> expression);
 		Task<IQueryable<T>> DeleteRangeAsync(IQueryable<T> entity);

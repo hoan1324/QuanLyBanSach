@@ -115,6 +115,18 @@ namespace ApiInfrastructure.Base
 		{
 			return await _dbSet.FindAsync(id);
 		}
+
+		public IQueryable<T> GetAllEagerLoading(params Expression<Func<T, object>>[] includes)
+		{
+			IQueryable<T> query = _dbSet;
+
+			foreach (var include in includes)
+			{
+				query = query.Include(include);
+			}
+
+			return query;
+		}
 	}
 
 }

@@ -23,20 +23,20 @@ namespace Api.Infrastructure.Implement
         public async Task<AttachmentFolder> CreateAsync(AttachmentFolder request)
         {
             request.Id = Guid.NewGuid();
-            var attachment = await _attachmentFolderRepo.AddAsync(request);
+            var create = await _attachmentFolderRepo.AddAsync(request);
             await _unitOfWork.SaveAsync();
-            return attachment;
+            return create;
         }
 
         public async Task<AttachmentFolder> DeleteAsync(Guid id)
         {
-            var attachmentFolder = await _attachmentFolderRepo.FindAsync(id);
-            if (attachmentFolder != null)
+            var position = await _attachmentFolderRepo.FindAsync(id);
+            if (position != null)
             {
                 await _attachmentRepo.DeleteByExpressionAsync(n => n.AttachmentFolderId == id);
-                await _attachmentFolderRepo.DeleteAsync(attachmentFolder);
+                await _attachmentFolderRepo.DeleteAsync(position);
                 await _unitOfWork.SaveAsync();
-                return attachmentFolder;
+                return position;
             }
             return null;
         }
@@ -74,13 +74,13 @@ namespace Api.Infrastructure.Implement
 
         public async Task<AttachmentFolder> UpdateAsync(AttachmentFolder request)
         {
-            var attachmentFolder = await _attachmentFolderRepo.FindAsync(request.Id);
-            if (attachmentFolder != null)
+            var poisition = await _attachmentFolderRepo.FindAsync(request.Id);
+            if (poisition != null)
             {
-                TypeHelper.NormalMapping(request, attachmentFolder, "Id", "CreatedDate", "CreatedBy");
-                var attachmentFolderUpdate = await _attachmentFolderRepo.UpdateAsync(attachmentFolder);
+                TypeHelper.NormalMapping(request, poisition, "Id", "CreatedDate", "CreatedBy");
+                var update = await _attachmentFolderRepo.UpdateAsync(poisition);
                 await _unitOfWork.SaveAsync();
-                return attachmentFolderUpdate;
+                return update;
             }
 
             return null;

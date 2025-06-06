@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace ApiDomain.Contract
 {
 	public interface IStaffRepository
@@ -13,8 +14,8 @@ namespace ApiDomain.Contract
 		Task<PaginationModel<Staff>> GetPaggination(PaginationRequestModel request);
 		Task<List<Staff>> GetAll();
 		Task<Staff> FindByIdAsync(Guid id);
-		Task<Staff> InsertAsync(Staff staff);
-		Task<Staff> UpdateAsync(Staff staff);
+		Task<Staff> CreateAsync(Staff request);
+		Task<Staff> UpdateAsync(Staff request);
 		Task<Staff> DeleteAsync(Guid id);
 	}
 }

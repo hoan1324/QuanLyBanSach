@@ -36,6 +36,7 @@ namespace Api.Controllers.V1
 				}
 				else if (response.Status == (int)UserLoginSatus.Ok)
 				{
+
 					return Ok(ResponseModel.Success(response.Data, "Đăng nhập thành công !"));
 				}
 				else
@@ -84,7 +85,8 @@ namespace Api.Controllers.V1
 		{
 			try
 			{
-				var response = await _authService.RefreshToken(request);
+				request.RefreshTokenValue=CryptionHander.DecryptString(HttpContext.Request.Cookies["RefreshToken"]);
+                var response = await _authService.RefreshToken(request);
 				if (response.Status == (int)RefreshTokenEnum.Ok)
 				{
 					return Ok(ResponseModel.Success(response.Data, "Refresh token thành công !"));

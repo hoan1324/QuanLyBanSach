@@ -15,15 +15,10 @@ namespace ApiDomain.Contract
 		Task<User> FindByUserNameAsync(string userName);
 		Task<User?> FindByIdAsync(Guid id);
 		Task<User> FindByIdAndRoleAsync(Guid id);
-		Task<User> InsertAsync(User user);
-		Task<User> UpdateAsync(User user);
+		Task<User> CreateAsync(User request);
+		Task<User> UpdateAsync(User request);
 		Task<bool> UpdatePasswordAsync(Guid id, string newPass);
 		Task<User> DeleteAsync(Guid id);
-		Task<UserToken> InsertUserTokenAsync(UserToken userToken);
-		Task<UserToken> UpdateUserTokenAsync(UserToken userToken);
-		Task<List<UserToken>> DeleteUserTokenAsync(Guid userId);
-		Task<UserToken> FindUserTokenById(Guid id);
-		Task<UserToken?> FindUserTokenByUserId(Guid id);
 		Task<List<User>> GetByRole(string code);
 	}
 }

@@ -10,6 +10,7 @@ using ApiInfrastructure.Implement;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
 
 namespace APIBook.Configurations
@@ -27,28 +28,32 @@ namespace APIBook.Configurations
 			services.AddScoped<IUnitOfWork, UnitOfWork>();
 			#region Repository
 			services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-			services.AddScoped<IRoleRepository, RoleRepository>();
-			services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IRoleRepository, RoleRepository>();
+            services.AddScoped<IUserTokenRepository, UserTokenRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
 			services.AddScoped<IPermissionRepository, PermissionRepository>();
 			services.AddScoped<IJobRepository, JobRepository>();
 			services.AddScoped<IStaffRepository, StaffRepository>();
 			services.AddScoped<IAttachmentFolderRepository, AttachmentFolderRepository>();
 			services.AddScoped<IAttachmentRepository, AttachmentRepository>();
-			#endregion
+			services.AddScoped<ICategoryRepository, CategoryRepository>();
+            #endregion
 
-			#region Service
-			services.AddScoped<ICacheService, CacheService>();
+            #region Service
+            services.AddScoped<ICacheService, CacheService>();
 			services.AddScoped<IRoleService, RoleService>();
 			services.AddScoped<IUserService, UserService>();
 			services.AddScoped<IAuthService, AuthService>();
 			services.AddScoped<IPermissionService, PermissionService>();
-			services.AddScoped<IJobService, JobService>();
+			services.AddScoped<ICategoryService, CategoryService>();
 			services.AddScoped<IStaffService, StaffService>();
 			services.AddScoped<IAttachmentFolderService, AttachmentFolderService>();
 			services.AddScoped<IAttachmentService, AttachmentService>();
+            services.AddScoped<IJobService, JobService>();
+            #endregion
 
 
-			services.AddAuthentication()
+            services.AddAuthentication()
 			.AddJwtBearer("ApiJwtScheme", options =>
 			{
 			options.RequireHttpsMetadata = false;
@@ -77,10 +82,29 @@ namespace APIBook.Configurations
 				{
 					return Task.CompletedTask;
 				},
-				OnTokenValidated = context =>
+				OnTokenValidated = async context =>
 				{
-					return Task.CompletedTask;
-				},
+					var endpoint = context.HttpContext.GetEndpoint();
+                    var allowAnonymousAttr = endpoint?.Metadata.GetMetadata<AllowAnonymousAttribute>();
+                    var authorizeAttr = endpoint?.Metadata.GetMetadata<AuthorizeAttribute>();
+
+                    if (allowAnonymousAttr == null && authorizeAttr !=null)
+					{
+                        var authHeader = context.Request.Headers["Authorization"].ToString();
+                        var authService = context.HttpContext.RequestServices.GetRequiredService<IAuthService>();
+                        var isTokenExists = await authService.IsTokenExists(authHeader.Replace("Bearer", "").Trim());
+
+                        if (!isTokenExists)
+                        {
+                            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                            context.Response.Headers["WWW-Authenticate"] =
+                                "Bearer error=\"invalid_token\", error_description=\"revoked\"";
+
+                            context.Fail("Token is revoke");
+                        }
+                    }
+                 
+                },
 			};
 		});
 				services.AddAuthorization(options =>
@@ -92,7 +116,6 @@ namespace APIBook.Configurations
 						policyBuilder.RequireAuthenticatedUser();
 					options.DefaultPolicy = policyBuilder.Build(); //dùng thằng jwt nào cũng được
 				});
-			#endregion
 		}
 
 	}

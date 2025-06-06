@@ -22,7 +22,13 @@ namespace CommonHelper.Enum
 		WrongPass = 2,
 		Locked = 3,
 	}
-	public enum RefreshTokenEnum
+	public enum AccessTokenEnum
+    {
+        NotExpired=0,
+		OK=2,
+        NotValid = 3,
+    }
+    public enum RefreshTokenEnum
 	{
 		TokenEmpty = 0,
 		Ok = 1,

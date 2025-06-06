@@ -13,7 +13,9 @@ namespace APIBook.Controllers.V1
 	[ApiController]
 	[Authorize]
 	[UserAuthorize]
-	public class AttachmentFolderController : ControllerBase
+    [GroupPermissionDescription("Quản lý danh sách thư mục")]
+
+    public class AttachmentFolderController : ControllerBase
 	{
 		private readonly IWebHostEnvironment _webHostEnvironment;
 		private readonly ILogger<AttachmentFolderController> _logger;

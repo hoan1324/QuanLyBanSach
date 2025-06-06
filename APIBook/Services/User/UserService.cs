@@ -43,35 +43,35 @@ namespace Api.Services
 			//user.CreatedBy = currentUser.Id;
 			user.Password = CryptionHander.EncryptString(request.Password);
 			user.CreateDate = DateTime.Now;
-			await _userRepository.InsertAsync(user);
+			await _userRepository.CreateAsync(user);
 
 			await _cacheService.LoadUserToCache(request.Id);
 			return _mapper.Map<User, UserCreateDto>(user);
 		}
 
-		public async Task<UserCreateDto> DeleteAsync(Guid userId)
+		public async Task<UserCreateDto> DeleteAsync(Guid id)
 		{
-			var user = await _userRepository.FindByIdAsync(userId);
+			var user = await _userRepository.FindByIdAsync(id);
 			if (user != null)
 			{
-				await _userRepository.DeleteAsync(userId);
+				await _userRepository.DeleteAsync(id);
 				return _mapper.Map<UserCreateDto>(user);
 			}
-			_cacheService.RemoveUserFromCache(userId);
+			_cacheService.RemoveUserFromCache(id);
 			return null;
 		}
 
-		public async Task<UserViewDto> GetProfileAsync(Guid userId)
+		public async Task<UserViewDto> GetProfileAsync(Guid id)
 		{
-			var user = await _userRepository.FindByIdAsync(userId);
+			var user = await _userRepository.FindByIdAsync(id);
 			if (user != null)
 				return _mapper.Map<UserViewDto>(user);
 			return null;
 		}
 
-		public async Task<UserCreateDto> GetByIdAsync(Guid userId)
+		public async Task<UserCreateDto> GetByIdAsync(Guid id)
 		{
-			var user = await _userRepository.FindByIdAsync(userId);
+			var user = await _userRepository.FindByIdAsync(id);
 			if (user != null)
 				return _mapper.Map<UserCreateDto>(user);
 			return null;
@@ -108,13 +108,13 @@ namespace Api.Services
 			}
 			return null;
 		}
-		public async Task<bool> UpdatePasswordAsync(Guid userId, string userName, string newPass, string oldPass)
+		public async Task<bool> UpdatePasswordAsync(Guid userID, string userName, string newPass, string oldPass)
 		{
 			newPass = CryptionHander.EncryptString(newPass);
 			oldPass = CryptionHander.EncryptString(oldPass);
 			//var currentUser = await _authService.CurrentUser();
 
-			var obj = await _userRepository.FindByIdAsync(userId);
+			var obj = await _userRepository.FindByIdAsync(userID);
 			if (obj == null)
 			{
 				return false;
@@ -128,16 +128,16 @@ namespace Api.Services
 				return false;
 			}
 			obj.Password = newPass;
-			var res = await _userRepository.UpdatePasswordAsync(userId, newPass);
+			var res = await _userRepository.UpdatePasswordAsync(userID, newPass);
 
 			return res != null;
 		}
 
-		public async Task<UserCreateDto> ResetPasswordAsync(Guid userId)
+		public async Task<UserCreateDto> ResetPasswordAsync(Guid id)
 		{
 			var newPassword = StringHelper.RandomString(8);
 			var currentUser = await _authService.CurrentUser();
-			var user = await _userRepository.FindByIdAsync(userId);
+			var user = await _userRepository.FindByIdAsync(id);
 			if (user == null) return null;
 			user.Password = CryptionHander.EncryptString(newPassword);
 			user.ModifiedBy = currentUser.Id;
@@ -145,7 +145,7 @@ namespace Api.Services
 			await _userRepository.UpdateAsync(user);
 			return _mapper.Map<UserCreateDto>(new User
 			{
-				Id = userId,
+				Id = id,
 				Password = newPassword,
 				UserName = user.UserName,
 			});

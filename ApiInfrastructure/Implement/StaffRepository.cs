@@ -53,27 +53,27 @@ namespace ApiInfrastructure.Implement
 			return await PaginatedList<Staff>.CreatePaginatedList(_staffRepo.GetAll(),request);
 		}
 
-		public async Task<Staff> InsertAsync(Staff Staff)
+		public async Task<Staff> CreateAsync(Staff request)
 		{
-			var position = await _staffRepo.FindAsync(Staff.Id);
+			var position = await _staffRepo.FindAsync(request.Id);
 			if(position == null)
 			{
-				var insertStaff=await _staffRepo.AddAsync(Staff);
+				var create=await _staffRepo.AddAsync(request);
 				await _unitOfWork.SaveAsync();
-				return insertStaff;
+				return create;
 			}
 			return null;
 		}
 
-		public async Task<Staff> UpdateAsync(Staff Staff)
+		public async Task<Staff> UpdateAsync(Staff request)
 		{
-			var position = await _staffRepo.FindAsync(Staff.Id);
+			var position = await _staffRepo.FindAsync(request.Id);
 			if (position != null)
 			{
-				_unitOfWork.GetDbContext().Entry(position).State = EntityState.Detached;
-				var updateStaff =await _staffRepo.UpdateAsync(Staff);
-				await _unitOfWork.SaveAsync();
-				return updateStaff;
+                TypeHelper.NormalMapping(request, position, "Id", "CreatedDate", "CreatedBy");
+				var update= await _staffRepo.UpdateAsync(position);
+                await _unitOfWork.SaveAsync();
+				return update;
 			}
 			return null;
 		}

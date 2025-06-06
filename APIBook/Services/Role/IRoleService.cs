@@ -7,11 +7,11 @@ namespace APIBook.Services
 	{
 		Task<List<RoleDto>> GetAllAsync();
 		Task<PaginationModel<RoleDto>> GetListAsync(FilterRequest request);
-		Task<RoleDto> GetByIdAsync(Guid roleId);
+		Task<RoleDto> GetByIdAsync(Guid id);
 		Task<RoleDto> GetByCodeAsync(string code);
 		Task<RoleDto> CreateAsync(RoleDto request);
 		Task<RoleDto> UpdateAsync(RoleDto request);
-		Task<RoleDto> DeleteAsync(Guid roleId);
+		Task<RoleDto> DeleteAsync(Guid id);
 		Task<List<RoleDto>> DropdownAsync();
 	}
 }

@@ -24,14 +24,14 @@ namespace APIBook.Services
 			request.Id = Guid.NewGuid();
 			//request.CreatedBy = currentUser.Id;
 			var position = _mapper.Map<Role>(request);
-			var positionInserted = await _roleRepository.InsertAsync(position);
-			return _mapper.Map<RoleDto>(positionInserted);
+			var create = await _roleRepository.CreateAsync(position);
+			return _mapper.Map<RoleDto>(create);
 		}
 
-		public async Task<RoleDto> DeleteAsync(Guid roleId)
+		public async Task<RoleDto> DeleteAsync(Guid id)
 		{
-			await _roleRepository.DeletePermissionAsync(roleId);
-			var position = await _roleRepository.DeleteAsync(roleId);
+			await _roleRepository.DeletePermissionAsync(id);
+			var position = await _roleRepository.DeleteAsync(id);
 			return _mapper.Map<RoleDto>(position);
 		}
 
@@ -55,9 +55,9 @@ namespace APIBook.Services
 			return _mapper.Map<RoleDto>(position);
 		}
 
-		public async Task<RoleDto> GetByIdAsync(Guid roleId)
+		public async Task<RoleDto> GetByIdAsync(Guid id)
 		{
-			var position = await _roleRepository.FindByIdAsync(roleId);
+			var position = await _roleRepository.FindByIdAsync(id);
 			if (position == null) return null;
 			return _mapper.Map<RoleDto>(position);
 		}

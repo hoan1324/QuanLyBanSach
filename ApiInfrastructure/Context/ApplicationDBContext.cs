@@ -15,12 +15,13 @@ namespace ApiInfrastructure.Context
 		{
 
 		}
-		public DbSet<User> Users { get; set; }
+        public DbSet<User> Users { get; set; }
 		public DbSet<UserToken> UserTokens { get; set; }
 
 		public DbSet<Role> Roles { get; set; }
 		public DbSet<Permission> Permissions { get; set; }
-		public DbSet<UserPermission> UserPermissions { get; set; }
+		public DbSet<GroupPermission> GroupPermissions { get; set; }
+        public DbSet<UserPermission> UserPermissions { get; set; }
 		public DbSet<PermissionRole> PermissionRoles { get; set; }
 		public DbSet<ActionLog> ActionLogs { get; set; }
 		public DbSet<Banner> Banners { get; set; }
@@ -69,7 +70,8 @@ namespace ApiInfrastructure.Context
 			user.HasMany(n => n.Comments).WithOne(n => n.User);
 			user.HasMany(n=>n.UserTokens).WithOne(n => n.User);
 
-			var userToken = modelBuilder.Entity<UserToken>();
+
+            var userToken = modelBuilder.Entity<UserToken>();
 			userToken.ToTable("UserTokens");
 			userToken.Property(n => n.AccessToken).IsRequired().IsUnicode(true);
 			userToken.Property(n => n.RefreshToken).IsRequired().IsUnicode(true);
@@ -94,10 +96,20 @@ namespace ApiInfrastructure.Context
 			permission.Property(n => n.Code).IsRequired().HasMaxLength(100).IsUnicode(false);
 			permission.Property(n=>n.CreatedDate).HasDefaultValue(DateTime.Now);
 			permission.Property(n => n.Status).HasDefaultValue(0);
-			permission.HasMany(n => n.UserPermissions).WithOne(n => n.Permission);
-			permission.HasMany(n => n.PermissionRoles).WithOne(n => n.Permission);
+			permission.HasMany(n => n.UserPermissions).WithOne(n => n.Permission).OnDelete(DeleteBehavior.Cascade);
+            permission.HasMany(n => n.PermissionRoles).WithOne(n => n.Permission).OnDelete(DeleteBehavior.Cascade);
+            permission.HasOne(n => n.GroupPermission).WithMany(n => n.Permissions).HasForeignKey(n => n.GroupPermissionId);
 
-			var folder = modelBuilder.Entity<AttachmentFolder>();
+			var groupPermission = modelBuilder.Entity<GroupPermission>();
+			groupPermission.Property(n => n.Name).IsRequired().HasColumnType("nvarchar(200) COLLATE Latin1_General_CI_AI");
+			groupPermission.Property(n=>n.Status).HasDefaultValue(0);
+			groupPermission.Property(n=>n.CreatedDate).HasDefaultValue(DateTime.Now);
+            groupPermission.HasMany(n => n.Permissions).WithOne(n => n.GroupPermission).OnDelete(DeleteBehavior.Cascade);
+
+
+
+
+            var folder = modelBuilder.Entity<AttachmentFolder>();
 			folder.ToTable("AttachmentFolders");
 			folder.Property(n => n.CreatedDate).HasDefaultValue(DateTime.Now);
 			folder.Property(n => n.Name).HasMaxLength(300).IsUnicode(true).HasColumnType("nvarchar(300) COLLATE Latin1_General_CI_AI");
@@ -282,7 +294,6 @@ namespace ApiInfrastructure.Context
 			var orderDetail = modelBuilder.Entity<OrderDetail>();
 			orderDetail.ToTable("OrderDetails");
 			orderDetail.HasKey(n => new { n.OrderID, n.BookID });
-			orderDetail.Property(n => n.CreatedDate).HasDefaultValue(DateTime.Now);
 			orderDetail.Property(n => n.NetPrice).HasDefaultValue(0).HasColumnType("decimal(18,2)");
 			orderDetail.Property(n => n.UnitPrice).HasDefaultValue(0).HasColumnType("decimal(18,2)");
 			orderDetail.Property(n => n.Quantity).HasDefaultValue(0);
@@ -299,7 +310,6 @@ namespace ApiInfrastructure.Context
 			var purchaseDetail = modelBuilder.Entity<PurchaseDetail>();
 			purchaseDetail.ToTable("PurchaseDetails");
 			purchaseDetail.HasKey(n => new { n.PurchaseID, n.BookID });
-			purchaseDetail.Property(n => n.CreatedDate).HasDefaultValue(DateTime.Now);
 			purchaseDetail.Property(n => n.NetPrice).HasDefaultValue(0).HasColumnType("decimal(18,2)");
 			purchaseDetail.Property(n => n.UnitPrice).HasDefaultValue(0).HasColumnType("decimal(18,2)");
 			purchaseDetail.Property(n => n.Quantity).HasDefaultValue(0);

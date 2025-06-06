@@ -31,6 +31,5 @@ namespace ApiDomain.Entity
 		public ICollection<ShoppingCart>? ShoppingCarts { get;set; }
 		public ICollection<Comment>? Comments { get; set; }
 
-
-	}
+    }
 }

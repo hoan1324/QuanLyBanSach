@@ -7,9 +7,9 @@ namespace APIBook.Services
 	{
 		Task<List<JobDto>> GetAllAsync();
 		Task<PaginationModel<JobDto>> GetListAsync(FilterRequest request);
-		Task<JobDto> GetByIdAsync(Guid jobId);
+		Task<JobViewDto> GetByIdAsync(Guid id);
 		Task<JobDto> CreateAsync(JobDto request);
 		Task<JobDto> UpdateAsync(JobDto request);
-		Task<JobDto> DeleteAsync(Guid jobId);
+		Task<JobDto> DeleteAsync(Guid id);
 	}
 }

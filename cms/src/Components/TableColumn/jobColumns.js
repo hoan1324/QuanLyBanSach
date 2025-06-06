@@ -1,43 +1,38 @@
 import { commonColumn } from "../../CommonHelper/Constant/commonColumn";
 import actionColumn from "./actionColumn";
 import { formatMoneyVn } from "../../CommonHelper/utils/helper/moneyHelper";
-const jobColumn = ({ handleEdit, handleDelete, handleDetail }) => {
+import useHasPermission from "../../hooks/useHasPermission";
 
-    return [
-        ...commonColumn,
-        {
-            title: "Tên công việc",
-            dataIndex: "name",
-            key: "name",
-            align: 'center',
+const JobColumn = ({ handleEdit, handleDelete, handleDetail }) => {
+  const permissionDetail = useHasPermission("Job-GetByIdAsync");
+  const permissionEdit = useHasPermission("Job-UpdateAsync");
+  const permissionDelete = useHasPermission("Job-DeleteAsync");
 
-        },
-        {
-            title: "Mức lương tối thiểu",
-            dataIndex: "salaryMin",
-            key: "salaryMin",
-            align: 'center',
-            render: (salary) => formatMoneyVn(salary),
+  return [
+    ...commonColumn,
+    {
+      title: "Tên công việc",
+      dataIndex: "name",
+      key: "name",
+      align: "center",
+    },
 
-        },
-        {
-            title: "Mức lương tối đa",
-            dataIndex: "salaryMax",
-            key: "salaryMax",
-            align: 'center',
-            render: (salary) => formatMoneyVn(salary),
+    {
+      title: "Mô tả công việc",
+      dataIndex: "description",
+      key: "description",
+      align: "center",
+    },
 
-        },
-        {
-            title: "Mô tả công việc",
-            dataIndex: "description",
-            key: "description",
-            align: 'center',
-
-        },
-
-        actionColumn({ handleEdit, handleDelete, handleDetail, title: "công việc" }),
-
-    ];
-}
-export default jobColumn
+    actionColumn({
+      handleEdit,
+      handleDelete,
+      handleDetail,
+      title: "công việc",
+      permissionDetail,
+      permissionEdit,
+      permissionDelete,
+    }),
+  ];
+};
+export default JobColumn;

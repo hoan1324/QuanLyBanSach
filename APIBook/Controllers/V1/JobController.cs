@@ -13,7 +13,9 @@ namespace APIBook.Controllers.V1
 	[ApiController]
 	[Authorize]
 	[UserAuthorize]
-	public class JobController : ControllerBase
+    [GroupPermissionDescription("Quản lý danh sách công việc")]
+
+    public class JobController : ControllerBase
 	{
 		private readonly ILogger<JobController> _logger;
 		private readonly IJobService _jobService;

@@ -1,24 +1,18 @@
 import { create } from "zustand";
 const usePageStore = create((set, get) => ({
-    detailData: {},
-    formInstance: null,
+  detailData: {},
 
+  // 🔥 Getters (dùng trực tiếp không cần viết)
+  getDetailData: () => get().detailData,
 
-    // 🔥 Getters (dùng trực tiếp không cần viết)
-    getDetailData: () => get().detailData,
-    getFormInstance: () => get().formInstance,
+  // 🔥 Actions
+  setDetailData: (detailData) => {
+    set({ detailData });
+  },
 
-
-    // 🔥 Actions
-    setDetailData: (detailData) => {
-        set({ detailData });
-    },
-    setFormInstance: (formInstance) => {
-        set({ formInstance });
-    },
-    resetElementPage: () => {
-        set({ detailData: {}, formInstance: null })
-    }
+  resetElementPage: () => {
+    set({ detailData: {} });
+  },
 }));
 
 export default usePageStore;

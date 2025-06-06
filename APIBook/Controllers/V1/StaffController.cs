@@ -13,7 +13,9 @@ namespace APIBook.Controllers.V1
 	[ApiController]
 	[Authorize]
 	[UserAuthorize]
-	public class StaffController : ControllerBase
+    [GroupPermissionDescription("Quản lý danh sách nhân viên")]
+
+    public class StaffController : ControllerBase
 	{
 		private readonly ILogger<StaffController> _logger;
 		private readonly IStaffService _staffService;

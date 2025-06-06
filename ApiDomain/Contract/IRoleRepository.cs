@@ -14,8 +14,8 @@ namespace ApiDomain.Contract
 		Task<List<Role>> GetAll();
 		Task<Role?> FindByIdAsync(Guid id);
 		Task<Role?> FindByCodeAsync(string code);
-		Task<Role> InsertAsync(Role role);
-		Task<Role> UpdateAsync(Role role);
+		Task<Role> CreateAsync(Role request);
+		Task<Role> UpdateAsync(Role request);
 		Task<Role> DeleteAsync(Guid id);
 		Task<List<PermissionRole>> DeletePermissionAsync(Guid id);
 	}

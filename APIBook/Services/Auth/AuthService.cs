@@ -25,23 +25,27 @@ namespace APIBook.Services
 		private readonly IHttpContextAccessor _httpContextAccessor;
 		private readonly IUserRepository _userRepository;
 		private readonly IRepository<ActionLog> _actionLogService;
-		private readonly IPermissionRepository _userPermissionRepository;
+		private readonly IPermissionRepository _permissionRepository;
 		private readonly IRoleRepository _roleRepository;
 		private readonly IMemoryCache _memoryCache;
 		private readonly IMapper _mapper;
 		private readonly JwtOptions _jwtOptions;
 		private readonly IConfiguration _configuration;
-		public AuthService(IHttpContextAccessor httpContextAccessor, IUserRepository userRepository, IPermissionRepository userPermissionRepository, IRoleRepository roleRepository, IMemoryCache memoryCache, IMapper mapper, IOptions<JwtOptions> jwtOptions, IConfiguration configuration)
+		private readonly IUserTokenRepository _userTokenRepository;
+		private readonly ICacheService _cacheService;
+        public AuthService(IHttpContextAccessor httpContextAccessor, IUserRepository userRepository, IPermissionRepository permissionRepository, IRoleRepository roleRepository, IMemoryCache memoryCache, IMapper mapper, IOptions<JwtOptions> jwtOptions, IConfiguration configuration,IUserTokenRepository userTokenRepository,ICacheService cacheService)
 		{
 			_httpContextAccessor = httpContextAccessor;
 			_userRepository = userRepository;
-			_userPermissionRepository = userPermissionRepository;
+			_permissionRepository = permissionRepository;
 			_roleRepository = roleRepository;
 			_memoryCache = memoryCache;
 			_mapper = mapper;
 			_jwtOptions = jwtOptions.Value;
 			_configuration = configuration;
-		}
+            _userTokenRepository = userTokenRepository;
+			_cacheService = cacheService;
+        }
 
 		public async Task<ServiceTranferModel<UserLoginResponseDto>> Login(string userName, string passWord)
 		{
@@ -65,8 +69,8 @@ namespace APIBook.Services
 				AccessToken = accessToken.Token,
 				RefreshToken = refreshToken.Token,
 			};
-			await _userRepository.DeleteUserTokenAsync(user.Id);
-			await _userRepository.InsertUserTokenAsync(new UserToken
+			await _userTokenRepository.DeleteUserTokenAsync(user.Id);
+			await _userTokenRepository.InsertUserTokenAsync(new UserToken
 			{
 				Id = Guid.NewGuid(),
 				AccessToken = accessToken.Token,
@@ -77,18 +81,25 @@ namespace APIBook.Services
 				RefreshToken = refreshToken.Token,
 				RefreshTokenExpire = refreshToken.Expire.Value,
 			});
-			return new ServiceTranferModel<UserLoginResponseDto>(loginResponse, (int)UserLoginSatus.Ok, "Đăng nhập thành công !");
+			_httpContextAccessor.HttpContext.Response.Cookies.Append("RefreshToken", CryptionHander.EncryptString(refreshToken.Token), new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Expires = DateTimeOffset.UtcNow.AddDays(_jwtOptions.ExpireTokenExpireDays)
+            });
+            return new ServiceTranferModel<UserLoginResponseDto>(loginResponse, (int)UserLoginSatus.Ok, "Đăng nhập thành công !");
 		}
 		public async Task<ServiceTranferModel<UserLoginResponseDto>> RefreshToken(RefeshTokenDto request)
 		{
-			if (string.IsNullOrEmpty(request.AccessToken))
-				return new ServiceTranferModel<UserLoginResponseDto>(null, (int)RefreshTokenEnum.TokenEmpty, "Access token không được để trống");
+            if (string.IsNullOrWhiteSpace(request.RefreshTokenValue) || string.IsNullOrWhiteSpace(request.AccessToken))
+                return new ServiceTranferModel<UserLoginResponseDto>(null, (int)RefreshTokenEnum.TokenEmpty, "Access token và Refresh Token không được để trống");
 
 			var tokenHandler = new JwtSecurityTokenHandler();
 			var key = Encoding.ASCII.GetBytes(_jwtOptions.Secret);
 			try
 			{
-				tokenHandler.ValidateToken(request.AccessToken, new TokenValidationParameters
+                var tokenInVerfication=tokenHandler.ValidateToken(request.AccessToken, new TokenValidationParameters
 				{
 					ValidateIssuer = true,
 					ValidateAudience = true,
@@ -98,77 +109,75 @@ namespace APIBook.Services
 					ValidateLifetime = false,
 				}, out SecurityToken validatedToken);
 
-				var jwtToken = (JwtSecurityToken)validatedToken;
-				var userId = Guid.Parse(jwtToken.Claims.First(x => x.Type == "Id").Value);
 
-				var userToken = await _userRepository.FindUserTokenByUserId(userId);
-				if (userToken == null) return new ServiceTranferModel<UserLoginResponseDto>(null, (int)RefreshTokenEnum.NotFound, "Không thể Refesh token khi chưa đăng nhập !");
 
-				var user = await _userRepository.FindByIdAsync(userId);
-				if (user == null) return new ServiceTranferModel<UserLoginResponseDto>(null, (int)RefreshTokenEnum.NotFound, "Không tìm thấy tài khoản này !");
-
-				var accessToken = GenerateAccessToken(user);
-
-				// nếu refresh token còn hạn => cập nhật lại accesstoken
-				if (userToken.RefreshTokenExpire > DateTime.Now)
+				//kiểm tra loại thuật toán sử dụng
+				if (validatedToken is JwtSecurityToken jwtToken)
 				{
-					userToken.AccessToken = accessToken.Token;
-					userToken.AccessTokenExpire = accessToken.Expire.Value;
-
-					await _userRepository.UpdateUserTokenAsync(userToken);
-					var refreshResponse = new UserLoginResponseDto
+					var result = jwtToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase);
+					if (!result)
 					{
-						AccessToken = accessToken.Token,
-					};
-					return new ServiceTranferModel<UserLoginResponseDto>(refreshResponse,
-						(int)RefreshTokenEnum.Ok,
-						"Refresh Token thành công !"
-					);
+						return new ServiceTranferModel<UserLoginResponseDto>(null, (int)AccessTokenEnum.NotValid, "Access token không hợp lệ");
+					}
+
 				}
-				return new ServiceTranferModel<UserLoginResponseDto>(null, (int)RefreshTokenEnum.RefreshTokenExpire, "Refresh Token đã hết hạn, vui lòng đăng nhập lại ");
-			}
-			catch
-			{
-				return new ServiceTranferModel<UserLoginResponseDto>(null, (int)RefreshTokenEnum.NotValid, "Token không hợp lệ hoặc đã hết hạn !");
-			}
-		}
+
+
+                if (validatedToken.ValidTo > DateTime.Now)
+                {
+                    return new ServiceTranferModel<UserLoginResponseDto>(null, (int)AccessTokenEnum.NotExpired, "Access token còn hạn");
+                }
+
+                var userId = tokenInVerfication.Claims.FirstOrDefault(c => c.Type == "Id")?.Value;
+                if (userId == null)
+                {
+                    return new ServiceTranferModel<UserLoginResponseDto>(null, (int)AccessTokenEnum.NotValid, "Access token không hợp lệ");
+                }
+
+                var userToken = await _userTokenRepository.FindUserTokenByUserId(Guid.Parse(userId));
+                if (userToken == null) return new ServiceTranferModel<UserLoginResponseDto>(null, (int)RefreshTokenEnum.NotFound, "Bạn chưa đăng nhập");;
+                if (userToken.RefreshToken != request.RefreshTokenValue || userToken.AccessToken != request.AccessToken)
+                {
+                    return new ServiceTranferModel<UserLoginResponseDto>(null, (int)RefreshTokenEnum.NotValid, "Access token hoặc Refresh Token không hợp lệ");
+                }
+
+
+                // nếu refresh token còn hạn => cập nhật lại accesstoken
+                if (userToken.RefreshTokenExpire > DateTime.Now)
+                {
+                    var user = await _userRepository.FindByIdAsync(userToken.UserId);
+                    var accessToken = GenerateAccessToken(user);
+                    var refreshToken = GenerateRefreshToken();
+                    userToken.AccessToken = accessToken.Token;
+                    userToken.AccessTokenExpire = accessToken.Expire.Value;
+                    userToken.RefreshToken = refreshToken.Token;
+
+                    await _userTokenRepository.UpdateUserTokenAsync(userToken);
+                    var refreshResponse = new UserLoginResponseDto
+                    {
+                        RefreshToken = refreshToken.Token,
+                        AccessToken = accessToken.Token,
+                    };
+
+
+                    return new ServiceTranferModel<UserLoginResponseDto>(null, (int)RefreshTokenEnum.Ok, "Refresh Token thành công");
+                }
+                return new ServiceTranferModel<UserLoginResponseDto>(null, (int)RefreshTokenEnum.RefreshTokenExpire, "Refresh Token thất bại");
+            }
+            catch (Exception ex)
+            {
+                return new ServiceTranferModel<UserLoginResponseDto>(null, (int)RefreshTokenEnum.NotValid, "Token không hợp lệ hoặc đã hết hạn");
+            }
+        }
 		public async Task<CurrentUserDto> CurrentUser()
 		{
 			Guid userId = Guid.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(n => n.Type == "Id").Value);
-			string userCachedKey = CacheKeyBuilder.BuildCurrentUserCacheKey(userId);
-			var cachedUser = _memoryCache.Get<CurrentUserDto>(userCachedKey);
-			if (cachedUser == null)
-			{
-				var user = await _userRepository.FindByIdAndRoleAsync(userId);
-				if (user == null) return null;
-				var curentUser = new CurrentUserDto
-				{
-					Id = userId,
-					FullName=user.FullName,
-					Address = user.Address,
-					Avatar = user.Avatar,
-					CreateBy = user.CreateBy,
-					CreateDate = user.CreateDate,
-					DateOfBirth = user.DateOfBirth,
-					Email = user.Email,
-					IsAdmin = user.Role?.IsAdmin,
-					ModifiedBy = user.ModifiedBy,
-					Status = user.Status,
-					ModifiedDate = user.ModifiedDate,
-					UserName = user.UserName,
-					RoleID= user.RoleID,
-					UserPermissions = (await _userPermissionRepository.GetUserPermission(userId)).Select(n => n.Code).ToList(),
-				};
-				_memoryCache.Set<CurrentUserDto>(userCachedKey, curentUser, new MemoryCacheEntryOptions { AbsoluteExpiration = DateTime.Now.AddMinutes(30) });
-				return curentUser;
-			}
-			else return cachedUser;
+			return await _cacheService.GetUserFromCache(userId);
 
 		}
 		public async Task<bool> Logout(Guid userId)
 		{
-			var user = await _userRepository.FindByIdAsync(userId);
-			await _userRepository.DeleteUserTokenAsync(userId);
+			await _userTokenRepository.DeleteUserTokenAsync(userId);
 			return true;
 		}
 		private GenerateTokenDto GenerateAccessToken(User userInfo)
@@ -231,5 +240,35 @@ namespace APIBook.Services
 				};
 			}
 		}
-	}
+
+        public async Task<bool> IsTokenExists(string accessToken)
+        {
+            if (string.IsNullOrWhiteSpace(accessToken))
+                return false;
+
+            try
+            {
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var token = tokenHandler.ReadJwtToken(accessToken);
+
+                // Lấy userId từ claim "Id" (hoặc "id", tùy bạn lưu claim)
+                var userId = token.Claims.FirstOrDefault(c => c.Type == "Id")?.Value;
+                if (string.IsNullOrEmpty(userId))
+                    return false;
+
+                // Tìm token trong DB theo userId
+                var userToken = await _userTokenRepository.FindUserTokenByUserId(Guid.Parse(userId));
+                if (userToken == null)
+                    return false;
+
+                // So sánh token trong DB với token truyền vào
+                return userToken.AccessToken == accessToken;
+            }
+            catch
+            {
+                // Nếu decode hoặc parse token lỗi => token không hợp lệ
+                return false;
+            }
+        }
+    }
 }

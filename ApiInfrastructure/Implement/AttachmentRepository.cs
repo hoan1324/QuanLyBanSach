@@ -36,43 +36,42 @@ namespace Api.Infrastructure.Implement
 			return await PaginatedList<Attachment>.CreatePaginatedList(_attachmentRepo.GetAll(), request);
         }
 
-        public async Task<Attachment?> GetByIdAsync(Guid attachmentId)
+        public async Task<Attachment?> GetByIdAsync(Guid id)
         {
-            return await _attachmentRepo.FindAsync(attachmentId);
+            return await _attachmentRepo.FindAsync(id);
         }
 
         public async Task<Attachment> CreateAsync(Attachment request)
         {
             request.Id = Guid.NewGuid();
 			request.CreatedDate = DateTime.Now;
-			var attachment = await _attachmentRepo.AddAsync(request);
+			var create = await _attachmentRepo.AddAsync(request);
             await _unitOfWork.SaveAsync();
-            return attachment;
+            return create;
         }
 
         public async Task<Attachment> UpdateAsync(Attachment request)
         {
-            var attachment = await _attachmentRepo.FindAsync(request.Id);
-            if (attachment != null)
+            var position = await _attachmentRepo.FindAsync(request.Id);
+            if (position != null)
             {
-				_unitOfWork.GetDbContext().Entry(attachment).State = EntityState.Detached;
-				TypeHelper.NormalMapping(request, attachment, "Id", "CreatedDate", "CreatedBy");
-                var attachmentUpdate = await _attachmentRepo.UpdateAsync(request);
+				TypeHelper.NormalMapping(request, position, "Id", "CreatedDate", "CreatedBy");
+                var update = await _attachmentRepo.UpdateAsync(position);
                 await _unitOfWork.SaveAsync();
-                return attachmentUpdate;
+                return update;
             }
 
             return null;
         }
 
-        public async Task<Attachment> DeleteAsync(Guid attachmentId)
+        public async Task<Attachment> DeleteAsync(Guid id)
         {
-            var attachment = await _attachmentRepo.FindAsync(attachmentId);
-            if (attachment != null)
+            var position = await _attachmentRepo.FindAsync(id);
+            if (position != null)
             {
-                await _attachmentRepo.DeleteAsync(attachment);
+                await _attachmentRepo.DeleteAsync(position);
                 await _unitOfWork.SaveAsync();
-                return attachment;
+                return position ;
             }
             return null;
         }

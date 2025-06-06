@@ -36,9 +36,9 @@ namespace Api.Services
 			return _mapper.Map<PaginationModel<AttachmentDto>>(userPosition);
 		}
 
-		public async Task<AttachmentDto> GetByIdAsync(Guid attachmentId)
+		public async Task<AttachmentDto> GetByIdAsync(Guid id)
 		{
-			var attachment = await _attachmentRepository.GetByIdAsync(attachmentId);
+			var attachment = await _attachmentRepository.GetByIdAsync(id);
 			if (attachment != null)
 			{
 				return _mapper.Map<ApiDomain.Entity.Attachment, AttachmentDto>(attachment);
@@ -62,13 +62,13 @@ namespace Api.Services
 				await _attachmentRepository.UpdateAsync(attachment));
 		}
 
-		public async Task<AttachmentDto> DeleteAsync(Guid attachmentId)
+		public async Task<AttachmentDto> DeleteAsync(Guid id)
 		{
-			var attachment = await _attachmentRepository.GetByIdAsync(attachmentId);
+			var attachment = await _attachmentRepository.GetByIdAsync(id);
 			if (attachment == null)
 				return null;
 
-			var isFileInUse = await _attachmentRepository.IsFileInUseAsync(attachment.Url, attachmentId);
+			var isFileInUse = await _attachmentRepository.IsFileInUseAsync(attachment.Url, id);
 			bool isFileDeleted = true;
 
 			if (!isFileInUse)
@@ -86,7 +86,7 @@ namespace Api.Services
 			}
 
 
-			return _mapper.Map<ApiDomain.Entity.Attachment, AttachmentDto>(await _attachmentRepository.DeleteAsync(attachmentId));
+			return _mapper.Map<ApiDomain.Entity.Attachment, AttachmentDto>(await _attachmentRepository.DeleteAsync(id));
 		}
 
 

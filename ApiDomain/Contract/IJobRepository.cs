@@ -13,8 +13,8 @@ namespace ApiDomain.Contract
 		Task<PaginationModel<Job>> GetPaggination(PaginationRequestModel request);
 		Task<List<Job>> GetAll();
 		Task<Job> FindByIdAsync(Guid id);
-		Task<Job> InsertAsync(Job job);
-		Task<Job> UpdateAsync(Job job);
+		Task<Job> CreateAsync(Job request);
+		Task<Job> UpdateAsync(Job request);
 		Task<Job> DeleteAsync(Guid id);
 	}
 }

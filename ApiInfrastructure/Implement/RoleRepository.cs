@@ -59,23 +59,23 @@ namespace ApiInfrastructure.Implement
 			return await PaginatedList<Job>.CreatePaginatedList(_roleRepo.GetAll(), request);
 		}
 
-		public async Task<Role> InsertAsync(Role role)
+		public async Task<Role> CreateAsync(Role request)
 		{
-			role.Id = Guid.NewGuid();
-			await _roleRepo.AddAsync(role);
+			request.Id = Guid.NewGuid();
+			await _roleRepo.AddAsync(request);
 			await _unitOfWork.SaveAsync();
-			return role;
+			return request;
 		}
 
-		public async Task<Role> UpdateAsync(Role role)
+		public async Task<Role> UpdateAsync(Role request)
 		{
-			var exists = await _roleRepo.FindAsync(role.Id);
-			if (exists != null)
+			var position = await _roleRepo.FindAsync(request.Id);
+			if (position != null)
 			{
-				TypeHelper.NormalMapping(role, exists, "Id", "CreatedDate", "CreatedBy");
-				var position = await _roleRepo.UpdateAsync(role);
+				TypeHelper.NormalMapping(request, position, "Id", "CreatedDate", "CreatedBy");
+				var update = await _roleRepo.UpdateAsync(position);
 				await _unitOfWork.SaveAsync();
-				return position;
+				return update;
 			}
 			return null;
 		}

@@ -14,11 +14,11 @@ namespace Api.Domain.Contracts
 
         Task<List<Attachment>> GetByUser(Guid userId);
         Task<PaginationModel<Attachment>> GetPaggination(PaginationRequestModel request);
-        Task<Attachment> GetByIdAsync(Guid AttachmentId);
+        Task<Attachment> GetByIdAsync(Guid id);
         Task<Attachment> CreateAsync(Attachment request);
         Task<List<Attachment>> CreateManyAsync(List<Attachment> request);
         Task<Attachment> UpdateAsync(Attachment request);
-        Task<Attachment> DeleteAsync(Guid AttachmentId);
+        Task<Attachment> DeleteAsync(Guid id);
         Task<bool> IsFileInUseAsync(string fileUrl, Guid currentAttachmentId);
 
 	}

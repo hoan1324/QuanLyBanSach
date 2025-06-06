@@ -14,7 +14,9 @@ namespace Api.Controllers.V1
 	[ApiController]
 	[Authorize]
 	[UserAuthorize]
-	public class UserController : ControllerBase
+    [GroupPermissionDescription("Quản lý danh sách người dùng")]
+
+    public class UserController : ControllerBase
 	{
 		private readonly IWebHostEnvironment _webHostEnvironment;
 		private readonly ILogger<UserController> _logger;

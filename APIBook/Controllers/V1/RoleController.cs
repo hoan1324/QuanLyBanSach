@@ -13,7 +13,9 @@ namespace APIBook.Controllers.V1
 	[ApiController]
 	[Authorize]
 	[UserAuthorize]
-	public class RoleController : ControllerBase
+    [GroupPermissionDescription("Quản lý danh sách vai trò")]
+
+    public class RoleController : ControllerBase
 	{
 		private readonly ILogger<RoleController> _logger;
 		private readonly IRoleService _roleService;

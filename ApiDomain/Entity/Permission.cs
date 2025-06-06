@@ -11,10 +11,15 @@ namespace ApiDomain.Entity
 	{
 		public  string Name { get; set; }
 		public  string Code { get; set; }
-		public int Status { get; set; }//0:hoatj ddoong,//1 ban
+		public int Method { get; set; } //1:Create, 2:Read, 3:Update, 4:Delete
+        public int Status { get; set; }//0:hoatj ddoong,//1 ban
 		public DateTime? CreatedDate { get; set; }
-
-		public ICollection<PermissionRole>? PermissionRoles { get; set; }
+        public Guid? CreatedBy { get; set; }
+        public DateTime? ModifiedDate { get; set; }
+        public Guid? ModifiedBy { get; set; }
+		public Guid? GroupPermissionId { get; set; }
+		public virtual GroupPermission? GroupPermission { get; set; }
+        public ICollection<PermissionRole>? PermissionRoles { get; set; }
 		public ICollection<UserPermission>? UserPermissions { get; set; }	
 	}
 }

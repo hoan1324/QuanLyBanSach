@@ -16,20 +16,30 @@ namespace ApiInfrastructure.Implement
 		private readonly IRepository<Permission> _permissionRepository;
 		private readonly IRepository<UserPermission> _userPermissionRepository;
 		private readonly IRepository<PermissionRole> _permissionRoleRepository;
-	
-		public PermissionRepository(IUnitOfWork unitOfWork, IRepository<Permission> permissionRepository, IRepository<UserPermission> userPermissionRepository, IRepository<PermissionRole> permissionRoleRepository)
-		{
-			_unitOfWork = unitOfWork;
-			_permissionRepository = permissionRepository;
-			_userPermissionRepository = userPermissionRepository;
-			_permissionRoleRepository = permissionRoleRepository;	
-		}
-		public async Task<List<Permission>> GetAllPermission()
+		private readonly IRepository<GroupPermission> _groupPermissionRepository;
+
+        public PermissionRepository(IUnitOfWork unitOfWork, IRepository<Permission> permissionRepository, IRepository<UserPermission> userPermissionRepository, IRepository<PermissionRole> permissionRoleRepository, IRepository<GroupPermission> groupPermissionRepository)
+        {
+            _unitOfWork = unitOfWork;
+            _permissionRepository = permissionRepository;
+            _userPermissionRepository = userPermissionRepository;
+            _permissionRoleRepository = permissionRoleRepository;
+            _groupPermissionRepository = groupPermissionRepository;
+        }
+        public async Task<List<Permission>> GetAllPermission()
 		{
 			return await _permissionRepository.GetAll().AsNoTracking().ToListAsync();
 		}
 
-		public async Task<List<Permission>> GetRolePermission(Guid roleId)
+        public async Task<List<GroupPermission>> GetEagerLoadingPermissions()
+        {
+            return await _groupPermissionRepository.GetAllEagerLoading(n=>n.Permissions).AsNoTracking().ToListAsync();
+        }
+        public async Task<List<GroupPermission>> GetGroupPermission()
+        {
+            return await _groupPermissionRepository.GetAll().AsNoTracking().ToListAsync();
+        }
+        public async Task<List<Permission>> GetRolePermission(Guid roleId)
 		{
 			var rolePermissions = _permissionRoleRepository.GetByExpression(n => n.RoleID == roleId).AsNoTracking();
 			return await _permissionRepository

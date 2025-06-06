@@ -1,5 +1,6 @@
 ﻿using Api.Dtos;
 using APIBook.Dtos;
+using APIBook.Dtos.Permission;
 using ApiDomain.Entity;
 using AutoMapper;
 using CommonHelper.Models;
@@ -28,13 +29,31 @@ namespace APIBook.Configurations
 			CreateMap<JobDto, Job>()
 				.ForMember(n => n.Staffs, m => m.Ignore())
 				.ReverseMap();
+			CreateMap<Job, JobViewDto>()
+			   .ForMember(dest => dest.CreatedByUserName, opt => opt.Ignore())
+			   .ForMember(dest => dest.ModifiedByUserName, opt => opt.Ignore());
 
-			CreateMap<StaffDto, Staff>()
+
+            CreateMap<CategoryDto, Category>().ReverseMap();
+            
+			CreateMap<Category, CategoryViewDto>()
+               .ForMember(dest => dest.CreatedByUserName, opt => opt.Ignore())
+               .ForMember(dest => dest.ModifiedByUserName, opt => opt.Ignore());
+
+            CreateMap<StaffDto, Staff>()
 				.ForMember(n => n.Job, m => m.Ignore())
 				.ReverseMap();
+            
+			CreateMap<Staff, StaffViewDto>()
+			   .ForMember(dest => dest.CreatedByUserName, opt => opt.Ignore())
+			   .ForMember(dest => dest.ModifiedByUserName, opt => opt.Ignore())
+			   .ForMember(dest => dest.JobName, opt => opt.Ignore());
 
 
-			CreateMap<AttachmentDto, Attachment>()
+
+
+
+            CreateMap<AttachmentDto, Attachment>()
 			 .ForMember(n => n.AttachmentFolder, g => g.Ignore())
 			 .ReverseMap();
 
@@ -80,7 +99,9 @@ namespace APIBook.Configurations
 				.ForMember(n => n.UserPermissions, g => g.Ignore())
 				.ForMember(n => n.PermissionRoles, g => g.Ignore())
 				.ReverseMap();
-			CreateMap(typeof(PaginationModel<>), typeof(PaginationModel<>));
+
+			CreateMap<GroupPermissionDto,GroupPermission>().ReverseMap();
+            CreateMap(typeof(PaginationModel<>), typeof(PaginationModel<>));
 
 		}
 	}

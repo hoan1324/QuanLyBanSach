@@ -9,7 +9,7 @@ namespace CommonHelper.Models
 	public class ResponseModel
 	{
 		public bool IsSuccess { get; set; }
-		public string? Messsage { get; set; }
+		public string? Message { get; set; }
 		public object? Data { get; set; }
 		public int? Code { get; set; }
 
@@ -20,7 +20,7 @@ namespace CommonHelper.Models
 				Data = data,
 				Code = 1,
 				IsSuccess = true,
-				Messsage = message
+				Message = message
 			};
 		}
 
@@ -31,7 +31,7 @@ namespace CommonHelper.Models
 				Data = data,
 				Code = 0,
 				IsSuccess = false,
-				Messsage = message
+				Message = message
 			};
 		}
 
@@ -42,7 +42,7 @@ namespace CommonHelper.Models
 				Data = data,
 				Code = code,
 				IsSuccess = false,
-				Messsage = message
+				Message = message
 			};
 		}
 		public static ResponseModel Error(string message = "Thất bại !")
@@ -52,7 +52,7 @@ namespace CommonHelper.Models
 				Data = null,
 				Code = 0,
 				IsSuccess = false,
-				Messsage = message
+				Message = message
 			};
 		}
 	}

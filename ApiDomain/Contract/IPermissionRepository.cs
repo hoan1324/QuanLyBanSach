@@ -9,8 +9,11 @@ namespace ApiDomain.Contract
 {
 	public interface IPermissionRepository
 	{
-		//Task<List<GroupPermission>> GetPermissions();
-		Task<List<Permission>> GetAllPermission();
+
+		Task<List<GroupPermission>> GetGroupPermission();
+        Task<List<GroupPermission>> GetEagerLoadingPermissions();
+
+        Task<List<Permission>> GetAllPermission();
 		Task<List<Permission>> GetUserPermission(Guid userId);
 		Task<List<Permission>> GetRolePermission(Guid roleId);
 		Task<List<Permission>> UpdateRolePermissions(Guid roleId, List<Permission> permissions);
